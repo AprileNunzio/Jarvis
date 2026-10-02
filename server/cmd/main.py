@@ -58,6 +58,9 @@ def create_application() -> FastAPI:
             logger.warning(
                 "Embedding model not found! Run: ollama pull nomic-embed-text"
             )
+            
+        from server.core.orchestrator.interrupt_manager import project_manager
+        await project_manager.load_and_resume_all()
 
         logger.info(
             "Jarvis v2.0.0 online — %d agents, %d graph nodes, %d graph edges",

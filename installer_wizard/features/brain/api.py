@@ -145,3 +145,21 @@ async def admin_ollama_test(request: Request, _: str = Depends(require_admin)):
     except (httpx.HTTPError, ValueError) as exc:
         return {"ok": False, "url": url, "error": f"non raggiungibile ({type(exc).__name__}): sul server remoto avvia Ollama con OLLAMA_HOST=0.0.0.0"}
     return {"ok": True, "url": url, "version": version, "models": [m.get("name", "") for m in tags]}
+
+
+@admin_routes.get("/api/projects/status")
+async def get_projects_status(_: str = Depends(require_admin)):
+    import os, json
+    projects_dir = "data/projects"
+    running = []
+    if os.path.exists(projects_dir):
+        for f in os.listdir(projects_dir):
+            if f.endswith(".json"):
+                try:
+                    with open(os.path.join(projects_dir, f), "r", encoding="utf-8") as file:
+                        data = json.load(file)
+                        if data.get("status") in ["running", "paused"]:
+                            running.append(data)
+                except:
+                    pass
+    return {"projects": running}

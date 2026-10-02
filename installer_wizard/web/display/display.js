@@ -148,3 +148,36 @@
   Jarvis.connectState("/api/stream", (s) => (window.jarvisPerf ? window.jarvisPerf.measure("stato", () => onState(s)) : onState(s)), (ok) => $("link").classList.toggle("show", !ok));
   D.startBrain();
 })();
+
+
+// === PROJECT WIDGET POLLING ===
+setInterval(async () => {
+    try {
+        const token = localStorage.getItem("token") || "";
+        const res = await fetch("/api/projects/status", { headers: { "Authorization": "Bearer " + token } });
+        if (!res.ok) return;
+        const data = await res.json();
+        
+        const widget = document.getElementById("project-widget");
+        if (!widget) return;
+        
+        if (data.projects && data.projects.length > 0) {
+            // Prendi il primo progetto attivo
+            const p = data.projects[0];
+            widget.style.display = "block";
+            
+            const pctText = document.getElementById("proj-pct");
+            const bar = document.getElementById("proj-bar");
+            const name = document.getElementById("proj-name");
+            
+            if (pctText) pctText.textContent = p.progress + "%";
+            if (bar) bar.style.width = p.progress + "%";
+            if (name) name.textContent = p.name.replace("tsk_", "Progetto #");
+        } else {
+            // Nascondi se non ci sono progetti attivi
+            widget.style.display = "none";
+        }
+    } catch (e) {
+        // fail silently per non inquinare la console
+    }
+}, 3000);
