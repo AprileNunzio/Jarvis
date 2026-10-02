@@ -47,6 +47,13 @@ def create_application() -> FastAPI:
     except ImportError:
         logger.warning("Modulo Telemetry non trovato. Ignoro OpenTelemetry.")
 
+    # Carica tutti i tool dinamici (Maps, 3D, ecc.) prima di avviare gli agenti
+    try:
+        import server.features.agent_tools.maps_tool  # noqa
+        logger.info("Tool dinamici caricati e pronti all'uso.")
+    except ImportError as e:
+        logger.warning("Nessun tool dinamico caricato: %s", str(e))
+
     agent_pool.register_agent(HomeAssistantAgent())
     agent_pool.register_agent(VisionSurveillanceAgent())
     agent_pool.register_agent(SelfHealingCoderAgent())
