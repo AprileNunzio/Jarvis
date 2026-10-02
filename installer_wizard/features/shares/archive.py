@@ -13,6 +13,7 @@ FOLDERS = {
     "modelli3d": "03 Modelli 3D",
     "codice": "04 Codice",
     "scambio": "05 Scambio",
+    "musica": "06 Musica",
 }
 DESCRIPTIONS = {
     "documenti": "testi, note, elenchi e documenti scritti da Jarvis",
@@ -20,6 +21,7 @@ DESCRIPTIONS = {
     "modelli3d": "oggetti 3D progettati da Jarvis (GLB, STL per la stampa, OBJ)",
     "codice": "il codice mostrato da Jarvis sullo schermo, pronto da riusare",
     "scambio": "cartella libera per scambiare file con Jarvis e sottocartelle create a richiesta",
+    "musica": "libreria musicale di Jarvis: brani organizzati per artista e album, playlist e nuova musica da smistare",
 }
 README = "LEGGIMI.txt"
 DATED = re.compile(r"^\d{8}_")

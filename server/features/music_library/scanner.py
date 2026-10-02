@@ -11,8 +11,12 @@ except ImportError:
 
 logger = logging.getLogger("jarvis.music_library")
 
-# Rileva automaticamente se il server ha il disco Y: mappato
-MUSIC_ROOT = "Y:\\Musica" if os.path.exists("Y:\\") else os.path.join("data", "Musica")
+try:
+    from installer_wizard.features.shares.archive import path as share_path
+    MUSIC_ROOT = str(share_path("musica"))
+except ImportError:
+    MUSIC_ROOT = os.path.join(os.environ.get("DATA_DIR", "./data"), "Musica")
+
 UNSORTED_DIR = os.path.join(MUSIC_ROOT, "Nuova_Musica")
 LIBRARY_DIR = os.path.join(MUSIC_ROOT, "Libreria")
 

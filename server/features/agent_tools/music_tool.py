@@ -2,7 +2,12 @@ import os
 import logging
 from server.core.agent_registry.tool_registry import jarvis_tool
 
-MUSIC_ROOT = "Y:\\Musica" if os.path.exists("Y:\\") else os.path.join("data", "Musica")
+try:
+    from installer_wizard.features.shares.archive import path as share_path
+    MUSIC_ROOT = str(share_path("musica"))
+except ImportError:
+    MUSIC_ROOT = os.path.join(os.environ.get("DATA_DIR", "./data"), "Musica")
+
 MUSIC_LIBRARY_DIR = os.path.join(MUSIC_ROOT, "Libreria")
 
 @jarvis_tool("play_music", "Riproduce musica. Puoi specificare 'sorgente' ('locale' o 'spotify') e 'brano' (es. 'Back in Black AC/DC').")

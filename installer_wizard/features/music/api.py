@@ -43,7 +43,12 @@ async def internal_music(request: Request):
 import json
 import os
 
-MUSIC_ROOT = "Y:\\Musica" if os.path.exists("Y:\\") else os.path.join("data", "Musica")
+try:
+    from shares.archive import path as share_path
+    MUSIC_ROOT = str(share_path("musica"))
+except ImportError:
+    MUSIC_ROOT = os.path.join(os.environ.get("DATA_DIR", "./data"), "Musica")
+
 PLAYLISTS_FILE = os.path.join(MUSIC_ROOT, "playlists.json")
 
 @admin_routes.get("/api/music/playlists")
