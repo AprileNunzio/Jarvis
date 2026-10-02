@@ -164,7 +164,9 @@ async def finish_pending(success: bool) -> bool:
         return False
     PENDING_FILE.unlink(missing_ok=True)
     if success:
-        store.update["last_result"] = f"Aggiornato a {data['to'][:7]} il {now_iso()}"
+        from datetime import datetime
+        local_time = datetime.now().astimezone().strftime('%d/%m/%Y %H:%M:%S')
+        store.update["last_result"] = f"Aggiornato a {data['to'][:7]} il {local_time}"
         store.event("INFO", "Aggiornamento verificato e confermato", "updater")
         await mark_good()
         return False
