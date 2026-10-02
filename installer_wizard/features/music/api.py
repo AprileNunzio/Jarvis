@@ -43,7 +43,8 @@ async def internal_music(request: Request):
 import json
 import os
 
-PLAYLISTS_FILE = os.path.join("data", "Musica", "playlists.json")
+MUSIC_ROOT = "Y:\\Musica" if os.path.exists("Y:\\") else os.path.join("data", "Musica")
+PLAYLISTS_FILE = os.path.join(MUSIC_ROOT, "playlists.json")
 
 @admin_routes.get("/api/music/playlists")
 async def get_playlists(_: str = Depends(require_admin)):
