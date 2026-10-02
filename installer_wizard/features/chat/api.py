@@ -18,6 +18,7 @@ from features.brain.residency import primary
 from features.chat import addressee, assistant, brain_chain, intents, speaker, voice_id, wake
 from features.chat.dialogue import dialogue
 from features.chat.skills import ambient
+from features.laws import guard
 from features.laws.laws import laws
 from features.mind.mind import mind
 from features.chat import context as request_context
@@ -121,7 +122,10 @@ async def assistant_chat(text: str, device: str, heard_lang: str | None = None, 
         return await (_demo_core(query) if DEMO else _core_call(query, device, speech_lang))
 
     enroll = voice_id.command(text)
-    if enroll:
+    if guard.attempt(said) or guard.attempt(text):
+        guard.record(said, device)
+        result = {"reply": guard.REFUSAL, "intent": "laws", "agent": "leggi fondamentali", "elapsed_ms": 0}
+    elif enroll:
         result = {"reply": enroll[0], "ui": enroll[1], "intent": "voice_id", "agent": "impronta vocale", "elapsed_ms": 0}
     else:
         result = await assistant.handle(text, core_call, speech_lang)

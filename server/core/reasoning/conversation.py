@@ -46,7 +46,7 @@ class ConversationEngine:
         persona = _PERSONA.format(now=f"{_DAYS[now.tm_wday]} {now.tm_mday} {_MONTHS[now.tm_mon - 1]} "
                                       f"{now.tm_year}, ore {now.tm_hour}:{now.tm_min:02d}")
         if laws:
-            persona = laws[:1800] + "\n\n" + persona
+            persona = laws[:8000] + "\n\n" + persona
         if speaker:
             persona += " " + speaker[:400]
         if dialogue:

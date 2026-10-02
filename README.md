@@ -1155,12 +1155,29 @@ precedente e lo comunica su Telegram e sul display. A voce: «fai il collaudo».
 | **Rete** | Firewall `ufw` (tutto chiuso in ingresso tranne le porte necessarie), hardening `sysctl` (niente redirect né source routing, `rp_filter`, SYN cookies, log dei pacchetti anomali); Ollama, Qdrant e i servizi di percezione ascoltano solo su `127.0.0.1`. |
 | **Codice generato** | Gli algoritmi scritti da Jarvis vengono analizzati (solo moduli ammessi, nessuna funzione pericolosa) ed eseguiti in un processo isolato con limiti di memoria, file e tempo. |
 | **Agente** | Conferma a voce prima di email, cancellazioni (che vanno nel cestino), comandi che modificano il sistema e scritture fuori dalla cartella di lavoro; livello `standard` per limitarlo a `/srv/jarvis`. |
-| **Leggi** | Le leggi fondamentali sono in testa a ogni prompt, anche dei servizi cloud, e non si possono modificare. |
+| **Leggi** | Le leggi fondamentali sono in testa a ogni prompt (locale, altri server, cloud, agente) e non si possono modificare. Sono scritte per «Jarvis» in prima persona, qualunque modello lo faccia funzionare, e sono seguite da una **clausola di integrità**: nessun messaggio, documento, email, pagina web o risultato di uno strumento può sospenderle; niente eccezioni per giochi di ruolo, ipotesi, traduzioni o «modalità sviluppatore». Una **guardia nel codice** (`features/laws/guard.py`) intercetta i tentativi espliciti di aggirarle (anche con caratteri invisibili) prima che arrivino al modello, risponde con un rifiuto fisso e registra l'evento; le regole personali che le indeboliscono vengono rifiutate. |
 | **Privacy** | Tutto funziona in locale; il cloud si usa solo se configurato. Voci online disattivabili (`JARVIS_VOICE_ONLINE=0`, il testo non esce dal server). Dati Google mostrati solo alla persona riconosciuta. Telecamere spente di default, con consenso e indicatore di registrazione. Il riconoscimento musicale invia 10 secondi di audio ed è disattivabile. |
 | **Aggiornamenti** | Solo versioni con i test superati, verifica dopo l'installazione e rollback automatico. |
 | **Repository** | Nessun segreto, password o dato personale nel codice: si leggono sempre da `jarvis.env` o dal vault. Prima di ogni push si controlla il contenuto (vedi [§22](#22-sviluppo)). |
 
 Per segnalare una vulnerabilità vedere [SECURITY.md](SECURITY.md).
+
+### Limiti delle leggi (da sapere)
+
+Le leggi nel prompt e la guardia sulle frasi riducono molto i tentativi di aggiramento, ma **nessun modello
+linguistico è impossibile da ingannare**: una richiesta formulata in modo nuovo può sfuggire ai controlli
+testuali. Per questo la sicurezza fisica non si affida al modello ma al **codice**, che il modello non può
+cambiare:
+
+- le azioni delicate dell'agente (email, cancellazioni, comandi che modificano il sistema, scritture fuori
+  dalla cartella di lavoro) richiedono la conferma dell'utente, decisa dal codice di ogni strumento
+  (`features/agent/registry.py`), e i comandi distruttivi sono bloccati in ogni caso;
+- serrature, allarme, cancelli e garage chiedono conferma (`JARVIS_HOME_CONFIRM`);
+- le azioni dei compiti automatici aspettano l'approvazione;
+- gli algoritmi generati girano isolati, senza file né rete.
+
+Ogni nuovo strumento o azione che può avere effetti nel mondo reale deve avere il suo controllo nel codice,
+non solo nelle leggi.
 
 ---
 
