@@ -89,13 +89,18 @@ class AutonomousTaskPlanner:
         original_query: str,
         user_id: str,
         device_id: str,
+        task_id: str = None
     ) -> Dict[str, Any]:
         completed: Dict[int, Dict[str, Any]] = {}
         results: List[Dict[str, Any]] = []
 
         sorted_plan = sorted(plan, key=lambda s: s.get("step", 0))
+        total_steps = len(sorted_plan)
+        
+        from server.core.orchestrator.interrupt_manager import project_manager, ProjectState
+        import asyncio
 
-        for step in sorted_plan:
+        for i, step in enumerate(sorted_plan):
             step_num = step.get("step", 0)
             deps = step.get("depends_on", [])
 
@@ -107,6 +112,20 @@ class AutonomousTaskPlanner:
                     "reason": f"Unmet dependencies: {unmet}",
                 })
                 continue
+                
+            # Verifica pause se è un long running task
+            if task_id and task_id in project_manager.active_tasks:
+                pause_event = project_manager.active_tasks[task_id]["pause_event"]
+                if not pause_event.is_set():
+                    logger.info("Plan execution PAUSED for task %s", task_id)
+                    await pause_event.wait()
+                    logger.info("Plan execution RESUMED for task %s", task_id)
+                    
+            # Aggiorna il progresso del manager
+            if task_id and task_id in project_manager.active_tasks:
+                state_file = project_manager.active_tasks[task_id]["state_file"]
+                progress = int((i / max(total_steps, 1)) * 100)
+                project_manager._save_state(state_file, {"status": ProjectState.RUNNING.value, "progress": progress, "name": original_query[:40]})
 
             sub_request = AgentTaskRequest(
                 task_id=f"plan_{step_num}",
@@ -139,7 +158,11 @@ class AutonomousTaskPlanner:
                 })
                 logger.error("Plan step %d failed: %s", step_num, exc)
 
-        fully_completed = len(completed) == len(sorted_plan)
+        if task_id and task_id in project_manager.active_tasks:
+            state_file = project_manager.active_tasks[task_id]["state_file"]
+            project_manager._save_state(state_file, {"status": ProjectState.COMPLETED.value, "progress": 100, "name": original_query[:40]})
+
+        fully_completed = len(completed) == total_steps
         return {
             "plan": plan,
             "execution": results,

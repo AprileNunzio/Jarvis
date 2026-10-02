@@ -48,13 +48,14 @@ class SelfHealingCoderAgent(BaseAgent):
         architect_rules = (
             "Agisci come un Software Architect e Team Lead estremamente severo e professionale. "
             "Rispetta e applica rigorosamente le seguenti direttive in ogni output:\n"
-            "1. Architettura: Applica i principi della Clean Architecture. Rispetta sempre la Separation of Concerns (SoC) e il Single Responsibility Principle (SRP).\n"
-            "2. Purezza del Codice: Scrivi esclusivamente codice puro. Non inserire mai commenti o spiegazioni all'interno del codice, a meno che non sia io a richiederlo esplicitamente.\n"
-            "3. Limiti Strutturali: Nessun file generato o proposto deve mai superare le 500 righe. Se il limite viene superato, modularizza il codice.\n"
-            "4. User Interface: Progetta ogni componente UI con un approccio totalmente responsive, ottimizzato in modo nativo sia per dispositivi Mobile che Desktop.\n"
-            "5. Sicurezza: Applica un approccio Zero-Trust. Implementa standard di sicurezza massimi (OWASP, sanitizzazione input) e crittografia dati sensibili.\n"
-            "6. Error Handling: Gestione errori robusta senza abusare di try-catch. Prediligi Global Error Handling e non sopprimere le eccezioni.\n"
-            "7. Struttura dei File (Colocation): Organizza il progetto raggruppando i file per funzionalità (feature-based), non per strato tecnico. Ogni modulo deve avere una directory dedicata isolata.\n"
+            "1. Architettura: Applica i principi della Clean Architecture (SoC, SRP).\n"
+            "2. Purezza del Codice: Scrivi esclusivamente codice puro. Nessun commento inutile.\n"
+            "3. Limiti Strutturali: Modularizza il codice in più file.\n"
+            "4. User Interface: UI responsive nativa, Material Design 3 Expressive se richiesto.\n"
+            "5. Sicurezza: Approccio Zero-Trust. Prevenzione vulnerabilità OWASP (SQLi, XSS, CSRF).\n"
+            "6. Error Handling: Gestione errori globale robusta.\n"
+            "7. Struttura dei File: Usa 'create_directory' per generare la struttura delle cartelle e 'write_file' per scrivere ogni singolo file sorgente (PHP, JS, CSS, ecc.) fisicamente su disco nel workspace.\n"
+            "8. Completezza: Riempi ogni campo e funzione in modo iper-dettagliato usando gergo professionale. Non lasciare placeholder.\n"
         )
 
         react_result = await self._react.run(
@@ -139,19 +140,48 @@ class SelfHealingCoderAgent(BaseAgent):
 
         loop.register_tool(
             "generate_code",
-            "Genera codice Python puro a partire da un requisito in linguaggio naturale",
+            "Genera codice Python o PHP o HTML puro a partire da un requisito",
             generate_code,
         )
         loop.register_tool(
             "sandbox_test",
-            "Esegue codice Python nella sandbox isolata e restituisce il risultato (SUCCESS/FAILED + output)",
+            "Esegue codice nella sandbox",
             sandbox_test,
         )
         loop.register_tool(
             "fix_code",
-            "Riceve codice e un errore, restituisce il codice corretto",
+            "Corregge codice",
             fix_code,
         )
+        
+        async def create_directory(path: str) -> str:
+            import os
+            try:
+                base_path = os.path.abspath("data/workspace")
+                full = os.path.abspath(os.path.join(base_path, path))
+                if not full.startswith(base_path):
+                    return "ERROR: Path traversal detected"
+                os.makedirs(full, exist_ok=True)
+                return f"Directory {path} creata con successo."
+            except Exception as e:
+                return f"ERROR: {str(e)}"
+                
+        async def write_file(path: str, content: str) -> str:
+            import os
+            try:
+                base_path = os.path.abspath("data/workspace")
+                full = os.path.abspath(os.path.join(base_path, path))
+                if not full.startswith(base_path):
+                    return "ERROR: Path traversal detected"
+                os.makedirs(os.path.dirname(full), exist_ok=True)
+                with open(full, "w", encoding="utf-8") as f:
+                    f.write(content)
+                return f"File {path} scritto con successo."
+            except Exception as e:
+                return f"ERROR: {str(e)}"
+                
+        loop.register_tool("create_directory", "Crea una cartella nel workspace (usa per strutturare progetti)", create_directory)
+        loop.register_tool("write_file", "Scrive il contenuto in un file nel workspace (usa per salvare codice PHP, HTML, CSS, JS)", write_file)
 
         return loop
 

@@ -98,54 +98,40 @@ class OrchestratorDispatcher:
             )
 
         is_complex = await task_planner.should_decompose(sanitized_query)
+        is_web_or_code = "sito web" in sanitized_query.lower() or "progetto" in sanitized_query.lower() or "app" in sanitized_query.lower()
 
-        if is_complex:
-            logger.info("Complex task detected, decomposing into sub-tasks")
-            plan = await task_planner.decompose(sanitized_query)
+        if is_complex or is_web_or_code:
+            logger.info("Complex task detected, delegating to LongRunningTaskManager")
+            
+            from server.core.orchestrator.interrupt_manager import project_manager
+            
+            async def background_planner_task():
+                plan = await task_planner.decompose(sanitized_query)
+                graph_client.upsert_node(
+                    node_id=task_id,
+                    node_type=NodeType.CONCEPT,
+                    label=f"Task: {sanitized_query[:40]}",
+                    properties={"status": "EXECUTING_PLAN", "plan_steps": len(plan)},
+                )
+                
+                await task_planner.execute_plan(
+                    plan=plan,
+                    original_query=sanitized_query,
+                    user_id=speaker_id,
+                    device_id=device_id,
+                    task_id=task_id # Pass task_id per aggiornare il progresso nel manager
+                )
 
-            graph_client.upsert_node(
-                node_id=task_id,
-                node_type=NodeType.CONCEPT,
-                label=f"Task: {sanitized_query[:40]}",
-                properties={"status": "EXECUTING_PLAN", "plan_steps": len(plan)},
-            )
-
-            plan_result = await task_planner.execute_plan(
-                plan=plan,
-                original_query=sanitized_query,
-                user_id=speaker_id,
-                device_id=device_id,
-            )
-
-            execution_summary = "; ".join(
-                f"Step {r['step']}: {r.get('speech', r.get('status', 'DONE'))}"
-                for r in plan_result.get("execution", [])
-            )
-
-            elapsed = (time.time() - float(graph_client.get_node(task_id).properties.get("last_seen", time.time()))) * 1000
-
-            speech_output = (
-                f"Piano eseguito: {plan_result['completed_steps']}/{plan_result['total_steps']} step completati. "
-                + execution_summary[:300]
-            )
-
-            graph_client.upsert_node(
-                node_id=task_id,
-                node_type=NodeType.CONCEPT,
-                label=f"Task: {sanitized_query[:40]}",
-                properties={
-                    "status": "COMPLETED" if plan_result["fully_completed"] else "PARTIAL",
-                    "plan_result": plan_result,
-                },
-            )
-
+            # Start in background using project manager
+            await project_manager.start_project(task_id, background_planner_task)
+            
             return AgentTaskResponse(
                 task_id=task_id,
                 agent_id="orchestrator_planner",
-                status="SUCCESS" if plan_result["fully_completed"] else "PARTIAL",
-                result_data=plan_result,
-                speech_output=speech_output,
-                execution_time_ms=elapsed,
+                status="STARTED_IN_BACKGROUND",
+                result_data={"message": "Progetto avviato in background."},
+                speech_output="Ho creato il progetto e la roadmap. La lavorazione in background è iniziata.",
+                execution_time_ms=0,
             )
 
         task_request = AgentTaskRequest(
