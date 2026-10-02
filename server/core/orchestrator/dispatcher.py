@@ -188,13 +188,26 @@ class OrchestratorDispatcher:
             properties={"status": "EXECUTING", "assigned_agent": assigned_agent.agent_id},
         )
         
-        # Assegna il cervello specifico leggendolo dalle impostazioni globali (se configurato)
         from server.config.env import settings
-        if hasattr(settings, "AGENT_BRAIN_MAP") and settings.AGENT_BRAIN_MAP:
-            brain = settings.AGENT_BRAIN_MAP.get(assigned_agent.agent_id)
-            if brain:
-                task_request.preferred_brain = brain
-                logger.info("Assegnato cervello specifico '%s' all'agente '%s'", brain, assigned_agent.agent_id)
+        
+        # Mappa l'agente specializzato alla sua variabile d'ambiente
+        agent_env_keys = {
+            "research": "JARVIS_LLM_RICERCATORE_ORDER",
+            "domotics": "JARVIS_LLM_DOMOTICO_ORDER",
+            "skill_synthesizer": "JARVIS_LLM_STUDIO_ORDER",
+            "genera_modello_3d": "JARVIS_LLM_3D_ORDER",
+            "agent_self_healing_coder": "JARVIS_LLM_CODER_ORDER"
+        }
+        
+        env_key = agent_env_keys.get(assigned_agent.agent_id)
+        if env_key and hasattr(settings, env_key):
+            brains_str = getattr(settings, env_key, "")
+            if brains_str:
+                # Prendi il primo modello (il preferito)
+                brain = brains_str.split(",")[0].strip()
+                if brain:
+                    task_request.preferred_brain = brain
+                    logger.info("Assegnato cervello specifico '%s' all'agente '%s'", brain, assigned_agent.agent_id)
 
         response = await assigned_agent.execute(task_request)
 

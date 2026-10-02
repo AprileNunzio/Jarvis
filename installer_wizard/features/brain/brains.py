@@ -87,11 +87,21 @@ class Brains:
         env = read_env()
         main = env.get("JARVIS_LLM_MODEL") or "qwen2.5:3b"
         fast = env.get("JARVIS_LLM_FAST_MODEL") or main
-        chat_custom, deep_custom = _split(env.get("JARVIS_LLM_CHAT_ORDER", "")), _split(env.get("JARVIS_LLM_DEEP_ORDER", ""))
+        chat_custom = _split(env.get("JARVIS_LLM_CHAT_ORDER", ""))
+        deep_custom = _split(env.get("JARVIS_LLM_DEEP_ORDER", ""))
+        ric_custom = _split(env.get("JARVIS_LLM_RICERCATORE_ORDER", ""))
+        dom_custom = _split(env.get("JARVIS_LLM_DOMOTICO_ORDER", ""))
+        stu_custom = _split(env.get("JARVIS_LLM_STUDIO_ORDER", ""))
+        cod_custom = _split(env.get("JARVIS_LLM_CODER_ORDER", ""))
+        
         return {
             "routing": env.get("JARVIS_LLM_ROUTING", "auto") if env.get("JARVIS_LLM_ROUTING") in ("auto", "1", "0") else "auto",
             "main": main, "fast": fast,
             "chat": _dedupe(chat_custom or [fast, main]), "deep": _dedupe(deep_custom or [main, fast]),
+            "ricercatore": _dedupe(ric_custom or []),
+            "domotico": _dedupe(dom_custom or []),
+            "studio": _dedupe(stu_custom or []),
+            "coder": _dedupe(cod_custom or []),
             "chat_custom": bool(chat_custom), "deep_custom": bool(deep_custom),
         }
 
@@ -216,6 +226,8 @@ class Brains:
         active = {"chat": self.active_now("chat"), "deep": self.active_now("deep")}
         last = {**self.last, **self.describe(self.last["model"])} if self.last.get("model") else {}
         return {"routing": cfg["routing"], "chat": entries(cfg["chat"]), "deep": entries(cfg["deep"]),
+                "ricercatore": entries(cfg["ricercatore"]), "domotico": entries(cfg["domotico"]),
+                "studio": entries(cfg["studio"]), "coder": entries(cfg["coder"]),
                 "active": active, "last_used": last,
                 "chat_custom": cfg["chat_custom"], "deep_custom": cfg["deep_custom"],
                 "main": cfg["main"], "fast": cfg["fast"], "suggested": {"chat": auto_fast, "deep": auto_main},

@@ -31,19 +31,33 @@
 
   <div class="panel" style="margin-top:18px">
     <div class="panel-title">Mappatura Agenti Specializzati</div>
-    <div class="muted-note" style="margin-bottom:12px">Assegna un cervello specifico (LLM) a ogni singolo Agente. Se lasciato in bianco, verrà usato il modello predefinito.</div>
-    <form id="agent-map-form" class="form-grid" style="grid-template-columns:1fr 1fr">
-      <div><label>Agente Ricercatore</label><select id="map-ricercatore" class="agent-map-select"><option value="">-- Predefinito --</option></select></div>
-      <div><label>Agente Domotico</label><select id="map-domotico" class="agent-map-select"><option value="">-- Predefinito --</option></select></div>
-      <div><label>Studio Autonomo (La Scuola)</label><select id="map-studio" class="agent-map-select"><option value="">-- Predefinito --</option></select></div>
-      <div><label>Generatore 3D</label><select id="map-3d" class="agent-map-select"><option value="">-- Predefinito --</option></select></div>
-      <div><label>Sviluppatore Web (Architetto)</label><select id="map-coder" class="agent-map-select"><option value="">-- Predefinito --</option></select></div>
-    </form>
-    <div class="actions" style="margin-top:14px"><button class="btn primary" id="save-agent-map">Salva Mappatura</button></div>
-    <div class="faint" id="agent-map-res" style="margin-top:8px"></div>
+    <div class="muted-note" style="margin-bottom:12px">Aggiungi i cervelli dal catalogo premendo + (il primo è il preferito, i successivi sono i fallback). Se vuoto, si usano quelli di default.</div>
+    
+    <div class="grid g2 br-lists" style="margin-top:12px;">
+      <div class="panel">
+        <div class="panel-title">Ricercatore</div>
+        <div class="prio" id="br-ricercatore" data-kind="ricercatore"></div>
+        <div class="actions" style="margin-top:10px"><button class="btn sm" data-br-reset="ricercatore">Predefinito</button></div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">Domotico</div>
+        <div class="prio" id="br-domotico" data-kind="domotico"></div>
+        <div class="actions" style="margin-top:10px"><button class="btn sm" data-br-reset="domotico">Predefinito</button></div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">Studio Autonomo</div>
+        <div class="prio" id="br-studio" data-kind="studio"></div>
+        <div class="actions" style="margin-top:10px"><button class="btn sm" data-br-reset="studio">Predefinito</button></div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">Architetto Web</div>
+        <div class="prio" id="br-coder" data-kind="coder"></div>
+        <div class="actions" style="margin-top:10px"><button class="btn sm" data-br-reset="coder">Predefinito</button></div>
+      </div>
+    </div>
   </div>
 
-  <div class="panel">
+  <div class="panel"><div class="panel">
     <div class="panel-title">Aggiungi cervelli</div>
     <div class="br-source" id="br-source">
       <button data-v="local" class="on"><b>🖥 Modelli locali</b><span>Ollama, gira su questo server, gratis e privato</span></button>

@@ -91,7 +91,9 @@ async def admin_brains_set(request: Request, user: str = Depends(require_admin))
         if body["routing"] not in ("auto", "1", "0"):
             raise HTTPException(400, "Modalità di instradamento non valida")
         updates["JARVIS_LLM_ROUTING"] = body["routing"]
-    for kind, key in (("chat", "JARVIS_LLM_CHAT_ORDER"), ("deep", "JARVIS_LLM_DEEP_ORDER")):
+    for kind, key in (("chat", "JARVIS_LLM_CHAT_ORDER"), ("deep", "JARVIS_LLM_DEEP_ORDER"),
+                      ("ricercatore", "JARVIS_LLM_RICERCATORE_ORDER"), ("domotico", "JARVIS_LLM_DOMOTICO_ORDER"),
+                      ("studio", "JARVIS_LLM_STUDIO_ORDER"), ("coder", "JARVIS_LLM_CODER_ORDER")):
         if kind in body:
             models = [str(m).strip() for m in (body[kind] or []) if str(m).strip()]
             if len(models) > 12 or not all(_MODEL_RE.match(m) for m in models):

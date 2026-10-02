@@ -46,7 +46,7 @@
     }).join("") + (d[`${kind}_custom`] ? "" : `<div class="muted-note" style="margin:4px 6px">Automatico: scelto da Jarvis in base all'hardware (${kind === "chat" ? "veloce" : "potente"}: ${fmt.esc(kind === "chat" ? d.fast : d.main)}).</div>`);
   }
 
-  function catalogItem(d, m, inChat, inDeep) {
+  function catalogItem(d, m, inChat, inDeep, inRic, inDom, inStu, inCod) {
     return `<div class="cat-item"><div>
         <div class="nm">${fmt.esc(m.label)} <span class="faint mono" style="font-size:11px">${fmt.esc(m.name)}${m.size_gb ? ` · ${m.size_gb} GB` : ""}</span>
           ${m.name === d.suggested.chat ? '<span class="badge ok">consigliato ⚡</span>' : ""}${m.name === d.suggested.deep ? '<span class="badge ok">consigliato 🧠</span>' : ""}</div>
@@ -66,10 +66,13 @@
     const l = d.last_used || {};
     $("br-last").innerHTML = l.model ? `Ultima risposta: <b>${fmt.esc(l.model)}</b> ${originBadge(l)} in ${seconds(l.ms)}` : "";
     $("br-chat").innerHTML = priorityList(d, "chat", cat); $("br-deep").innerHTML = priorityList(d, "deep", cat);
+    $("br-ricercatore").innerHTML = priorityList(d, "ricercatore", cat); $("br-domotico").innerHTML = priorityList(d, "domotico", cat);
+    $("br-studio").innerHTML = priorityList(d, "studio", cat); $("br-coder").innerHTML = priorityList(d, "coder", cat);
     const hw = d.hardware || {};
     $("br-hw").textContent = `${hw.ram_gb || "?"} GB RAM · ${hw.gpu ? `${hw.gpu} ${hw.vram_gb} GB` : "solo CPU"}`;
     const inChat = new Set(d.chat.map((m) => m.name)), inDeep = new Set(d.deep.map((m) => m.name));
-    $("br-catalog").innerHTML = d.catalog.map((m) => catalogItem(d, m, inChat, inDeep)).join("");
+    const inRic = new Set((d.ricercatore||[]).map(m=>m.name)), inDom = new Set((d.domotico||[]).map(m=>m.name)), inStu = new Set((d.studio||[]).map(m=>m.name)), inCod = new Set((d.coder||[]).map(m=>m.name));
+    $("br-catalog").innerHTML = d.catalog.map((m) => catalogItem(d, m, inChat, inDeep, inRic, inDom, inStu, inCod)).join("");
   }
 
   async function saveBrains(body) {
@@ -133,6 +136,10 @@
     });
     A.makeSortable($("br-chat"), (items) => saveBrains({ chat: items }));
     A.makeSortable($("br-deep"), (items) => saveBrains({ deep: items }));
+    A.makeSortable($("br-ricercatore"), (items) => saveBrains({ ricercatore: items }));
+    A.makeSortable($("br-domotico"), (items) => saveBrains({ domotico: items }));
+    A.makeSortable($("br-studio"), (items) => saveBrains({ studio: items }));
+    A.makeSortable($("br-coder"), (items) => saveBrains({ coder: items }));
     $("br-routing").addEventListener("click", (e) => { const b = e.target.closest("[data-r]"); if (b) saveBrains({ routing: b.dataset.r }).then(() => A.toast("Instradamento aggiornato")); });
     document.querySelectorAll("[data-br-reset]").forEach((b) => b.addEventListener("click", () => saveBrains({ [b.dataset.brReset]: [] }).then(() => A.toast("Lista tornata automatica"))));
     $("br-source").addEventListener("click", (e) => { const b = e.target.closest("[data-v]"); if (b) showSource(b.dataset.v); });
