@@ -1,5 +1,4 @@
 import os
-import logging
 from server.core.agent_registry.tool_registry import jarvis_tool
 
 try:
