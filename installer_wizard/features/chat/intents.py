@@ -1,6 +1,6 @@
 import re
 
-from features.chat.templates import load_templates
+from features.chat.templates import predictable
 
 INTENTS = [
     ("weather", re.compile(r"\b(meteo|previsioni|piover[àa]|piove|nevicher[àa]|temperatura (fuori|esterna)"
@@ -33,6 +33,6 @@ def detect_intent(text: str) -> str:
 
 def predict(text: str) -> dict:
     intent = detect_intent(text)
-    tpl = load_templates().get(intent)
+    tpl = predictable(intent)
     return {"intent": intent, "skeleton": tpl["skeleton"] if tpl else None,
             "expected_ms": tpl["avg_ms"] if tpl else None}
