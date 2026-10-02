@@ -51,6 +51,8 @@ def create_application() -> FastAPI:
     try:
         import server.features.agent_tools.maps_tool
         import server.features.agent_tools.web_search_tool
+        import server.features.agent_tools.music_tool
+        _ = server.features.agent_tools.music_tool
         _ = server.features.agent_tools.web_search_tool
         _ = server.features.agent_tools.maps_tool
         logger.info("Tool dinamici caricati e pronti all'uso.")
@@ -67,6 +69,11 @@ def create_application() -> FastAPI:
 
     @app.on_event("startup")
     async def on_startup() -> None:
+        # Avvia background tasks
+        from server.features.music_library.scanner import music_organizer
+        import asyncio
+        asyncio.create_task(music_organizer.scan_loop())
+        
         # Inizializza Database (Pilastro 1)
         try:
             from server.core.db.database import engine, Base

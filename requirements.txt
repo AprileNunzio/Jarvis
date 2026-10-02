@@ -26,3 +26,6 @@ docker
 # Web Search Tool
 duckduckgo-search
 beautifulsoup4
+
+# Music Library
+mutagen
