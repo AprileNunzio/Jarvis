@@ -5,12 +5,14 @@ from features.models3d import generator, library
 from state import store
 from tasks import background
 
-CREATE = re.compile(r"\b(crea|creami|fammi|disegna|disegnami|modella|modellami|genera|generami|progetta|progettami"
-                    r"|costruisci|costruiscimi|stampami)\b\s*(un|una|uno|un'|il|la|lo|dei|delle)?\s*"
-                    r"(modello\s+(3d\s+)?(di|del|della|dello)\s+(un|una|uno|un')?\s*)?(?P<what>.+?)\s*"
+VERB = (r"(?!\w*at[oaie]\b)(?:cre[aiou]\w*|fa(?:i|mmi|resti|rebbe|re|rmi)|fammi|disegn\w*|modell\w*|gener\w*|progett\w*|costru\w*"
+        r"|stamp\w*|realizz\w*|prepar\w*)")
+CREATE = re.compile(r"\b" + VERB + r"\b(?:\s+(?:mi|me|ci|per\s+me|pure|subito|gentilmente|per\s+favore))*\s*"
+                    r"(?:(?:una|uno|un|il|la|lo|dei|delle)\s+|un')?"
+                    r"(modello\s+(3d\s+)?(di|del|della|dello)\s+(?:(?:una|uno|un)\s+|un')?)?(?P<what>.+?)\s*"
                     r"\b(in\s+3\s*d|3\s*d|tridimensional[ei]|in\s+tre\s+dimensioni)\b", re.I)
-CREATE_MODEL = re.compile(r"\b(crea|fammi|genera|disegna)\w*\s+(un|il)\s+modello\s+(3d|tridimensionale)\s+(di|del|della)\s+"
-                          r"(un|una|uno|un')?\s*(?P<what>.+)$", re.I)
+CREATE_MODEL = re.compile(r"\b" + VERB + r"\b(?:\s+(?:mi|me|ci))*\s+(un|il)\s+modello\s+(3d|tridimensionale)\s+(di|del|della)\s+"
+                          r"(?:(?:una|uno|un)\s+|un')?(?P<what>.+)$", re.I)
 SHOW = re.compile(r"\b(mostra|mostrami|apri|aprimi|fammi vedere|visualizza|riapri)\b\s*(il|la|lo|l')?\s*"
                   r"(modello|file|oggetto)?\s*(3d\s+)?(?P<what>.*)$", re.I)
 CLOSE = re.compile(r"\b(chiudi|nascondi|togli)\b.*\b(modello|visualizzatore|3d|oggetto)\b", re.I)
