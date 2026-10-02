@@ -12,15 +12,13 @@ FOLDERS = {
     "siti": "02 Siti web",
     "modelli3d": "03 Modelli 3D",
     "codice": "04 Codice",
-    "memoria": "05 Memoria",
-    "scambio": "06 Scambio",
+    "scambio": "05 Scambio",
 }
 DESCRIPTIONS = {
     "documenti": "testi, note, elenchi e documenti scritti da Jarvis",
     "siti": "siti web creati da Jarvis, uno per cartella, visibili anche dal browser",
     "modelli3d": "oggetti 3D progettati da Jarvis (GLB, STL per la stampa, OBJ)",
     "codice": "il codice mostrato da Jarvis sullo schermo, pronto da riusare",
-    "memoria": "persone, fatti, abitudini, automazioni e diario giornaliero (modificabili)",
     "scambio": "cartella libera per scambiare file con Jarvis e sottocartelle create a richiesta",
 }
 README = "LEGGIMI.txt"
@@ -78,7 +76,8 @@ def unc(ip: str, kind: str = "") -> str:
 def readme() -> str:
     lines = ["Cartella condivisa di Jarvis", "", "Qui Jarvis salva tutto ciò che crea, in queste sottocartelle:", ""]
     lines += [f"  {FOLDERS[k]:<16} {DESCRIPTIONS[k]}" for k in FOLDERS]
-    lines += ["", "I nomi iniziano sempre con la data in ordine inverso (AAAAMMGG_nome), così l'ordine alfabetico",
+    lines += ["", "La memoria di Jarvis (persone, fatti, diario) non è qui: per privacy resta solo sul server.",
+              "", "I nomi iniziano sempre con la data in ordine inverso (AAAAMMGG_nome), così l'ordine alfabetico",
               "è anche quello cronologico: per esempio 20261002_lista-della-spesa.txt.",
               "", "L'accesso richiede l'utente jarvis-share e la password indicata nel pannello di Jarvis",
               "(Condivisioni di rete)."]

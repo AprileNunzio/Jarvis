@@ -26,8 +26,7 @@ def root() -> Path:
     custom = env_get("JARVIS_VAULT_DIR", "").strip()
     if custom:
         return Path(custom)
-    from features.shares import archive
-    return archive.path("memoria")
+    return STATE_DIR / "memoria"
 
 
 class Vault:

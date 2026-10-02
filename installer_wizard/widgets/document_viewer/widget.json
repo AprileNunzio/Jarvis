@@ -1,19 +1,27 @@
 {
   "id": "document_viewer",
-  "name": "Visualizzatore File & Web",
-  "icon": "\ud83d\udcc4",
+  "name": "Documenti e anteprime",
+  "icon": "📄",
   "priority": 90,
   "size": "l",
   "intents": [
     "document_viewer",
     "pdf",
-    "web"
+    "web",
+    "documents"
   ],
-  "description": "Visualizzazione unificata per PDF, Documenti Office e siti Web (IFrame).",
-  "ttl": 600,
+  "description": "Documenti e progetti creati da Jarvis (Word, Excel, PowerPoint, LibreOffice, PDF) con anteprima, oppure pagine web e PDF.",
+  "ttl": 1800,
   "demo": {
-    "type": "web",
-    "title": "Ricerca Web Generata",
-    "url": "https://en.wikipedia.org/wiki/Special:Random"
+    "type": "office",
+    "id": "demo",
+    "title": "Relazione trimestrale",
+    "kind": "documento",
+    "summary": "6 sezioni, 3 tabelle, 2 grafici",
+    "preview": false,
+    "files": [
+      "01 Documenti/20261002_Relazione-trimestrale.docx",
+      "01 Documenti/20261002_Relazione-trimestrale.pdf"
+    ]
   }
 }

@@ -33,7 +33,7 @@ class ArchiveTest(unittest.TestCase):
         _, ui = asyncio.run(smb_action("crea una cartella condivisa chiamata progetti"))
         target = archive.path("scambio") / "progetti"
         self.assertTrue(target.is_dir())
-        self.assertIn("\\condivisa\\06 Scambio\\progetti", ui["panels"][0]["data"]["Windows"])
+        self.assertIn("\\condivisa\\05 Scambio\\progetti", ui["panels"][0]["data"]["Windows"])
         target.rmdir()
 
     def test_code_is_saved(self):

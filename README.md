@@ -43,7 +43,7 @@ funzionalità, configurazione, API, regole di codice, sicurezza e risoluzione de
 10. [Il cervello: modelli locali, altri server e cloud](#10-il-cervello-modelli-locali-altri-server-e-cloud)
 11. [Catalogo delle funzionalità](#11-catalogo-delle-funzionalità)
 12. [Display, widget e ologramma](#12-display-widget-e-ologramma)
-13. [Algoritmi (skills)](#13-algoritmi-skills)
+13. [Algoritmi (skills)](#13-algoritmi-skills) · [Documenti Office e progetti](#13-bis-documenti-office-e-progetti)
 14. [Nodi e satelliti](#14-nodi-e-satelliti)
 15. [Configurazione: jarvis.env e modalità auto/1/0](#15-configurazione-jarvisenv-e-modalità-auto10)
 16. [Riferimento delle variabili](#16-riferimento-delle-variabili)
@@ -113,7 +113,7 @@ con codice Python, API, scheda del pannello e manifest. Le principali novità:
 - **Abitudini**: Jarvis osserva come si usa la casa e propone le automazioni; segnala le situazioni insolite.
 - **Mente**: valuta ogni scambio e decide cosa ricordare a lungo o breve termine.
 - **Memoria in chiaro e diario**: la memoria in file Markdown leggibili e modificabili, con un diario per ogni
-  giorno, nella cartella condivisa protetta (sottocartella «05 Memoria»).
+  giorno, conservati solo sul server (`/var/lib/jarvis/memoria`), mai in rete.
 - **Leggi**: quattro leggi fondamentali immutabili più le regole dell'utente, iniettate in ogni ragionamento; otto regole di comportamento predefinite, modificabili e inserite una sola volta.
 
 ### Percezione e display
@@ -433,7 +433,7 @@ Poi aprire `http://localhost:8000/` (display) e `http://localhost:8001/` (pannel
 
 ## 9. Passi d'installazione (step)
 
-Ogni passo è uno script in `scripts/os/steps/` con due comandi:
+Ogni passo (22 in tutto) è uno script in `scripts/os/steps/` con due comandi:
 
 - `check`: esce con 0 se il sistema è già nello stato voluto (deve essere veloce e senza effetti);
 - `apply`: porta il sistema nello stato voluto; deve essere **idempotente**.
@@ -470,13 +470,14 @@ ricostruire solo se il codice è cambiato), `compose`, `has_usable_gpu`, `hw_pro
 | 12 | `ear` | `58-ear.sh` | no | Servizio di ascolto (wake word, faster-whisper) |
 | 13 | `music` | `59-music.sh` | no | Riconoscimento musicale |
 | 14 | `shares` | `63-shares.sh` | no | Samba: un'unica cartella «condivisa» protetta da password, con le sottocartelle delle creazioni; sposta da solo i contenuti delle vecchie condivisioni |
-| 15 | `convert3d` | `62-convert3d.sh` | no | Blender e LibreDWG per BLEND, USD, DWG |
-| 16 | `models` | `60-models.sh` | sì | Scarica modello di ragionamento, modello veloce ed embedding (con server remoto non scarica nulla) |
-| 17 | `soup` | `67-soup.sh` | no | Ambiente per il consolidamento dello studio nei pesi (solo con GPU adatta) |
-| 18 | `core` | `70-core.sh` | sì | Compila l'immagine Docker di Jarvis Core (solo se il codice è cambiato) |
-| 19 | `services` | `80-services.sh` | sì | Genera la chiave segreta del Core se manca e avvia Core e Qdrant con docker compose |
-| 20 | `maintenance` | `90-maintenance.sh` | no | Aggiornamenti di sicurezza, rotazione dei log, `jarvisctl` |
-| 21 | `warmup` | `95-warmup.sh` | sì | Carica in memoria il cervello principale e l'embedding; libera la memoria dai modelli non in uso (solo su Ollama locale) |
+| 15 | `office` | `64-office.sh` | no | LibreOffice senza interfaccia (Writer, Calc, Impress) e caratteri metricamente compatibili con Office (Carlito, Caladea, Liberation) per ODF e PDF |
+| 16 | `convert3d` | `62-convert3d.sh` | no | Blender e LibreDWG per BLEND, USD, DWG |
+| 17 | `models` | `60-models.sh` | sì | Scarica modello di ragionamento, modello veloce ed embedding (con server remoto non scarica nulla) |
+| 18 | `soup` | `67-soup.sh` | no | Ambiente per il consolidamento dello studio nei pesi (solo con GPU adatta) |
+| 19 | `core` | `70-core.sh` | sì | Compila l'immagine Docker di Jarvis Core (solo se il codice è cambiato) |
+| 20 | `services` | `80-services.sh` | sì | Genera la chiave segreta del Core se manca e avvia Core e Qdrant con docker compose |
+| 21 | `maintenance` | `90-maintenance.sh` | no | Aggiornamenti di sicurezza, rotazione dei log, `jarvisctl` |
+| 22 | `warmup` | `95-warmup.sh` | sì | Carica in memoria il cervello principale e l'embedding; libera la memoria dai modelli non in uso (solo su Ollama locale) |
 
 L'ordine di esecuzione è quello della lista `STEPS` in `backend/steps.py` (non quello numerico dei file).
 
@@ -652,6 +653,7 @@ raggruppate per categoria, con lo stato, i requisiti e un interruttore a tre pos
 | 🗣 **Voci** | `voices` | Oltre 600 voci in più di 60 lingue: Kokoro (9 lingue), catalogo Piper, voci online Microsoft Edge; voce preferita per lingua, ordine di priorità, anteprima, download automatico delle lingue nuove; velocità, tono e volume. |
 | 🧑 **Aspetto** | `appearance` | Ologramma 3D del volto o nucleo leggero (`JARVIS_AVATAR`), colore (`JARVIS_FACE_COLOR`). |
 | ▣ **Desktop a widget** | `desktop` | Il display come desktop: widget indipendenti con priorità, allarmi a schermo intero, prova dal pannello, più monitor (vedi [§12](#12-display-widget-e-ologramma)). |
+| 📄 **Documenti Office** | `documents` | Documenti professionali per Microsoft Office, LibreOffice e OpenOffice: Word, Excel, PowerPoint, ODT, ODS, ODP e PDF, con temi grafici, caratteri, colori, tabelle, grafici e indicatori; progetti con cartelle, documenti collegati e indice (vedi [§13 bis](#13-bis-documenti-office-e-progetti)). |
 | 🧊 **Modelli 3D** | `models3d` | Genera oggetti 3D da una frase (GLB a colori, STL in millimetri per la stampa, OBJ) e apre glTF/GLB, OBJ, STL, 3MF, AMF, PLY, FBX, DAE, 3DS, VRML, DXF, STEP, IGES, BREP; BLEND, USD e DWG con conversione sul server. |
 | 🎵 **Suoni ed effetti** | `sounds` | Effetti di attivazione, attesa ed elaborazione, notifiche, allarmi, sottofondi (reattore, spazio, pioggia, onde, laboratorio), orari di silenzio e «non disturbare», tre temi sintetizzati dal vivo. |
 | 🗺️ **Maps** | `maps` | Indicazioni stradali con mappa e percorso disegnato, tempi con traffico (chiave Google Maps) o OpenStreetMap, luoghi salvati a voce, tragitto per il lavoro al mattino, avvisi di partenza per gli appuntamenti. |
@@ -685,7 +687,7 @@ raggruppate per categoria, con lo stato, i requisiti e un interruttore a tre pos
 | 🎓 **Studio autonomo** | `study` | A riposo studia le materie scelte o scoperte dalle conversazioni, da fonti reali, con esercizi pratici, ripasso ed esami di livello; usa gli appunti nelle risposte. |
 | 🧬 **Consolidamento (Soup)** | `soup` | Di notte addestra un modello personale (LoRA) dagli appunti e lo pubblica in Ollama come «jarvis-studio». Sperimentale: GPU con 4 GB+ e 8 GB di RAM. |
 | ∑ **Algoritmi** | `skills` | Calcoli, conversioni e procedure come algoritmi Python verificati; Jarvis ne scrive di nuovi, li prova in isolamento e li riusa in millisecondi (vedi [§13](#13-algoritmi-skills)). |
-| 📓 **Memoria in chiaro e diario** | `vault` | Memoria in file Markdown nella cartella condivisa, «05 Memoria»: `Persone/<Nome>.md`, `Memoria/Fatti generali.md`, `Casa/Abitudini.md`, `Automazioni.md`, `Diario/AAAA/MM/AAAA-MM-GG.md`. Le modifiche fatte nei file tornano nella memoria. |
+| 📓 **Memoria in chiaro e diario** | `vault` | Memoria in file Markdown conservati solo sul server in `/var/lib/jarvis/memoria` (per privacy non è in rete): `Persone/<Nome>.md`, `Memoria/Fatti generali.md`, `Casa/Abitudini.md`, `Automazioni.md`, `Diario/AAAA/MM/AAAA-MM-GG.md`. Le modifiche fatte nei file tornano nella memoria. |
 
 ### Comunicazione
 
@@ -789,6 +791,49 @@ Sicurezza dell'esecuzione (`features/skills/library.py`, `features/skills/worker
   4 secondi per risposta;
 - con `JARVIS_SKILLS_GENERATE=1` Jarvis scrive un nuovo algoritmo quando serve, lo prova sugli esempi e lo
   salva solo se funziona.
+
+---
+
+## 13 bis. Documenti Office e progetti
+
+Codice: `installer_wizard/features/documents/`. Jarvis prepara documenti veri, non testo con un'estensione
+diversa: il cervello **progetta** il contenuto in una struttura JSON, il codice **impagina** con stili, temi e
+grafici, così il risultato è curato anche con modelli piccoli.
+
+| Modulo | Ruolo |
+| :--- | :--- |
+| `spec.py` | Schemi per documento, foglio e presentazione; normalizzazione robusta di ciò che produce il modello (voci strane, duplicati, righe vuote, numeri all'italiana, markdown) |
+| `planner.py` | Progettazione in due fasi: prima l'indice (6-10 sezioni) o la scaletta (10-16 diapositive), poi ogni sezione o gruppo di diapositive scritto in parallelo |
+| `themes.py` | Sette temi: moderno, aziendale, elegante, vivace, minimal, natura, tech (o colori e carattere a scelta) |
+| `word.py` | DOCX: copertina a fascia, stili dei titoli, intestazione e «Pagina X di Y», tabelle a righe alterne con totali, grafici, indicatori, riquadri, citazioni, elenchi, link |
+| `excel.py` | XLSX: colonne tipizzate (valuta, percentuale, date, interi), formule con `{r}`, totali `SOMMA` (esclusi prezzi unitari, sconti, aliquote), filtri, intestazioni bloccate, righe alterne, stampa orizzontale, grafici nativi |
+| `slides.py` | PPTX 16:9: copertina, sezioni numerate, elenchi, due colonne, tabelle, grafici nativi, indicatori, citazioni, chiusura, numeri di pagina, note del relatore |
+| `charts.py` | Grafici PNG ad alta risoluzione per i documenti di testo (matplotlib) |
+| `recipes.py` | Procedure di conversione imparate e salvate in memoria (vedi sotto) |
+| `convert.py` | LibreOffice in modalità headless, con profilo separato per ogni conversione (due in parallelo) |
+| `jobs.py` | Documento singolo o progetto; indice dei lavori in `/var/lib/jarvis/documents.json`, anteprime PDF |
+| `commands.py` · `tools.py` · `api.py` | Comando vocale, strumento `create_document` dell'agente, anteprima e scaricamento |
+
+Formati: la richiesta decide il formato («in word», «excel», «presentazione», «pdf», «libreoffice»/«openoffice»
+per ODT/ODS/ODP). Se si chiede un PDF, Jarvis consegna il PDF **e** il file modificabile da cui l'ha generato.
+
+**Progetti.** Con «progetto», «pacchetto», «dossier», «più documenti» o con tipi diversi nella stessa frase,
+Jarvis pianifica cartelle e documenti, crea `01 Documenti/AAAAMMGG_nome-progetto/` con le sottocartelle,
+genera i documenti in parallelo (tre alla volta) con un contesto comune, li **collega tra loro con link
+relativi** (funzionano in Word, Excel, PowerPoint e LibreOffice anche spostando la cartella) e aggiunge
+`AAAAMMGG_00_Indice-del-progetto.docx` con la tabella dei documenti e i collegamenti.
+
+**Procedure di conversione in memoria.** Ogni conversione (es. DOCX → PDF, XLSX → ODS) è una ricetta in
+`/var/lib/jarvis/conversion_recipes.json` con percorso, filtro di esportazione, usi, tempo medio e ultima riuscita.
+Se la ricetta c'è, Jarvis la riusa; se manca, la **impara**: prova i percorsi possibili (diretto, filtro specifico,
+passaggio da ODF), **verifica** che il risultato sia valido (PDF reale, ODF con il tipo giusto), salva quella che
+funziona e lo annota negli eventi. Una ricetta che smette di funzionare viene scartata e reimparata.
+
+Uso: «creami una relazione in word sulle energie rinnovabili con tabelle e grafici», «prepara un foglio excel
+per il budget del 2027», «fammi una presentazione per il lancio del prodotto», «creami un documento per la
+dichiarazione dei servizi ATA in pdf», «prepara un progetto completo per aprire una pizzeria». Jarvis risponde
+subito, lavora in background e avvisa a voce quando ha finito, aprendo il widget con i file e l'anteprima.
+API: `GET/POST /api/documents` (pannello), `GET /api/documents/{id}/preview.pdf` e `/file/{n}` (display).
 
 ---
 
@@ -956,7 +1001,7 @@ valore proprio.
 | `JARVIS_HABITS_ASK` | Abitudini: proposte a voce (1/0) | `1` |  | sì |
 | `JARVIS_HABITS_ANOMALIES` | Avvisi di situazioni insolite con casa vuota (1/0) | `1` |  | sì |
 | `JARVIS_VAULT` | Memoria in file leggibili e diario giornaliero (1/0) | `auto` |  | sì |
-| `JARVIS_VAULT_DIR` | Cartella della memoria in chiaro (vuoto = cartella condivisa, «05 Memoria») |  |  | sì |
+| `JARVIS_VAULT_DIR` | Cartella della memoria in chiaro (vuoto = /var/lib/jarvis/memoria, solo sul server) |  |  | sì |
 | `JARVIS_GPU_DRIVER` | Driver video del display: auto (NVIDIA ufficiale se adatto), nouveau (libero) | `auto` |  | sì |
 | `JARVIS_GPU_DRIVER_REBOOT` | Riavvio per attivare il driver video: night (alle 04:15) o now | `night` |  | sì |
 | `JARVIS_SHARES` | Cartella condivisa Samba «condivisa» con le creazioni di Jarvis, protetta da password (1/0) | `auto` |  | sì |
@@ -1054,8 +1099,7 @@ deve usarlo (`archive.new_path(tipo, nome)`), mai percorsi propri.
 | `02 Siti web` | Un sito per cartella, servito anche su `http://IP/siti/<cartella>/` | azione «crea un sito», agente (`create_site`) |
 | `03 Modelli 3D` | Copia di ogni modello progettato (GLB, STL, OBJ, MTL) | Modelli 3D |
 | `04 Codice` | Il codice mostrato nel widget o nelle schede | conversazione |
-| `05 Memoria` | Persone, fatti, abitudini, automazioni, diario (modificabili) | Memoria in chiaro |
-| `06 Scambio` | Cartella libera e sottocartelle create a richiesta | «crea una cartella condivisa», agente (`share_folder`, `copy_to_share`) |
+| `05 Scambio` | Cartella libera e sottocartelle create a richiesta | «crea una cartella condivisa», agente (`share_folder`, `copy_to_share`) |
 
 Regole dei nomi (`archive.dated`):
 - iniziano sempre con la data in ordine inverso: `20261002_lista-della-spesa.txt`, `20261002_pizzeria-da-mario/`;
@@ -1063,7 +1107,10 @@ Regole dei nomi (`archive.dated`):
 - se un nome esiste già si aggiunge `_2`, `_3`…;
 - un file già datato non viene ridatato.
 
-Alla prima esecuzione del passo `shares` i contenuti delle vecchie condivisioni (`memoria-jarvis`, `condivisa`
+La **memoria** di Jarvis (persone, fatti, abitudini, diario) **non è nella cartella condivisa**: per sicurezza e
+privacy resta in `/var/lib/jarvis/memoria` (permessi 700), leggibile solo sul server.
+
+Alla prima esecuzione del passo `shares` la memoria viene spostata lì e i contenuti delle vecchie condivisioni (`condivisa`
 libera, `/srv/jarvis/file`, `/srv/jarvis/siti`, cartelle create in `/srv/jarvis/condivisioni`) vengono spostati
 nelle nuove sottocartelle e le vecchie condivisioni vengono rimosse da Samba. Nella cartella c'è anche un
 `LEGGIMI.txt` che spiega la struttura.

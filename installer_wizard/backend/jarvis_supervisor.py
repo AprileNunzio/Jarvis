@@ -26,6 +26,7 @@ from features.nodes import api as nodes_api
 from features.cloud import api as cloud_api
 from features.desktop import api as desktop_api
 from features.desktop.desk import desk
+from features.documents import api as documents_api
 from features.devices import api as devices_api
 from features.devices import audio
 from features.google import api as google_api
@@ -79,7 +80,7 @@ logging.getLogger("httpcore").setLevel(logging.WARNING)
 FEATURE_APIS = (actions_api, bluetooth_api, chat_api, cloud_api, voices_api, vision_api, devices_api, location_api,
                 people_api, music_api, study_api, soup_api, network_api, telegram_api, home_api, brain_api,
                 desktop_api, spotify_api, google_api, maps_api, skills_api, nodes_api, mind_api, laws_api, cameras_api,
-                models3d_api, ear_api, autonomy_api, automations_api, sounds_api, selftest_api, habits_api, vault_api, shares_api)
+                models3d_api, documents_api, ear_api, autonomy_api, automations_api, sounds_api, selftest_api, habits_api, vault_api, shares_api)
 
 
 def build(admin: bool) -> FastAPI:

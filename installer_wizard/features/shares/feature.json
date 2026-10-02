@@ -11,12 +11,13 @@
       "shares"
     ]
   },
-  "description": "Un'unica cartella di rete protetta da password, «condivisa», con tutto ciò che Jarvis crea in sottocartelle ordinate: documenti, siti web, modelli 3D, codice, memoria e scambio. I nomi iniziano con la data in ordine inverso (AAAAMMGG_nome).",
+  "description": "Un'unica cartella di rete protetta da password, «condivisa», con tutto ciò che Jarvis crea in sottocartelle ordinate: documenti, siti web, modelli 3D, codice e scambio. La memoria di Jarvis non è in rete. I nomi iniziano con la data in ordine inverso (AAAAMMGG_nome).",
   "capabilities": [
     "\\\\IP-del-server\\condivisa da Esplora file di Windows, smb://IP/condivisa da Mac e Linux",
-    "Sottocartelle: 01 Documenti, 02 Siti web, 03 Modelli 3D, 04 Codice, 05 Memoria, 06 Scambio",
+    "Sottocartelle: 01 Documenti, 02 Siti web, 03 Modelli 3D, 04 Codice, 05 Scambio",
     "Nomi con data inversa: 20261002_nome.estensione",
-    "Accesso solo con l'utente jarvis-share e password, compatibile con Windows 11 (SMB2/3)"
+    "Accesso solo con l'utente jarvis-share e password, compatibile con Windows 11 (SMB2/3)",
+    "La memoria personale resta solo sul server, mai in rete"
   ],
   "settings": [
     {

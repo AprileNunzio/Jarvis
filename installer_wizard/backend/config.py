@@ -128,7 +128,7 @@ EDITABLE_KEYS = {
     "JARVIS_HABITS_ASK": "Abitudini: proposte a voce (1/0)",
     "JARVIS_HABITS_ANOMALIES": "Avvisi di situazioni insolite con casa vuota (1/0)",
     "JARVIS_VAULT": "Memoria in file leggibili e diario giornaliero (1/0)",
-    "JARVIS_VAULT_DIR": "Cartella della memoria in chiaro (vuoto = cartella condivisa, «05 Memoria»)",
+    "JARVIS_VAULT_DIR": "Cartella della memoria in chiaro (vuoto = /var/lib/jarvis/memoria, solo sul server)",
     "JARVIS_GPU_DRIVER": "Driver video del display: auto (NVIDIA ufficiale se adatto), nouveau (libero)",
     "JARVIS_GPU_DRIVER_REBOOT": "Riavvio per attivare il driver video: night (alle 04:15) o now",
     "JARVIS_SHARES": "Cartella condivisa Samba «condivisa» con le creazioni di Jarvis, protetta da password (1/0)",
@@ -142,6 +142,7 @@ EDITABLE_KEYS = {
     "JARVIS_SMTP_USER": "Email in uscita: utente SMTP",
     "JARVIS_SMTP_PASSWORD": "Email in uscita: password SMTP (per Gmail una password per le app)",
     "JARVIS_SMTP_FROM": "Email in uscita: mittente (vuoto = utente SMTP)",
+    "JARVIS_DOCUMENTS": "Documenti Office e LibreOffice: Word, Excel, PowerPoint, ODT, ODS, ODP, PDF e progetti (1/0)",
     "JARVIS_3D_CONVERT": "Conversione 3D sul server: Blender per BLEND/USD/USDZ e LibreDWG per DWG (auto = se c'è spazio, 1 = sì, 0 = no)",
 }
 SECRET_KEYS = {"JARVIS_SECRET_KEY", "JARVIS_SMB_PASSWORD", "GEMINI_API_KEY", "ANTHROPIC_API_KEY", "HOME_ASSISTANT_TOKEN", "JARVIS_TELEGRAM_TOKEN", "JARVIS_SMTP_PASSWORD",

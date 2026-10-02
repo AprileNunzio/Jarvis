@@ -1,24 +1,28 @@
 (() => {
+  const ICON = { docx: "📝", odt: "📝", xlsx: "📊", ods: "📊", pptx: "📽", odp: "📽", pdf: "📕" };
+  const ext = (name) => (String(name).split(".").pop() || "").toLowerCase();
+  const base = (path) => String(path).split("/").pop();
+
+  function office(el, d, ctx) {
+    const files = (d.files || []).map((f, i) => `<a class="dv-file" href="/api/documents/${encodeURIComponent(d.id)}/file/${i}" target="_blank" rel="noopener">
+        <span class="dv-ic">${ICON[ext(f)] || "📄"}</span><span class="dv-name">${ctx.esc(base(f))}</span><span class="dv-ext">${ctx.esc(ext(f))}</span></a>`).join("");
+    const errors = (d.errors || []).length ? `<div class="dv-err">Non riusciti: ${d.errors.map(ctx.esc).join("; ")}</div>` : "";
+    const preview = d.preview ? `<iframe class="dv-frame" src="/api/documents/${encodeURIComponent(d.id)}/preview.pdf#view=FitH&toolbar=0"></iframe>` : "";
+    el.innerHTML = `<div class="dv-wrap">
+      <div class="dv-head"><div><div class="dv-title">${ctx.esc(d.title || "Documento")}</div>
+        <div class="dv-sub">${ctx.esc(d.kind === "progetto" ? "Progetto" : "Documento")} · ${ctx.esc(d.summary || "")}</div></div></div>
+      <div class="dv-body ${preview ? "with-preview" : ""}"><div class="dv-files">${files}${errors}
+        <div class="dv-where">Cartella condivisa › 01 Documenti${d.project ? ` › ${ctx.esc(base(d.project))}` : ""}</div></div>${preview}</div></div>`;
+  }
+
   JarvisDesk.register("document_viewer", {
     render(el, d, ctx) {
-      const isWeb = d.type === 'web';
-      
-      const content = isWeb && d.url 
-        ? `<iframe src="${d.url}" style="width:100%; height:75vh; min-height:600px; border:none; border-radius:4px; background:#fff;"></iframe>`
-        : `<div style="padding: 40px; text-align: center; border: 2px dashed #475569; border-radius: 8px; color: #94a3b8;">
-             <span style="font-size: 3rem; display: block; margin-bottom: 12px;">📑</span>
-             Preview non disponibile per il formato nativo locale (${d.type || 'Sconosciuto'}). Apre l'applicazione predefinita di sistema.
-           </div>`;
-
-      el.innerHTML = `
-        <div style="background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 12px; height: 100%; width: 100%; box-sizing: border-box; display: flex; flex-direction: column;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-            <div style="color: #e2e8f0; font-weight: bold; font-size: 1.2rem;">${ctx.esc(d.title || "Visualizzatore")}</div>
-            <div style="background: #475569; color: #f8fafc; font-size: 0.8rem; padding: 4px 8px; border-radius: 4px; text-transform: uppercase;">${ctx.esc(d.type || "FILE")}</div>
-          </div>
-          <div style="flex-grow: 1;">${content}</div>
-        </div>
-      `;
-    }
+      if (d.type === "office") return office(el, d, ctx);
+      const url = d.url ? String(d.url) : "";
+      const content = url ? `<iframe class="dv-frame" src="${ctx.esc(url)}"></iframe>`
+        : `<div class="dv-empty">Anteprima non disponibile per questo formato (${ctx.esc(d.type || "file")}).</div>`;
+      el.innerHTML = `<div class="dv-wrap"><div class="dv-head"><div class="dv-title">${ctx.esc(d.title || "Visualizzatore")}</div>
+        <span class="dv-ext">${ctx.esc(d.type || "file")}</span></div><div class="dv-body with-preview">${content}</div></div>`;
+    },
   });
 })();

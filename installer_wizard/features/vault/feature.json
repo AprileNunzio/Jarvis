@@ -8,7 +8,7 @@
     "env": "JARVIS_VAULT",
     "apply": []
   },
-  "description": "La memoria di Jarvis in file di testo leggibili nella cartella condivisa di Jarvis, sottocartella «05 Memoria» (protetta da password, vedi Cartella condivisa): schede delle persone, fatti, abitudini, automazioni e un diario per ogni giorno. Le correzioni fatte nei file tornano nella memoria.",
+  "description": "La memoria di Jarvis in file di testo leggibili, conservati solo sul server (non in rete) per privacy: schede delle persone, fatti, abitudini, automazioni e un diario per ogni giorno. Le correzioni fatte nei file tornano nella memoria.",
   "capabilities": [
     "Persone/<Nome>.md: anagrafica, gusti, abitudini e ciò che Jarvis sa (salute e documenti restano privati)",
     "Memoria/Fatti generali.md, Casa/Abitudini.md, Automazioni.md",
@@ -19,7 +19,7 @@
   "settings": [
     {
       "key": "JARVIS_VAULT_DIR",
-      "label": "Cartella personalizzata (vuoto = condivisa\\05 Memoria)",
+      "label": "Cartella personalizzata (vuoto = /var/lib/jarvis/memoria, solo sul server)",
       "type": "text",
       "default": ""
     }

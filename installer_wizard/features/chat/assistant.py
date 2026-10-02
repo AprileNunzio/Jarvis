@@ -18,7 +18,7 @@ from features.chat.skills.voices import voices_skill
 from features.chat.skills.weather import weather_skill
 from features.chat.templates import remember_template
 
-CONNECTORS = {"vault": "features.vault.commands", "selftest": "features.selftest.commands", "sounds": "features.sounds.commands", "screens": "features.desktop.commands", "models3d": "features.models3d.commands", "vision": "features.vision.sight", "gservices": "features.google.commands", "maps": "features.maps.maps"}
+CONNECTORS = {"vault": "features.vault.commands", "selftest": "features.selftest.commands", "sounds": "features.sounds.commands", "screens": "features.desktop.commands", "models3d": "features.models3d.commands", "documents": "features.documents.commands", "vision": "features.vision.sight", "gservices": "features.google.commands", "maps": "features.maps.maps"}
 
 
 async def _agent(text: str, started: float) -> dict:

@@ -6,10 +6,11 @@ from state import store
 from features.agent import registry, tools_comm, tools_display, tools_files, tools_system
 from features.agent.paths import FILES, AccessDenied, level
 from features.automations import tools as tools_automations
+from features.documents import tools as tools_documents
 from features.autonomy import tools as tools_autonomy
 from features.brain.llm import BrainUnavailable, generate
 
-MODULES = (tools_comm, tools_display, tools_files, tools_system, tools_autonomy, tools_automations)
+MODULES = (tools_comm, tools_display, tools_files, tools_system, tools_autonomy, tools_automations, tools_documents)
 MAX_STEPS = 8
 PENDING_TTL = 180
 

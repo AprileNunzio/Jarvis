@@ -1,0 +1,20 @@
+{
+  "id": "documents",
+  "name": "Documenti Office",
+  "icon": "📄",
+  "category": "assistente",
+  "order": 36,
+  "pinned": false,
+  "panel": "",
+  "toggle": { "env": "JARVIS_DOCUMENTS", "apply": ["office"] },
+  "description": "Jarvis prepara documenti professionali per Microsoft Office, LibreOffice e OpenOffice: Word, Excel, PowerPoint, ODT, ODS, ODP e PDF, con temi grafici moderni, caratteri, colori, tabelle, grafici e indicatori. Per i progetti crea una cartella con sottocartelle, più documenti collegati tra loro e un indice.",
+  "capabilities": [
+    "Word e ODT: copertina, stili dei titoli, intestazione e numeri di pagina, tabelle con totali, grafici, indicatori, riquadri, citazioni, link",
+    "Excel e ODS: colonne tipizzate (valuta, percentuale, date), formule, totali, filtri, intestazioni bloccate, grafici nativi",
+    "PowerPoint e ODP: diapositive 16:9 con copertina, sezioni, due colonne, tabelle, grafici nativi, indicatori e note del relatore",
+    "PDF da qualsiasi documento, anteprima sul display",
+    "Progetti: cartella con sottocartelle, documenti generati in parallelo e collegati con link relativi, documento indice",
+    "Sette temi grafici (moderno, aziendale, elegante, vivace, minimal, natura, tech) o colori e carattere a scelta",
+    "Salvataggio in «01 Documenti» con nomi AAAAMMGG_titolo"
+  ]
+}

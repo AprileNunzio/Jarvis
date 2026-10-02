@@ -4,7 +4,8 @@
 SMB_USER=jarvis-share
 OLD_ROOT=/srv/jarvis/condivisioni
 ARCHIVE=/srv/jarvis/condivisa
-FOLDERS=("01 Documenti" "02 Siti web" "03 Modelli 3D" "04 Codice" "05 Memoria" "06 Scambio")
+FOLDERS=("01 Documenti" "02 Siti web" "03 Modelli 3D" "04 Codice" "05 Scambio")
+MEMORY=/var/lib/jarvis/memoria
 CONF=/etc/samba/smb.conf
 
 wanted() { [ "${JARVIS_SHARES:-1}" != "0" ]; }
@@ -16,7 +17,9 @@ step_check() {
     systemctl is-active --quiet smbd || return 1
     grep -q '^\[condivisa\]' "$CONF" 2>/dev/null || return 1
     grep -q '^\[memoria-jarvis\]' "$CONF" 2>/dev/null && return 1
-    [ -d "$ARCHIVE/05 Memoria" ] || return 1
+    [ -d "$ARCHIVE/05 Scambio" ] || return 1
+    [ -e "$ARCHIVE/05 Memoria" ] && return 1
+    [ -e "$ARCHIVE/06 Scambio" ] && return 1
     [ "$(cat "$JARVIS_STATE/.shares-pass" 2>/dev/null)" = "$(password_hash)" ] || return 1
     code_current shares "$0"
 }
@@ -68,11 +71,15 @@ move_into() {
 }
 
 migrate_old() {
-    move_into "$OLD_ROOT/memoria-jarvis" "$ARCHIVE/05 Memoria"
-    move_into "$OLD_ROOT/condivisa" "$ARCHIVE/06 Scambio"
+    move_into "$OLD_ROOT/memoria-jarvis" "$MEMORY"
+    move_into "$ARCHIVE/05 Memoria" "$MEMORY"
+    move_into "$ARCHIVE/06 Scambio" "$ARCHIVE/05 Scambio"
+    move_into "$OLD_ROOT/condivisa" "$ARCHIVE/05 Scambio"
     move_into /srv/jarvis/file "$ARCHIVE/01 Documenti"
     move_into /srv/jarvis/siti "$ARCHIVE/02 Siti web"
-    move_into "$OLD_ROOT" "$ARCHIVE/06 Scambio"
+    move_into "$OLD_ROOT" "$ARCHIVE/05 Scambio"
+    mkdir -p "$MEMORY"
+    chmod 700 "$MEMORY"
 }
 
 step_apply() {

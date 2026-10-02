@@ -40,6 +40,8 @@ STEPS = [
          critical=False),
     Step("shares", "63-shares.sh", "Condivisioni di rete", "Cartelle visibili da Windows e Mac, memoria con password", 1,
          critical=False),
+    Step("office", "64-office.sh", "Ufficio", "LibreOffice e caratteri per documenti Office, ODF e PDF", 2,
+         critical=False),
     Step("convert3d", "62-convert3d.sh", "Conversione 3D", "Blender e LibreDWG per aprire BLEND, USD e DWG", 1,
          critical=False),
     Step("models", "60-models.sh", "Reti neurali", "Modello linguistico e memoria semantica", 30),
