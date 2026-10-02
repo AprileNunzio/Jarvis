@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  jarvis:
+    build: .
+    container_name: jarvis_core
+    restart: unless-stopped
+    ports:
+      - "80:80"       # Frontend Ologramma
+      - "8080:8080"   # Pannello di Controllo / Admin
+    volumes:
+      - ./data:/app/data   # Persistenza dati, progetti e configurazioni
+      - ./.env:/app/.env   # Variabili d'ambiente e chiavi API
+    environment:
+      - JARVIS_ENV=production
+      - JARVIS_HOST=0.0.0.0
+      - JARVIS_PORT=80

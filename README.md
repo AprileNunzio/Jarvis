@@ -1668,6 +1668,15 @@ modifiche locali. Si lavora sul repository e si pubblica su `main`.
 `git -C /opt/Jarvis reset --hard <commit>` seguito da `systemctl restart jarvis-supervisor`, sapendo che
 il prossimo aggiornamento riporterà l'ultima versione con la CI verde.
 
+**Posso installarlo in un container Docker?** S. Nel repository sono presenti il `Dockerfile` e il `docker-compose.yml`. Avvia l'infrastruttura eseguendo `docker-compose up -d`. L'applicazione esporr il pannello utente sulla porta 80 e il pannello di amministrazione sulla porta 8080 (isolate e persistenti nella cartella `./data`).
+
+**L'installazione via curl | sudo bash  sicura?** Lo script richiede permessi di root per configurare servizi di sistema e microfoni. Se preferisci, puoi non usare la pipe diretta a bash, ma scaricare lo script, ispezionarlo manualmente (o calcolarne l'hash SHA256) ed eseguirlo solo se sei soddisfatto:
+`curl -sL https://raw.githubusercontent.com/.../install.sh > install.sh && bash install.sh`. Il sistema di aggiornamento automatico controlla che le CI (Continuous Integration) siano verdi prima di aggiornare, per minimizzare i rischi di regressioni automatiche. Con l'uso di Docker, questo rischio scompare.
+
+** compatibile con Groq?** S, nativamente. Groq  gi implementato nei servizi Cloud. Dal pannello di controllo (Cervelli   Servizi Cloud) puoi selezionare "Groq", incollare la chiave API e usufruire dei modelli ultra-veloci gratuiti, impostandoli per conversazioni, ragionamento o studio autonomo.
+
+**Lo uso su una VM su NAS QNAP ed  molto lento (es. 120 secondi per risposta)**.  normale: Jarvis utilizza per default modelli IA eseguiti interamente in locale (Offline). Le CPU dei NAS (solitamente sprovviste di GPU dedicate) sono lente nell'eseguire il calcolo neurale (LLM). Per prestazioni ottimali su NAS, si raccomanda di utilizzare un modello Cloud (come **Groq** o **OpenAI**) oppure esporre l'IP di un PC della rete con scheda video e Ollama, e mapparlo nella UI in "Altri server".
+
 **Come cambio il nome dell'assistente o il mio?** `JARVIS_ASSISTANT_NAME` e `JARVIS_USER_NAME` in
 Configurazione.
 
