@@ -9,9 +9,62 @@ services:
       - "80:80"       # Frontend Ologramma
       - "8080:8080"   # Pannello di Controllo / Admin
     volumes:
-      - ./data:/app/data   # Persistenza dati, progetti e configurazioni
-      - ./.env:/app/.env   # Variabili d'ambiente e chiavi API
+      - ./data:/app/data
+      - ./.env:/app/.env
+      # Montaggio socket docker per il Sandbox
+      - /var/run/docker.sock:/var/run/docker.sock
     environment:
       - JARVIS_ENV=production
       - JARVIS_HOST=0.0.0.0
       - JARVIS_PORT=80
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - JARVIS_DB_URL=postgresql://jarvis:secret@postgres:5432/jarvis
+      - OTLP_ENDPOINT=http://jaeger:4317
+    depends_on:
+      - redis
+      - postgres
+
+  jarvis_worker:
+    build: .
+    container_name: jarvis_worker
+    restart: unless-stopped
+    command: celery -A server.core.orchestrator.broker.celery_app worker --loglevel=info
+    volumes:
+      - ./data:/app/data
+      - ./.env:/app/.env
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - JARVIS_DB_URL=postgresql://jarvis:secret@postgres:5432/jarvis
+      - OTLP_ENDPOINT=http://jaeger:4317
+    depends_on:
+      - redis
+      - postgres
+
+  redis:
+    image: redis:7-alpine
+    container_name: jarvis_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: jarvis_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: jarvis
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: jarvis
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: jarvis_jaeger
+    ports:
+      - "16686:16686" # UI
+      - "4317:4317"   # OTLP gRPC
+
+volumes:
+  pgdata:

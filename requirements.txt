@@ -1,0 +1,24 @@
+fastapi
+uvicorn[standard]
+pydantic
+pydantic-settings
+httpx
+jinja2
+python-multipart
+# Database ORM
+sqlalchemy
+alembic
+psycopg2-binary
+# Telemetry
+opentelemetry-api
+opentelemetry-sdk
+opentelemetry-instrumentation-fastapi
+opentelemetry-exporter-otlp
+# Message Broker
+redis
+celery
+# Testing
+pytest
+pytest-asyncio
+# Sandbox
+docker
