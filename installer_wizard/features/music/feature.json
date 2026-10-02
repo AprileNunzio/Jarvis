@@ -1,11 +1,11 @@
 {
   "id": "music",
-  "name": "Riconoscimento musicale",
+  "name": "Gestione Musica",
   "icon": "🎵",
-  "category": "percezione",
+  "category": "intelligenza",
   "order": 80,
   "panel": "music",
-  "description": "Riconosce il brano che suona nella stanza e mostra titolo, artista, album e biografia.",
+  "description": "Libreria musicale (Auto-Organizer), gestione Playlist e Riconoscimento ambientale (Shazam).",
   "toggle": {
     "env": "JARVIS_MUSIC_ID",
     "apply": [
@@ -18,8 +18,8 @@
     ]
   },
   "capabilities": [
-    "Brano in ascolto",
-    "Storico degli ascolti",
-    "Biografia dell'artista"
+    "Gestione Libreria Musicale",
+    "Playlist",
+    "Riconoscimento Ambientale"
   ]
 }
