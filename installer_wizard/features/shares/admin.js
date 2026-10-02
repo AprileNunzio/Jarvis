@@ -13,8 +13,17 @@
     $("sh-copy").onclick = async () => { try { await navigator.clipboard.writeText(d.password); A.toast("Password copiata"); } catch (e) { A.toast("Copia non riuscita", true); } };
     $("sh-list").innerHTML = d.shares.map((s) => `<div class="row" style="justify-content:space-between; padding:6px 0; border-bottom:1px solid var(--line)">
       <div><b>${fmt.esc(s.name)}</b> <span class="badge ${s.guest ? "" : "ok"}">${s.guest ? "libera in rete" : "con password"}</span><div class="faint mono">${fmt.esc(s.path)}</div></div>
-      <span class="mono">${fmt.esc(d.windows)}\${fmt.esc(s.name)}</span></div>`).join("") || '<div class="faint">Nessuna cartella condivisa ancora.</div>';
+      <span class="mono">${fmt.esc(d.windows)}\\${fmt.esc(s.name)}</span>
+      <button class="btn sm" data-copy="${fmt.esc(`${d.windows}\\${s.name}`)}">Copia</button></div>`).join("") || '<div class="faint">Nessuna cartella condivisa ancora.</div>';
   }
 
-  A.tab("shares", { title: "Condivisioni", init() {}, load });
+  function init() {
+    $("sh-list").addEventListener("click", async (e) => {
+      const b = e.target.closest("[data-copy]");
+      if (!b) return;
+      try { await navigator.clipboard.writeText(b.dataset.copy); A.toast(`Copiato: ${b.dataset.copy}`); } catch (err) { A.toast(b.dataset.copy); }
+    });
+  }
+
+  A.tab("shares", { title: "Condivisioni", init, load });
 })();

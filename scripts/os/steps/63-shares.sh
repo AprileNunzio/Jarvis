@@ -37,6 +37,8 @@ for key, value in wanted.items():
     else:
         glob = glob.rstrip("\n") + f"\n   {key} = {value}\n"
 blocks["global"] = glob.rstrip("\n") + "\n\n"
+for unused in ("homes", "printers", "print$"):
+    blocks.pop(unused, None)
 common = "   browseable = yes\n   read only = no\n   create mask = 0664\n   directory mask = 2775\n   hosts allow = 127. 10. 172.16.0.0/12 192.168.\n"
 blocks["condivisa"] = (f"[condivisa]\n   comment = Cartella condivisa di Jarvis\n   path = {root}/condivisa\n{common}"
                        f"   guest ok = yes\n   force user = nobody\n\n")
