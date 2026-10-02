@@ -11,6 +11,8 @@ INTENT_CATALOG: Dict[str, str] = {
     "VISION_SURVEILLANCE": "Telecamere, rilevamento intrusi, cancelli, garage, sorveglianza, persone, veicoli",
     "AUTONOMOUS_PROGRAMMING": "Scrivere codice, creare script, correggere bug, refactoring, generare funzioni",
     "SYSOPS_AUTOMATION": "Gestione server, SSH, servizi systemd, backup, database, rete, DNS, firewall, Docker",
+    "3D_GENERATION": "Creare modelli 3D, disegnare case in 3D, generare asset tridimensionali, architettura 3D",
+    "WEB_RESEARCH_CATALOGS": "Scaricare cataloghi, cercare informazioni di prodotti, estrarre dati da siti web, scraping",
     "GENERAL_INTELLIGENCE": "Domande generiche, conversazione, ragionamento, ricerca informazioni",
 }
 
@@ -78,6 +80,10 @@ class LLMIntentClassifier:
             return "AUTONOMOUS_PROGRAMMING"
         if any(w in lowered for w in ["server", "ssh", "backup", "database", "servizio", "docker"]):
             return "SYSOPS_AUTOMATION"
+        if any(w in lowered for w in ["3d", "blender", "modello 3d", "casa in 3d", "architettura"]):
+            return "3D_GENERATION"
+        if any(w in lowered for w in ["catalogo", "cataloghi", "prodotti", "scarica informazioni", "web scraping", "ricerca prodotto"]):
+            return "WEB_RESEARCH_CATALOGS"
         return "GENERAL_INTELLIGENCE"
 
 

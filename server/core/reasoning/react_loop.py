@@ -64,7 +64,7 @@ class ReActLoop:
         lines.append("- finish: Concludi il task con la risposta finale")
         return "\n".join(lines)
 
-    async def run(self, task: str, agent_context: str = "") -> Dict[str, Any]:
+    async def run(self, task: str, agent_context: str = "", override_model: str = None) -> Dict[str, Any]:
         system_prompt = _REACT_SYSTEM_TEMPLATE.format(
             agent_context=agent_context,
             tool_descriptions=self._build_tool_descriptions(),
@@ -78,9 +78,10 @@ class ReActLoop:
         for iteration in range(1, self.max_iterations + 1):
             logger.info("ReAct iteration %d/%d for task: %s", iteration, self.max_iterations, task[:60])
 
+            active_model = override_model if override_model else self.model_name
             response = await llm_gateway.generate_completion(
                 LLMRequest(
-                    model_name=self.model_name,
+                    model_name=active_model,
                     messages=messages,
                     system_prompt=system_prompt,
                     temperature=0.2,

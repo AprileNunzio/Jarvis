@@ -9,7 +9,11 @@ class ServerSettings(BaseSettings):
     JARVIS_SECRET_KEY: str = "0000000000000000000000000000000000000000000000000000000000000000"
     DATA_DIR: str = "./data"
     OLLAMA_BASE_URL: str = "http://127.0.0.1:11434"
+    OPENAI_API_KEY: str = ""
+    ANTHROPIC_API_KEY: str = ""
+    GOOGLE_API_KEY: str = ""
     JARVIS_LLM_MODEL: str = ""
+    AGENT_BRAIN_MAP: dict = {}  # Esempio: {"ricercatore": "gpt-4o", "3d": "claude-3.5-sonnet"}
     JARVIS_EMBED_MODEL: str = "nomic-embed-text"
     JARVIS_ASSISTANT_NAME: str = ""
     JARVIS_USER_NAME: str = ""

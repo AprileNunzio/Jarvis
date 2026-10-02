@@ -9,6 +9,7 @@ class AgentTaskRequest(BaseModel):
     raw_query: str
     parameters: Dict[str, Any] = Field(default_factory=dict)
     confidence: float = 1.0
+    preferred_brain: str = None
 
 class AgentTaskResponse(BaseModel):
     task_id: str
