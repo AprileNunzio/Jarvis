@@ -111,6 +111,28 @@ async def admin_brains_test(request: Request, _: str = Depends(require_admin)):
     return await brains.route(text)
 
 
+@admin_routes.get("/api/brain/agent_map")
+async def get_agent_map(_: str = Depends(require_admin)):
+    from config import read_env
+    env = read_env()
+    try:
+        import json
+        mapping = json.loads(env.get("AGENT_BRAIN_MAP", "{}"))
+    except:
+        mapping = {}
+    return {"map": mapping}
+
+
+@admin_routes.post("/api/brain/agent_map")
+async def save_agent_map(request: Request, _: str = Depends(require_admin)):
+    body = await request.json()
+    mapping = body.get("map", {})
+    from config import write_env
+    import json
+    write_env({"AGENT_BRAIN_MAP": json.dumps(mapping)})
+    return {"ok": True}
+
+
 @admin_routes.post("/api/brains/ollama/test")
 async def admin_ollama_test(request: Request, _: str = Depends(require_admin)):
     from settings import normalize_ollama

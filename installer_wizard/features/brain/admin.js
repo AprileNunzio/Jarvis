@@ -164,3 +164,73 @@
   A.brain = { reload: loadBrains, addTo, lists: () => brainData, showSource };
   A.tab("models", { title: "Cervello", init() { init(); if (A.brainCloud) A.brainCloud.init(); if (A.brainServers) A.brainServers.init(); }, load() { loadModels(); loadBrains(); loadOllama(); if (A.brainCloud) A.brainCloud.load(); if (A.brainServers) A.brainServers.load(); }, onState });
 })();
+
+  // === AGENT MAPPING LOGIC ===
+  async function loadAgentMap() {
+    try {
+      const res = await fetch('/api/brain/agent_map', { headers: { "Authorization": "Bearer " + localStorage.getItem("token") } });
+      if (!res.ok) return;
+      const data = await res.json();
+      
+      const selects = document.querySelectorAll(".agent-map-select");
+      
+      // Popola le option dei select con i modelli disponibili
+      const allModels = window._lastModels || []; // Presupponendo che i modelli siano salvati
+      // Facciamo una fetch dei modelli se non ci sono
+      const mRes = await fetch('/api/models', { headers: { "Authorization": "Bearer " + localStorage.getItem("token") } });
+      const mData = await mRes.json();
+      
+      let optionsHtml = '<option value="">-- Predefinito --</option>';
+      for (const m of mData.models || []) {
+        optionsHtml += `<option value="${m.id}">${m.name} (${m.provider})</option>`;
+      }
+      
+      selects.forEach(sel => {
+        sel.innerHTML = optionsHtml;
+        const mappedAgentId = sel.id.replace("map-", ""); // es. ricercatore
+        
+        let dbId = mappedAgentId;
+        if (dbId === 'studio') dbId = 'skill_synthesizer';
+        if (dbId === '3d') dbId = 'genera_modello_3d';
+        if (dbId === 'coder') dbId = 'agent_self_healing_coder';
+        
+        if (data.map && data.map[dbId]) {
+           sel.value = data.map[dbId];
+        }
+      });
+    } catch (e) {}
+  }
+  
+  if ($("save-agent-map")) {
+      $("save-agent-map").addEventListener("click", async () => {
+          $("save-agent-map").disabled = true;
+          const map = {};
+          document.querySelectorAll(".agent-map-select").forEach(sel => {
+              if (sel.value) {
+                  let dbId = sel.id.replace("map-", "");
+                  if (dbId === 'studio') dbId = 'skill_synthesizer';
+                  if (dbId === '3d') dbId = 'genera_modello_3d';
+                  if (dbId === 'coder') dbId = 'agent_self_healing_coder';
+                  map[dbId] = sel.value;
+              }
+          });
+          
+          const res = await fetch('/api/brain/agent_map', {
+              method: 'POST',
+              headers: { "Content-Type": "application/json", "Authorization": "Bearer " + localStorage.getItem("token") },
+              body: JSON.stringify({ map })
+          });
+          
+          if (res.ok) {
+              $("agent-map-res").textContent = "✓ Mappatura salvata con successo";
+              $("agent-map-res").style.color = "var(--cyan)";
+          } else {
+              $("agent-map-res").textContent = "Errore durante il salvataggio";
+          }
+          $("save-agent-map").disabled = false;
+          setTimeout(() => { $("agent-map-res").textContent = ""; }, 3000);
+      });
+      
+      // Load map on boot
+      loadAgentMap();
+  }

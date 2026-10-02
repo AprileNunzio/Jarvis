@@ -29,6 +29,20 @@
     </div>
   </div>
 
+  <div class="panel" style="margin-top:18px">
+    <div class="panel-title">Mappatura Agenti Specializzati</div>
+    <div class="muted-note" style="margin-bottom:12px">Assegna un cervello specifico (LLM) a ogni singolo Agente. Se lasciato in bianco, verrà usato il modello predefinito.</div>
+    <form id="agent-map-form" class="form-grid" style="grid-template-columns:1fr 1fr">
+      <div><label>Agente Ricercatore</label><select id="map-ricercatore" class="agent-map-select"><option value="">-- Predefinito --</option></select></div>
+      <div><label>Agente Domotico</label><select id="map-domotico" class="agent-map-select"><option value="">-- Predefinito --</option></select></div>
+      <div><label>Studio Autonomo (La Scuola)</label><select id="map-studio" class="agent-map-select"><option value="">-- Predefinito --</option></select></div>
+      <div><label>Generatore 3D</label><select id="map-3d" class="agent-map-select"><option value="">-- Predefinito --</option></select></div>
+      <div><label>Sviluppatore Web (Architetto)</label><select id="map-coder" class="agent-map-select"><option value="">-- Predefinito --</option></select></div>
+    </form>
+    <div class="actions" style="margin-top:14px"><button class="btn primary" id="save-agent-map">Salva Mappatura</button></div>
+    <div class="faint" id="agent-map-res" style="margin-top:8px"></div>
+  </div>
+
   <div class="panel">
     <div class="panel-title">Aggiungi cervelli</div>
     <div class="br-source" id="br-source">
