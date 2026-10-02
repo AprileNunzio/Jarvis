@@ -44,8 +44,8 @@ import json
 import os
 
 try:
-    from shares.archive import path as share_path
-    MUSIC_ROOT = str(share_path("musica"))
+    from shares.archive import folder as share_folder
+    MUSIC_ROOT = str(share_folder("musica"))
 except ImportError:
     MUSIC_ROOT = os.path.join(os.environ.get("DATA_DIR", "./data"), "Musica")
 
