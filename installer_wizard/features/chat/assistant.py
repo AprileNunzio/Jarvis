@@ -125,7 +125,7 @@ async def handle(text: str, core_call, speech_lang: dict | None = None) -> dict:
         agent = data.get("agent_id") or "core"
         speech, ui = code.answer(data.get("speech_output") or "", text) or compose_generic(data.get("speech_output") or "…", text)
     if ui.get("code"):
-        intent = "code_view"
+        intent = ui.pop("intent", "code_view")
 
     elapsed = int((time.time() - started) * 1000)
     if ui.get("mode") != "face":

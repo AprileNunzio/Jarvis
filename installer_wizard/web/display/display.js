@@ -3,6 +3,7 @@
   let homeSent = 0;
 
   function goHome() {
+    D.setPresence("normal");
     D.setMode("face");
     if (Date.now() - homeSent < 5000) return;
     homeSent = Date.now();

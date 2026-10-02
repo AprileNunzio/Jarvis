@@ -60,6 +60,7 @@
       } else {
         this.faceTarget = { x: 0, y: 0.05, s: 1 };
       }
+      if (mode !== "brain") this.faceTarget.s *= this.presence || 1;
       if (this.face) { this.face.opacity = mode === "brain" ? 0 : 1; if (this.face.setContext) this.face.setContext(mode); }
       else if (mode === "brain" && this._sleeping) { this._sleeping = false; this.clock.getDelta(); this.renderer.setAnimationLoop(() => this._frame()); }
       this.brain.opacity = mode === "brain" ? 1 : 0;
@@ -74,6 +75,7 @@
       this.brain.group.position.x = narrow ? 0 : 0.35;
     }
     setStage(zone) { this.stage = zone; if (this.mode === "face") this.setMode("face", true); }
+    setPresence(k) { this.presence = k; this.setMode(this.mode, true); }
     setSpeaking(on, level = 1) { this.speaking = on; if (this.face) this.face.jawTarget = on ? level : 0; }
     setTint(hex) { if (this.face) this.face.setColor(hex); }
     setGroove(v) { if (this.face && this.face.setGroove) this.face.setGroove(v); }

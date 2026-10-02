@@ -25,6 +25,15 @@ body.focus .stage { opacity: 1; transform: none; pointer-events: auto; }
 .stage-head p { margin: 6px 0 0; color: var(--text-dim); font-size: 14px; }
 .stage-body { flex: 1; min-height: 0; overflow: auto; display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); align-content: start; padding-right: 4px; }
 .stage-body .wide { grid-column: 1 / -1; }
+.stage-body.grid12 { grid-template-columns: repeat(12, minmax(0, 1fr)); }
+.stage-body.grid12 > .panel { grid-column: span var(--span, 12); min-width: 0; }
+.p-code-head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 12px; }
+.p-code-lang { font-family: monospace; color: var(--cyan); text-transform: uppercase; letter-spacing: 0.06em; }
+.p-code-head .dim { flex: 1; }
+.p-code-copy { font: inherit; padding: 3px 10px; border-radius: 6px; border: 1px solid var(--line-strong); background: transparent; color: var(--cyan); cursor: pointer; }
+.p-code pre { margin: 0; padding: 12px; max-height: 58vh; overflow: auto; border-radius: 8px; background: rgba(2, 8, 16, 0.85);
+  border: 1px solid var(--line); color: #d4e6f0; font: 13px/1.5 ui-monospace, Consolas, monospace; white-space: pre; tab-size: 2; }
+@media (max-width: 900px) { .stage-body.grid12 > .panel { grid-column: 1 / -1; } }
 .stage .panel { padding: 18px 20px; animation: fadeUp 0.5s both; }
 .focus-say { position: absolute; left: 26px; top: calc(108px + 30vh); width: min(28vw, 420px); font-size: 15px; line-height: 1.55; color: var(--text); opacity: 0; transition: opacity 0.5s; }
 body.focus .focus-say { opacity: 1; }

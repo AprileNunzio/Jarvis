@@ -153,6 +153,7 @@
     }
     setMode(mode) { this.mode = mode; }
     setStage(zone) { this.stage = zone; }
+    setPresence(k) { this.presence = k; }
     setSpeaking(on, level = 1) { this.speaking = on; this.levelTarget = on ? level : 0; }
     setTint(hex) { this.target = rgb(hex); }
     setInputLevel(v) { this.input = Math.max(this.input, v); }
@@ -162,6 +163,10 @@
     destroy() { cancelAnimationFrame(this.raf); global.removeEventListener("resize", this._resize); }
 
     _target() {
+      const t = this._place(), k = this.presence || 1;
+      return { ...t, s: t.s * k };
+    }
+    _place() {
       const { w, h } = this, narrow = w < h;
       if (this.mode === "focus") return narrow ? { x: w / 2, y: h * 0.17, s: 0.34 } : { x: w * 0.13, y: h * 0.3, s: 0.42 };
       const z = this.stage;

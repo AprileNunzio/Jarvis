@@ -41,6 +41,7 @@
     if (enrollUi(d)) return;
     const ui = d.ui || { mode: "face" };
     if (ui.mode === "focus") { D.renderStage(ui); D.typeInto($("focus-say"), d.reply); }
+    D.setPresence(ui.presence || "normal");
     D.setMode(ui.mode);
     D.typeInto($("say"), d.reply);
     D.speak(d.reply, d.lang);

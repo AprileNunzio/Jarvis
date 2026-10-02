@@ -57,6 +57,9 @@
           ${steps ? `<div class="rm-steps-title dim">Indicazioni</div><ol class="rm-steps">${steps}</ol>` : ""}
         </div></div>`;
     },
+    code: (p) => `<div class="p-code"><div class="p-code-head"><span class="p-code-lang">${fmt.esc(p.language || "testo")}</span>
+      <span class="dim">${String(p.content || "").split("\n").length} righe</span><button class="p-code-copy" type="button">Copia</button></div>
+      <pre><code>${fmt.esc(p.content || "")}</code></pre></div>`,
     kv: (p) => `<div class="p-list">${Object.entries(p.data || {}).map(([k, v]) => row(fmt.esc(k), fmt.esc(v))).join("")}</div>`,
   };
   const WIDE = { forecast: 1, text: 1, routemap: 1 };
@@ -66,7 +69,20 @@
     const css = document.createElement("link"); css.rel = "stylesheet"; css.href = `/vendor/leaflet.css${v}`; document.head.appendChild(css);
     const s = document.createElement("script"); s.src = `/vendor/leaflet.js${v}`; s.onload = () => ok(window.L); s.onerror = ko; document.head.appendChild(s);
   }));
+  const copyText = (text, button) => {
+    const done = () => { button.textContent = "Copiato"; setTimeout(() => { button.textContent = "Copia"; }, 1500); };
+    if (navigator.clipboard && window.isSecureContext) { navigator.clipboard.writeText(text).then(done).catch(() => {}); return; }
+    const area = document.createElement("textarea");
+    area.value = text; area.style.position = "fixed"; area.style.opacity = "0";
+    document.body.appendChild(area); area.select();
+    try { document.execCommand("copy"); done(); } catch (err) { console.warn(err); }
+    area.remove();
+  };
   const AFTER = {
+    code(el, p) {
+      const b = el.querySelector(".p-code-copy");
+      if (b) b.addEventListener("click", (e) => { e.stopPropagation(); copyText(p.content || "", b); });
+    },
     async routemap(el, p) {
       const d = p.data || {}, box = el.querySelector("[data-route]");
       if (!box || !(d.path && d.path.length || d.a)) { if (box) box.classList.add("rm-none"); return; }
@@ -88,15 +104,20 @@
   };
   D.stagePanels = { render: RENDER, wide: WIDE };
 
+  const spanOf = (p) => Math.max(1, Math.min(12, parseInt(p.span, 10) || 12));
+
   D.renderStage = (ui) => {
     $("stage-title").textContent = ui.title || "";
     $("stage-sub").textContent = ui.subtitle || "";
-    $("stage-body").innerHTML = (ui.panels || []).map((p, i) => `<div class="panel ${WIDE[p.type] ? "wide" : ""}" style="animation-delay:${i * 90}ms">
+    const grid = ui.layout === "grid";
+    $("stage-body").classList.toggle("grid12", grid);
+    $("stage-body").innerHTML = (ui.panels || []).map((p, i) => `<div class="panel ${!grid && WIDE[p.type] ? "wide" : ""}" style="animation-delay:${i * 90}ms${grid ? `;--span:${spanOf(p)}` : ""}">
       ${p.title ? `<h3 class="panel-title">${fmt.esc(p.title)}</h3>` : ""}${(RENDER[p.type] || RENDER.text)(p)}</div>`).join("");
     [...$("stage-body").children].forEach((el, i) => { const p = (ui.panels || [])[i]; if (p && AFTER[p.type]) AFTER[p.type](el, p); });
   };
 
   D.renderSkeleton = (sk) => {
+    $("stage-body").classList.remove("grid12");
     $("stage-title").textContent = "Elaborazione…"; $("stage-sub").textContent = "Preparo le informazioni";
     $("stage-body").innerHTML = sk.panels.map((p) => `<div class="panel ${WIDE[p.type] ? "wide" : ""}"><h3 class="panel-title">${fmt.esc(p.title)}</h3><div class="skeleton"></div></div>`).join("");
   };

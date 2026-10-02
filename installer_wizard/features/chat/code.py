@@ -1,5 +1,7 @@
 import re
 
+from features.chat import layout
+
 FENCE = re.compile(r"```[ \t]*([\w+#.-]*)[^\n]*\n(.*?)(?:```|\Z)", re.S)
 HTML = re.compile(r"(<!DOCTYPE html.*?</html>|<html\b.*?</html>|(?:<(?:div|section|style|script|form|table|body|head|ul|svg)\b.*?"
                   r"</(?:div|section|style|script|form|table|body|head|ul|svg)>\s*)+)", re.I | re.S)
@@ -28,23 +30,17 @@ def extract(reply: str, question: str = "") -> tuple[str, list[dict]]:
         if found:
             blocks = [{"language": "html", "content": "\n\n".join(found)}]
             prose = HTML.sub(" ", reply)
-    prose = re.sub(r"\s+", " ", prose).strip(" :")
-    return prose, blocks
+    prose = "\n".join(re.sub(r"[ \t]+", " ", ln).strip() for ln in prose.splitlines() if ln.strip())
+    return prose.strip(" :"), blocks
 
 
 def answer(reply: str, question: str) -> tuple[str, dict] | None:
     prose, blocks = extract(reply, question)
     if not blocks:
         return None
-    language = blocks[0]["language"]
-    content = "\n\n".join(b["content"] for b in blocks)[:MAX_CODE]
-    sentences = re.split(r"(?<=[.!?])\s+", prose)
-    speech = " ".join(sentences[:2]).strip() if prose else ""
-    if len(speech) < 3 or len(speech) > 320:
-        speech = "Ecco il codice, signore: è sullo schermo."
-    title = question.strip().rstrip("?")[:80]
-    return speech, {"mode": "face", "code": True, "title": title,
-                    "panels": [{"type": "code", "data": {"language": language, "content": content, "title": title}}]}
+    speech, ui, intent = layout.plan_code(question, prose.splitlines(), blocks, MAX_CODE)
+    ui["intent"] = intent
+    return speech, ui
 
 
 def wanted(question: str) -> bool:

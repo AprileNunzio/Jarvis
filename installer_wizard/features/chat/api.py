@@ -17,6 +17,7 @@ from features.brain.brains import brains
 from features.brain.residency import primary
 from features.chat import addressee, assistant, brain_chain, intents, speaker, voice_id, wake
 from features.chat.dialogue import dialogue
+from features.chat.layout import presence
 from features.chat.skills import ambient
 from features.laws import guard
 from features.laws.laws import laws
@@ -130,6 +131,8 @@ async def assistant_chat(text: str, device: str, heard_lang: str | None = None, 
     else:
         result = await assistant.handle(text, core_call, speech_lang)
     result["reply"] = speaker.fix_address(result.get("reply") or "") + voice_id.offer(heard.get("voice_known"))
+    if isinstance(result.get("ui"), dict):
+        result["ui"].setdefault("presence", presence(result["reply"], result["ui"]))
     dialogue.remember(device, said, result["reply"], result.get("intent", ""))
     result["lang"] = languages.detect(result.get("reply") or "", speech_lang["lang"])
     result["language"] = {**speech_lang, "label": languages.label(speech_lang["lang"])}

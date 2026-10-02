@@ -80,6 +80,13 @@
     else { $("inspector").classList.remove("show"); D.selectedId = null; if (scene) scene.brain.select(null); }
   };
 
+  const PRESENCE = { large: 1.15, normal: 1, small: 0.82, mini: 0.7 };
+  D.setPresence = (name) => {
+    const k = PRESENCE[name] || 1;
+    D.presence = name;
+    for (const target of new Set([D.avatar, D.scene])) if (target && target.setPresence) target.setPresence(k);
+  };
+
   D.applyStage = () => {
     const { avatar, scene, stageZone } = D;
     if (avatar && avatar.setStage) avatar.setStage(stageZone);
