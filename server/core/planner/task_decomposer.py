@@ -98,7 +98,6 @@ class AutonomousTaskPlanner:
         total_steps = len(sorted_plan)
         
         from server.core.orchestrator.interrupt_manager import project_manager, ProjectState
-        import asyncio
 
         for i, step in enumerate(sorted_plan):
             step_num = step.get("step", 0)

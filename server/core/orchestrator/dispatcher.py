@@ -159,7 +159,6 @@ class OrchestratorDispatcher:
             try:
                 assigned_agent = await agent_pool.select_best_agent(task_request)
             except Exception:
-                elapsed = (time.time()) * 1000
                 return AgentTaskResponse(
                     task_id=task_id,
                     agent_id="skill_synthesizer",
