@@ -22,3 +22,7 @@ pytest
 pytest-asyncio
 # Sandbox
 docker
+
+# Web Search Tool
+duckduckgo-search
+beautifulsoup4
