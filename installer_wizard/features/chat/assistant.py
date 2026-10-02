@@ -6,6 +6,7 @@ from state import store
 
 from features.actions import router as actions
 from features.brain.llm import BrainUnavailable
+from features.chat import code
 from features.chat.compose import compose_generic
 from features.chat.intents import detect_intent
 from features.chat.skills.music import music_skill
@@ -122,7 +123,9 @@ async def handle(text: str, core_call, speech_lang: dict | None = None) -> dict:
         store.event("WARN", f"Abilità '{intent}' non disponibile: {exc}", "assistant")
         data = await core_call(text)
         agent = data.get("agent_id") or "core"
-        speech, ui = compose_generic(data.get("speech_output") or "…", text)
+        speech, ui = code.answer(data.get("speech_output") or "", text) or compose_generic(data.get("speech_output") or "…", text)
+    if ui.get("code"):
+        intent = "code_view"
 
     elapsed = int((time.time() - started) * 1000)
     if ui.get("mode") != "face":
@@ -140,7 +143,7 @@ async def _diagnose(text: str) -> tuple[str, dict] | None:
 
 async def _converse(text: str, core_call) -> tuple[str, str, dict]:
     from features.agent import commands as agent_cmd
-    if agent_cmd.weak(text):
+    if agent_cmd.weak(text) and not code.wanted(text):
         speech, ui = await agent_cmd.answer(text)
         return "agente · strumenti", speech, ui
     if actions.ACTIONISH.search(text):
@@ -159,4 +162,4 @@ async def _converse(text: str, core_call) -> tuple[str, str, dict]:
         return "agente · strumenti", speech, ui
     if refused:
         actions.note_gap(text, "il modello ha rifiutato e nessuno strumento è adatto")
-    return data.get("agent_id") or "core", *compose_generic(reply, text)
+    return data.get("agent_id") or "core", *(code.answer(reply, text) or compose_generic(reply, text))

@@ -7,10 +7,12 @@
   "intents": [
     "code_view"
   ],
-  "description": "Mostra snippet di codice con formattazione preservata.",
+  "description": "Mostra il codice chiesto a Jarvis con il linguaggio e un pulsante per copiarlo (resta 15 minuti).",
   "demo": {
     "language": "html",
-    "content": "<hr style=\"border: 1px solid white;\">"
+    "title": "Pagina di esempio",
+    "content": "<!DOCTYPE html>\n<html lang=\"it\">\n<head>\n  <meta charset=\"utf-8\">\n  <title>Ciao</title>\n</head>\n<body>\n  <h1>Ciao, mondo</h1>\n</body>\n</html>"
   },
-  "ttl": 180
+  "ttl": 900,
+  "panel_type": "code"
 }

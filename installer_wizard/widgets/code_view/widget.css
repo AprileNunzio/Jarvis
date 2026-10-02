@@ -1,0 +1,10 @@
+.cv-head { display: flex; align-items: center; gap: 10px; padding: 6px 10px; background: rgba(41, 224, 255, 0.08);
+  border: 1px solid rgba(41, 224, 255, 0.25); border-bottom: 0; border-radius: 8px 8px 0 0; font-size: 12px; }
+.cv-lang { font-family: monospace; color: #29e0ff; text-transform: uppercase; letter-spacing: 0.06em; }
+.cv-title { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: rgba(255, 255, 255, 0.75); }
+.cv-lines { color: rgba(255, 255, 255, 0.45); }
+.cv-copy { font: inherit; padding: 3px 10px; border-radius: 6px; border: 1px solid rgba(41, 224, 255, 0.5); background: transparent;
+  color: #29e0ff; cursor: pointer; }
+.cv-code { margin: 0; padding: 12px; max-height: 60vh; overflow: auto; background: rgba(2, 8, 16, 0.85); color: #d4e6f0;
+  border: 1px solid rgba(41, 224, 255, 0.25); border-radius: 0 0 8px 8px; font: 13px/1.5 ui-monospace, Consolas, monospace;
+  white-space: pre; tab-size: 2; }

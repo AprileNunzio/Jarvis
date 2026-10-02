@@ -51,7 +51,7 @@ _DEEP = re.compile(
     r"\b(spiega(mi)?|spiegazione|analizza|analisi|confronta|differenz[ae]|vantaggi|svantaggi|perch[ée]"
     r"|come funziona|in dettaglio|dettagliat\w*|approfondi\w*|passo (a|per) passo|ragiona|dimostra|valuta"
     r"|riassumi|riassunto|traduci|scrivi (un|una|il|la|lo|dei|delle)|componi|progetta|pianifica|organizza"
-    r"|strategia|calcola|risolvi|equazion\w*|codice|script|programma|funzione|python|javascript|bash|sql"
+    r"|strategia|calcola|risolvi|equazion\w*|codice|script|programma|funzione|python|javascript|bash|sql|html|css|json|yaml|regex|query"
     r"|algoritmo|errore|debug|configura|installa|consigli(ami)?|elenca|lista di|pro e contro|storia d\w*)\b",
     re.I)
 _CHITCHAT = re.compile(r"^\s*(ciao|buongiorno|buonasera|buonanotte|grazie|ok|okay|va bene|perfetto|come stai"
