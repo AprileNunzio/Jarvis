@@ -202,6 +202,14 @@ class OrchestratorDispatcher:
             label=f"Task: {sanitized_query[:40]}",
             properties={"status": "EXECUTING", "assigned_agent": assigned_agent.agent_id},
         )
+        
+        # Assegna il cervello specifico leggendolo dalle impostazioni globali (se configurato)
+        from server.config.env import settings
+        if hasattr(settings, "AGENT_BRAIN_MAP") and settings.AGENT_BRAIN_MAP:
+            brain = settings.AGENT_BRAIN_MAP.get(assigned_agent.agent_id)
+            if brain:
+                task_request.preferred_brain = brain
+                logger.info("Assegnato cervello specifico '%s' all'agente '%s'", brain, assigned_agent.agent_id)
 
         response = await assigned_agent.execute(task_request)
 
