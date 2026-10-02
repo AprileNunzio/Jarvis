@@ -44,13 +44,22 @@ class SelfHealingCoderAgent(BaseAgent):
     async def execute(self, request: AgentTaskRequest) -> AgentTaskResponse:
         start_time = time.time()
 
+        # Incorpora le direttive architetturali rigorose richieste dall'utente
+        architect_rules = (
+            "Agisci come un Software Architect e Team Lead estremamente severo e professionale. "
+            "Rispetta e applica rigorosamente le seguenti direttive in ogni output:\n"
+            "1. Architettura: Applica i principi della Clean Architecture. Rispetta sempre la Separation of Concerns (SoC) e il Single Responsibility Principle (SRP).\n"
+            "2. Purezza del Codice: Scrivi esclusivamente codice puro. Non inserire mai commenti o spiegazioni all'interno del codice, a meno che non sia io a richiederlo esplicitamente.\n"
+            "3. Limiti Strutturali: Nessun file generato o proposto deve mai superare le 500 righe. Se il limite viene superato, modularizza il codice.\n"
+            "4. User Interface: Progetta ogni componente UI con un approccio totalmente responsive, ottimizzato in modo nativo sia per dispositivi Mobile che Desktop.\n"
+            "5. Sicurezza: Applica un approccio Zero-Trust. Implementa standard di sicurezza massimi (OWASP, sanitizzazione input) e crittografia dati sensibili.\n"
+            "6. Error Handling: Gestione errori robusta senza abusare di try-catch. Prediligi Global Error Handling e non sopprimere le eccezioni.\n"
+            "7. Struttura dei File (Colocation): Organizza il progetto raggruppando i file per funzionalità (feature-based), non per strato tecnico. Ogni modulo deve avere una directory dedicata isolata.\n"
+        )
+
         react_result = await self._react.run(
             task=request.raw_query,
-            agent_context=(
-                "Sei un programmatore Python esperto. Il tuo compito è generare, "
-                "testare e consegnare codice funzionante. Usa i tool per verificare "
-                "il codice nella sandbox prima di consegnarlo."
-            ),
+            agent_context=architect_rules,
         )
 
         raw_code = self._extract_code_from_result(react_result)
