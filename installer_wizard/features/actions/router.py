@@ -11,12 +11,14 @@ from features.actions.diagnose import diagnose_action
 from features.actions.files import file_action
 from features.actions.packages import package_action
 from features.actions.resources import resources_action
-from features.actions.sites import site_action
+from features.actions.sites import site_action, sites_list_action
 from features.actions.smb import smb_action
 from features.actions.speed import speed_action
 from features.actions.updates import updates_action
 
 __all__ = ["CALC", "REFUSAL", "ACTIONISH", "match", "handle", "calc_action", "try_calc", "diagnose_action", "note_gap"]
+MAKE = (r"(?!\w*at[oaie]\b)(?:cre[aiou]\w*|fa(?:i|mmi|rmi|resti|rebbe|re)|fammi|gener\w*|costru\w*|realizz\w*"
+        r"|progett\w*|svilupp\w*|prepar\w*|pubblic\w*)")
 ROUTES = [
     (
         "bluetooth",
@@ -56,9 +58,15 @@ ROUTES = [
         smb_action,
     ),
     (
+        "sites_list",
+        re.compile(r"\b(quali|elenca\w*|dove\s+(sono|trovo|vedo|posso\s+vedere)|mostra\w*|lista)\b[^.?!]{0,25}"
+                   r"\b(siti|sito\s+che\s+hai|miei\s+siti|tuoi\s+siti)\b", re.I),
+        sites_list_action,
+    ),
+    (
         "site",
         re.compile(
-            r"\b(crea|creami|fai|fammi|genera|costruisci|realizza|progetta|sviluppa)\w*\b[^.?!]{0,40}"
+            r"\b" + MAKE + r"\b[^.?!]{0,40}"
             r"\b(sito|pagina web|landing page|homepage|portfolio online)\b",
             re.I,
         ),
@@ -67,7 +75,7 @@ ROUTES = [
     (
         "file",
         re.compile(
-            r"\b(crea|creami|scrivi|scrivimi|salva|genera|prepara)\w*\b[^.?!]{0,25}\b(un |il |nuovo )?"
+            r"\b(?:" + MAKE + r"|scriv\w*|salva\w*)\b[^.?!]{0,25}\b(un |il |nuovo )?"
             r"(file|documento di testo|file di testo|txt)\b",
             re.I,
         ),

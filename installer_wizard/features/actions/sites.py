@@ -113,3 +113,25 @@ async def site_action(text: str) -> tuple[str, dict]:
             }
         ],
     }
+
+
+def listing() -> list[dict]:
+    rows = []
+    for meta in sorted(SITES_DIR.glob("*/sito.json"), key=lambda p: p.stat().st_mtime, reverse=True):
+        try:
+            spec = json.loads(meta.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            spec = {}
+        rows.append({"title": spec.get("title") or meta.parent.name, "url": f"http://{my_ip()}/siti/{meta.parent.name}/"})
+    return rows
+
+
+async def sites_list_action(text: str) -> tuple[str, dict]:
+    rows = listing()
+    if not rows:
+        return "Non ho ancora creato nessun sito, signore. Basta chiedere, per esempio «creami un sito per una pizzeria».", {"mode": "face"}
+    first = rows[0]
+    speech = (f"Ho creato {len(rows)} sit{'i' if len(rows) > 1 else 'o'}. L'ultimo è {first['title']}: lo apre dal browser "
+              f"all'indirizzo {first['url']}")
+    return speech, {"mode": "focus", "title": "Siti creati da Jarvis", "subtitle": "Visibili da ogni dispositivo della rete di casa",
+                    "panels": [{"type": "kv", "title": "Indirizzi", "data": {r["title"]: r["url"] for r in rows[:20]}}]}
