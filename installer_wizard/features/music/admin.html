@@ -1,9 +1,30 @@
 <section class="tab" id="tab-music">
   <div class="grid g2">
+    
     <div class="panel">
-      <div class="panel-title">Musica in ascolto</div>
-      <div id="mu-body" class="faint">—</div>
-      <div class="muted-note">Quando nella stanza suona musica per almeno 10 secondi, Jarvis riconosce il brano (servizio di impronte acustiche Shazam: vengono inviati solo quei 10 secondi) e lo mostra sul display. Attivo di default: da disattivato l'audio non lascia mai la macchina.</div>
+      <div class="panel-title">Libreria Musicale (Auto-Organizer)</div>
+      <div class="row" style="justify-content:space-between; flex-wrap:wrap; margin-bottom:12px">
+        <label class="switch">
+          <input type="checkbox" id="mu-auto-on"> Organizza Automaticamente
+        </label>
+        <span id="mu-auto-badge"></span>
+      </div>
+      <div class="muted-note">Se attivato, Jarvis scansionerà la directory condivisa <code>Nuova_Musica</code>, leggerà i metadati dei file audio e li sposterà ordinatamente in <code>Libreria/Artista/Album</code>, costruendo un database musicale nativo.</div>
+      
+      <div class="panel-title" style="margin-top:20px;">Gestione Playlist</div>
+      <div id="mu-playlists-body" class="faint">Caricamento playlist in corso...</div>
+      
+      <div style="margin-top: 15px; display: flex; gap: 8px;">
+        <input type="text" id="mu-new-playlist-name" placeholder="Nome nuova playlist..." style="flex:1; padding: 6px; border-radius: 4px; border: 1px solid var(--border);">
+        <button id="mu-create-playlist-btn" class="btn" style="padding: 6px 12px; background: var(--primary); color: #fff; border: none; border-radius: 4px; cursor: pointer;">Crea</button>
+      </div>
     </div>
+
+    <div class="panel">
+      <div class="panel-title">Riconoscimento Ambientale (Shazam)</div>
+      <div id="mu-body" class="faint">-</div>
+      <div class="muted-note" style="margin-top: 12px;">Quando nella stanza suona musica per almeno 10 secondi, Jarvis riconosce il brano tramite impronta acustica e lo mostra sul display. Attivo di default: da disattivato l'audio non lascia mai la macchina.</div>
+    </div>
+
   </div>
 </section>

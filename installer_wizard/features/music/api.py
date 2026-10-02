@@ -39,3 +39,24 @@ async def internal_music(request: Request):
     if not 1000 < len(wav) < 4_000_000:
         raise HTTPException(400, "Audio non valido")
     return await music.watcher.handle(wav)
+
+import json
+import os
+
+PLAYLISTS_FILE = os.path.join("data", "Musica", "playlists.json")
+
+@admin_routes.get("/api/music/playlists")
+async def get_playlists(_: str = Depends(require_admin)):
+    if not os.path.exists(PLAYLISTS_FILE):
+        return []
+    with open(PLAYLISTS_FILE, "r") as f:
+        return json.load(f)
+
+@admin_routes.post("/api/music/playlists")
+async def save_playlists(request: Request, _: str = Depends(require_admin)):
+    data = await request.json()
+    os.makedirs(os.path.dirname(PLAYLISTS_FILE), exist_ok=True)
+    with open(PLAYLISTS_FILE, "w") as f:
+        json.dump(data, f)
+    return {"status": "ok"}
+
