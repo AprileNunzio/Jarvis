@@ -113,7 +113,7 @@ con codice Python, API, scheda del pannello e manifest. Le principali novità:
 - **Abitudini**: Jarvis osserva come si usa la casa e propone le automazioni; segnala le situazioni insolite.
 - **Mente**: valuta ogni scambio e decide cosa ricordare a lungo o breve termine.
 - **Memoria in chiaro e diario**: la memoria in file Markdown leggibili e modificabili, con un diario per ogni
-  giorno, nella cartella di rete protetta «memoria-jarvis».
+  giorno, nella cartella condivisa protetta (sottocartella «05 Memoria»).
 - **Leggi**: quattro leggi fondamentali immutabili più le regole dell'utente, iniettate in ogni ragionamento; otto regole di comportamento predefinite, modificabili e inserite una sola volta.
 
 ### Percezione e display
@@ -469,7 +469,7 @@ ricostruire solo se il codice è cambiato), `compose`, `has_usable_gpu`, `hw_pro
 | 11 | `vision` | `57-vision.sh` | no | Servizio di riconoscimento facciale |
 | 12 | `ear` | `58-ear.sh` | no | Servizio di ascolto (wake word, faster-whisper) |
 | 13 | `music` | `59-music.sh` | no | Riconoscimento musicale |
-| 14 | `shares` | `63-shares.sh` | no | Samba: condivisioni «condivisa» e «memoria-jarvis» |
+| 14 | `shares` | `63-shares.sh` | no | Samba: un'unica cartella «condivisa» protetta da password, con le sottocartelle delle creazioni; sposta da solo i contenuti delle vecchie condivisioni |
 | 15 | `convert3d` | `62-convert3d.sh` | no | Blender e LibreDWG per BLEND, USD, DWG |
 | 16 | `models` | `60-models.sh` | sì | Scarica modello di ragionamento, modello veloce ed embedding (con server remoto non scarica nulla) |
 | 17 | `soup` | `67-soup.sh` | no | Ambiente per il consolidamento dello studio nei pesi (solo con GPU adatta) |
@@ -685,7 +685,7 @@ raggruppate per categoria, con lo stato, i requisiti e un interruttore a tre pos
 | 🎓 **Studio autonomo** | `study` | A riposo studia le materie scelte o scoperte dalle conversazioni, da fonti reali, con esercizi pratici, ripasso ed esami di livello; usa gli appunti nelle risposte. |
 | 🧬 **Consolidamento (Soup)** | `soup` | Di notte addestra un modello personale (LoRA) dagli appunti e lo pubblica in Ollama come «jarvis-studio». Sperimentale: GPU con 4 GB+ e 8 GB di RAM. |
 | ∑ **Algoritmi** | `skills` | Calcoli, conversioni e procedure come algoritmi Python verificati; Jarvis ne scrive di nuovi, li prova in isolamento e li riusa in millisecondi (vedi [§13](#13-algoritmi-skills)). |
-| 📓 **Memoria in chiaro e diario** | `vault` | Memoria in file Markdown nella condivisione «memoria-jarvis»: `Persone/<Nome>.md`, `Memoria/Fatti generali.md`, `Casa/Abitudini.md`, `Automazioni.md`, `Diario/AAAA/MM/AAAA-MM-GG.md`. Le modifiche fatte nei file tornano nella memoria. |
+| 📓 **Memoria in chiaro e diario** | `vault` | Memoria in file Markdown nella cartella condivisa, «05 Memoria»: `Persone/<Nome>.md`, `Memoria/Fatti generali.md`, `Casa/Abitudini.md`, `Automazioni.md`, `Diario/AAAA/MM/AAAA-MM-GG.md`. Le modifiche fatte nei file tornano nella memoria. |
 
 ### Comunicazione
 
@@ -702,7 +702,7 @@ raggruppate per categoria, con lo stato, i requisiti e un interruttore a tre pos
 | 🖥 **Display** | `kiosk` | Chromium dedicato a schermo intero, riavvio automatico, driver video NVIDIA con verifica. |
 | ⟳ **Aggiornamenti automatici** | `auto_update` | Aggiornamenti da GitHub con verifica e rollback (vedi [§19](#19-aggiornamenti-collaudo-e-rollback)). |
 | 🧪 **Collaudo** | `selftest` | 13 prove reali ogni notte (03:30) e dopo ogni aggiornamento; rollback se una prova essenziale si rompe; «fai il collaudo» a voce. |
-| 🗂 **Condivisioni di rete** | `shares` | Samba compatibile con Windows 11: «condivisa» libera per la rete di casa, «memoria-jarvis» solo con l'utente `jarvis-share` e password. |
+| 🗂 **Cartella condivisa** | `shares` | Un'unica cartella Samba `\\IP\condivisa`, protetta dall'utente `jarvis-share` e password, compatibile con Windows 11. Contiene tutte le creazioni di Jarvis in sottocartelle numerate, con nomi che iniziano per data inversa (vedi [§17](#17-porte-servizi-e-file-sul-disco)). |
 | 🖧 **Nodi e server** | `nodes` | Server principale e nodi (satelliti, display, altri server, microcontrollori): abbinamento sicuro, stato, comandi, revoca (vedi [§14](#14-nodi-e-satelliti)). |
 
 ---
@@ -956,11 +956,11 @@ valore proprio.
 | `JARVIS_HABITS_ASK` | Abitudini: proposte a voce (1/0) | `1` |  | sì |
 | `JARVIS_HABITS_ANOMALIES` | Avvisi di situazioni insolite con casa vuota (1/0) | `1` |  | sì |
 | `JARVIS_VAULT` | Memoria in file leggibili e diario giornaliero (1/0) | `auto` |  | sì |
-| `JARVIS_VAULT_DIR` | Cartella della memoria in chiaro (vuoto = condivisione memoria-jarvis) |  |  | sì |
+| `JARVIS_VAULT_DIR` | Cartella della memoria in chiaro (vuoto = cartella condivisa, «05 Memoria») |  |  | sì |
 | `JARVIS_GPU_DRIVER` | Driver video del display: auto (NVIDIA ufficiale se adatto), nouveau (libero) | `auto` |  | sì |
 | `JARVIS_GPU_DRIVER_REBOOT` | Riavvio per attivare il driver video: night (alle 04:15) o now | `night` |  | sì |
-| `JARVIS_SHARES` | Condivisioni di rete Samba: «condivisa» e «memoria-jarvis» (1/0) | `auto` |  | sì |
-| `JARVIS_SMB_PASSWORD` | Password dell'utente jarvis-share per le condivisioni |  | sì |  |
+| `JARVIS_SHARES` | Cartella condivisa Samba «condivisa» con le creazioni di Jarvis, protetta da password (1/0) | `auto` |  | sì |
+| `JARVIS_SMB_PASSWORD` | Password dell'utente jarvis-share per la cartella condivisa |  | sì |  |
 | `JARVIS_AUTONOMY` | Autonomia: compiti programmati, autopilota (diagnosi, studio, riepilogo serale) e approvazioni (1/0) | `auto` |  | sì |
 | `JARVIS_WELCOME` | Quando ti riconosce mostra meteo, promemoria e riepilogo Google nei widget (1/0) |  |  | sì |
 | `JARVIS_AGENT` | Agente con strumenti: file, widget, ologramma, 3D, email, SMB, terminale (1/0) | `auto` |  | sì |
@@ -1038,8 +1038,35 @@ Il firewall `ufw` blocca tutto in ingresso tranne le porte della tabella esposte
 | `/var/lib/jarvis/last_good_rev` · `bad_revs` | Ultima versione funzionante e versioni scartate |
 | `/var/log/jarvis/` | `install.log`, `rollback.log` e altri registri |
 | `/srv/jarvis` | Cartella di lavoro dell'agente |
-| `/srv/jarvis/condivisioni/` | Cartelle condivise `condivisa` e `memoria-jarvis` |
+| `/srv/jarvis/condivisa/` | Cartella condivisa `\\IP\condivisa` (vedi sotto) |
 | `/opt/Jarvis/data/` | Database, certificati e modelli del Core, dati di Qdrant |
+
+### Cartella condivisa: struttura e nomi
+
+Tutto ciò che Jarvis crea finisce in un'unica cartella di rete, `\\IP\condivisa` (sul server
+`/srv/jarvis/condivisa`), protetta dall'utente `jarvis-share` e dalla password indicata nel pannello. Il modulo
+`installer_wizard/features/shares/archive.py` definisce la struttura e i nomi; ogni funzionalità che crea file
+deve usarlo (`archive.new_path(tipo, nome)`), mai percorsi propri.
+
+| Sottocartella | Contenuto | Chi la usa |
+| :--- | :--- | :--- |
+| `01 Documenti` | Testi, note, elenchi e documenti | azione «crea un file», agente (`write_file`) |
+| `02 Siti web` | Un sito per cartella, servito anche su `http://IP/siti/<cartella>/` | azione «crea un sito», agente (`create_site`) |
+| `03 Modelli 3D` | Copia di ogni modello progettato (GLB, STL, OBJ, MTL) | Modelli 3D |
+| `04 Codice` | Il codice mostrato nel widget o nelle schede | conversazione |
+| `05 Memoria` | Persone, fatti, abitudini, automazioni, diario (modificabili) | Memoria in chiaro |
+| `06 Scambio` | Cartella libera e sottocartelle create a richiesta | «crea una cartella condivisa», agente (`share_folder`, `copy_to_share`) |
+
+Regole dei nomi (`archive.dated`):
+- iniziano sempre con la data in ordine inverso: `20261002_lista-della-spesa.txt`, `20261002_pizzeria-da-mario/`;
+- niente accenti né caratteri non validi per Windows; gli spazi diventano trattini;
+- se un nome esiste già si aggiunge `_2`, `_3`…;
+- un file già datato non viene ridatato.
+
+Alla prima esecuzione del passo `shares` i contenuti delle vecchie condivisioni (`memoria-jarvis`, `condivisa`
+libera, `/srv/jarvis/file`, `/srv/jarvis/siti`, cartelle create in `/srv/jarvis/condivisioni`) vengono spostati
+nelle nuove sottocartelle e le vecchie condivisioni vengono rimosse da Samba. Nella cartella c'è anche un
+`LEGGIMI.txt` che spiega la struttura.
 
 ---
 
@@ -1560,7 +1587,7 @@ supervisore (porte 80 e 8080).
 | Un aggiornamento non arriva | `jarvisctl update`: se la CI su GitHub non è passata il server attende; `JARVIS_UPDATE_REQUIRE_CI=0` per ignorarla (sconsigliato). |
 | Dopo un aggiornamento qualcosa non va | Il collaudo torna indietro da solo; altrimenti `/var/log/jarvis/rollback.log` e lo storico eventi nel pannello. |
 | Home Assistant non si collega | Indirizzo e token a lunga durata; con certificato autofirmato `HOME_ASSISTANT_VERIFY_SSL=0`. |
-| Le condivisioni non si vedono da Windows | Passo «Condivisioni di rete» completato; da Esplora file `\\<ip-del-server>`; la «memoria-jarvis» richiede l'utente `jarvis-share`. |
+| La cartella condivisa non si apre da Windows | Indirizzo `\\<ip-del-server>\condivisa` (copiabile dal pannello), utente `jarvis-share` e password del pannello; se Windows segnala credenziali diverse già in uso: `net use \\<ip> /delete` e riprovare. |
 
 ---
 

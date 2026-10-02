@@ -6,6 +6,7 @@ import time
 from state import store
 
 from features.actions.common import SITES_DIR, llm, my_ip, slug
+from features.shares import archive
 
 _SITE_CSS = """*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
 color:#1d1d1f;background:#fafaf7;line-height:1.6}header{background:linear-gradient(135deg,var(--c1),var(--c2));
@@ -81,9 +82,9 @@ async def site_action(text: str) -> tuple[str, dict]:
     )
     if not spec.get("title") or not spec.get("sections"):
         raise LookupError("contenuto del sito non generato")
-    name = slug(str(spec["title"]), "sito")
-    folder = SITES_DIR / name
+    folder = archive.new_path("siti", slug(str(spec["title"]), "sito"), "sito")
     folder.mkdir(parents=True, exist_ok=True)
+    name = folder.name
     (folder / "index.html").write_text(render_site(spec), encoding="utf-8")
     (folder / "sito.json").write_text(
         json.dumps({**spec, "request": text, "created_at": time.time()}, ensure_ascii=False, indent=1), encoding="utf-8"
@@ -95,7 +96,8 @@ async def site_action(text: str) -> tuple[str, dict]:
         f"Ho creato il sito di {spec['title']} con {len(spec['sections'])} sezioni"
         + (f", {n} voci" if n else "")
         + (" e i contatti" if spec.get("contacts") else "")
-        + f". È già online sulla rete di casa all'indirizzo {url}"
+        + f". È già online sulla rete di casa all'indirizzo {url} e i file sono nella cartella condivisa, "
+        + f"in «{archive.FOLDERS['siti']}»."
     )
     return speech, {
         "mode": "focus",
@@ -107,7 +109,7 @@ async def site_action(text: str) -> tuple[str, dict]:
                 "title": "Pubblicato",
                 "data": {
                     "Indirizzo": url,
-                    "Cartella": str(folder),
+                    "Cartella": f"{archive.unc(my_ip(), 'siti')}\\{name}",
                     "Sezioni": ", ".join(s.get("title", "") for s in spec["sections"]),
                 },
             }

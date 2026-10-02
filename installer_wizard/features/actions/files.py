@@ -4,7 +4,8 @@ from pathlib import Path
 
 from state import store
 
-from features.actions.common import FILES_DIR, SMB_CONF, llm, my_ip
+from features.actions.common import llm, my_ip
+from features.shares import archive
 
 _FILE_NAME = re.compile(
     r"(?:chiamat[oa]|di nome|nominat[oa])\s+[«\"']?([\w\-. ]{1,60}?\.\w{1,6}|[\w\-.]{1,60})[»\"']?(?=[\s,.:;]|$)", re.I
@@ -36,22 +37,20 @@ async def file_action(text: str) -> tuple[str, dict]:
         name += ".txt"
     if not body:
         raise LookupError("contenuto del file mancante")
-    FILES_DIR.mkdir(parents=True, exist_ok=True)
-    path = FILES_DIR / name
+    path = archive.new_path("documenti", name, "nota")
+    name = path.name
     path.write_text(body.rstrip() + "\n", encoding="utf-8")
     ok = path.read_text(encoding="utf-8").strip() == body.strip()
     store.event("INFO", f"File creato: {path}", "actions")
     speech = (
-        f"Ho creato il file {name} in {FILES_DIR} con {len(body.splitlines()) or 1} "
+        f"Ho creato il file {name} nella cartella condivisa, in «{archive.FOLDERS['documenti']}», con {len(body.splitlines()) or 1} "
         f"{'riga' if len(body.splitlines()) <= 1 else 'righe'} e l'ho verificato."
         if ok
         else f"Ho scritto {path}, ma rileggendolo il contenuto non corrisponde: controllalo."
     )
-    if SMB_CONF.exists() and "[file-jarvis]" in SMB_CONF.read_text(errors="ignore"):
-        speech += f" Lo trovi anche in rete su \\\\{my_ip()}\\file-jarvis."
     return speech, {
         "mode": "focus",
         "title": name,
-        "subtitle": str(path),
+        "subtitle": f"{archive.unc(my_ip(), 'documenti')}\\{name}",
         "panels": [{"type": "text", "title": "Contenuto", "body": body[:4000]}],
     }

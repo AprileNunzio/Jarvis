@@ -1,19 +1,32 @@
 {
   "id": "shares",
-  "name": "Condivisioni di rete",
+  "name": "Cartella condivisa",
   "icon": "🗂",
   "category": "sistema",
   "order": 40,
   "panel": "shares",
-  "toggle": { "env": "JARVIS_SHARES", "apply": ["shares"] },
-  "description": "Cartelle del server visibili da Windows, Mac e telefoni della rete di casa: «condivisa» per scambiare file e «memoria-jarvis» con memoria e diario, protetta da password.",
+  "toggle": {
+    "env": "JARVIS_SHARES",
+    "apply": [
+      "shares"
+    ]
+  },
+  "description": "Un'unica cartella di rete protetta da password, «condivisa», con tutto ciò che Jarvis crea in sottocartelle ordinate: documenti, siti web, modelli 3D, codice, memoria e scambio. I nomi iniziano con la data in ordine inverso (AAAAMMGG_nome).",
   "capabilities": [
-    "\\IP-del-server da Esplora file di Windows (anche nella sezione Rete)",
-    "«condivisa»: libera per la rete di casa",
-    "«memoria-jarvis»: solo con utente jarvis-share e password",
-    "Compatibile con Windows 11 (niente accesso ospite per la memoria, SMB2/3)"
+    "\\\\IP-del-server\\condivisa da Esplora file di Windows, smb://IP/condivisa da Mac e Linux",
+    "Sottocartelle: 01 Documenti, 02 Siti web, 03 Modelli 3D, 04 Codice, 05 Memoria, 06 Scambio",
+    "Nomi con data inversa: 20261002_nome.estensione",
+    "Accesso solo con l'utente jarvis-share e password, compatibile con Windows 11 (SMB2/3)"
   ],
   "settings": [
-    {"key": "JARVIS_SMB_PASSWORD", "label": "Password dell'utente jarvis-share (vuota = generata)", "type": "secret", "default": "", "apply": ["shares"]}
+    {
+      "key": "JARVIS_SMB_PASSWORD",
+      "label": "Password dell'utente jarvis-share (vuota = generata)",
+      "type": "secret",
+      "default": "",
+      "apply": [
+        "shares"
+      ]
+    }
   ]
 }

@@ -5,6 +5,7 @@ from pathlib import Path
 
 from features.agent.paths import FILES, TRASH, resolve, trusted
 from features.agent.registry import tool
+from features.shares import archive
 
 TEXT_LIMIT = 8000
 
@@ -42,6 +43,8 @@ async def read_file(path: str) -> str:
       {"path": "file", "content": "testo", "append": "true/false"}, confirm=_write_risk)
 async def write_file(path: str, content: str, append: bool = False) -> str:
     p = resolve(path)
+    if not p.exists() and p.parent.parent == archive.ROOT and not archive.DATED.match(p.name):
+        p = archive.unique(p.parent, archive.dated(p.name))
     p.parent.mkdir(parents=True, exist_ok=True)
     with p.open("a" if str(append).lower() == "true" else "w", encoding="utf-8") as f:
         f.write(str(content))

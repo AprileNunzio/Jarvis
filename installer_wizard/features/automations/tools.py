@@ -9,6 +9,9 @@ from features.automations.library import InvalidAutomation, library
 @tool("create_automation", "crea un'automazione complessa (inneschi, condizioni, azioni a più stadi) descritta a parole; "
       "resta disattivata finché l'utente non la attiva", {"description": "cosa deve fare, quando e a quali condizioni"})
 async def create_automation(description: str) -> str:
+    from features.agent.registry import asked_for_recurring
+    if not asked_for_recurring():
+        raise ValueError("l'utente non ha chiesto un'automazione: esegui direttamente l'azione con lo strumento adatto")
     from features.automations.builder import build
     spec, errors = await build(description)
     if errors:

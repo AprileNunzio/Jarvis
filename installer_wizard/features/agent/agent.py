@@ -23,7 +23,10 @@ RULES = (
     "un'informazione che manca (per esempio l'indirizzo email).\n"
     "Regole: non inventare esiti, aspetta il risultato di ogni strumento; non ripetere uno strumento già riuscito; "
     "per mandare un progetto usa i percorsi restituiti dagli strumenti; se un destinatario è un nome, cercalo con "
-    "find_contact; se uno strumento fallisce prova un'alternativa o spiega il problema."
+    "find_contact; se uno strumento fallisce prova un'alternativa o spiega il problema. Esegui SUBITO ciò che "
+    "viene chiesto con gli strumenti diretti (create_site, write_file, make_dir, create_3d, share_folder…): crea "
+    "automazioni o compiti programmati solo se l'utente chiede esplicitamente qualcosa di ricorrente, programmato "
+    "o condizionato. Tutto ciò che crei va nella cartella condivisa di Jarvis, già organizzata in sottocartelle."
 )
 
 
@@ -74,6 +77,7 @@ class Agent:
                   routine: str = "") -> str:
         steps = [] if steps is None else steps
         self.last_steps = steps
+        registry.REQUEST.set(request)
         allowed = {t["name"] for t in registry.available(level())}
         for _ in range(MAX_STEPS):
             try:

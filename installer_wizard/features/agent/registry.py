@@ -1,6 +1,17 @@
 import inspect
+import re
+from contextvars import ContextVar
 
 TOOLS: dict[str, dict] = {}
+REQUEST: ContextVar[str] = ContextVar("agent_request", default="")
+RECURRING = re.compile(r"\b(automazion\w*|ogni|tutti\s+i|tutte\s+le|quando|appena|se\s+\w+|alle\s+\d|alle\s+ore|"
+                       r"domani|stasera|stanotte|più\s+tardi|tra\s+\d+|fra\s+\d+|ricordami|programm\w*|pianific\w*|"
+                       r"routine|sempre|ogni\s+volta)\b", re.I)
+
+
+def asked_for_recurring() -> bool:
+    request = REQUEST.get()
+    return not request or bool(RECURRING.search(request))
 
 
 def tool(name: str, description: str, args: dict, confirm=False, full_only: bool = False):

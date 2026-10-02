@@ -3,9 +3,10 @@ from pathlib import Path
 from config import DEMO, STATE_DIR, env_get
 
 from features.actions.common import WORK_DIR
+from features.shares import archive
 
 WORK = (STATE_DIR / "srv") if DEMO else WORK_DIR
-FILES = WORK / "file"
+FILES = archive.path("documenti")
 TRASH = STATE_DIR / "cestino"
 MODELS = STATE_DIR / "models3d"
 FORBIDDEN = ("/proc", "/sys", "/dev", "/boot", "/etc/shadow", "/etc/gshadow", "/etc/sudoers")

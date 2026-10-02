@@ -1,11 +1,11 @@
 <section class="tab stack" id="tab-shares">
   <div class="panel">
-    <div class="panel-title">🗂 Condivisioni di rete</div>
+    <div class="panel-title">🗂 Cartella condivisa di Jarvis</div>
     <div class="faint" id="sh-status"></div>
     <div class="sh-access" id="sh-access"></div>
   </div>
-  <div class="panel"><div class="panel-title">Cartelle</div><div id="sh-list"></div></div>
-  <div class="panel faint">Da Windows: Esplora file → barra dell'indirizzo → incolli l'indirizzo di una cartella (pulsante «Copia» accanto), per esempio <span class="mono">\\IP\condivisa</span>: il nome della cartella va subito dopo l'IP, senza altre cartelle in mezzo.
-    Per un'unità fissa: Questo PC → «Connetti unità di rete» → stesso indirizzo; per «memoria-jarvis» spunti «Connetti con credenziali diverse» e usi utente e password qui sopra (con «Memorizza credenziali»).
-    Se Windows risponde che sono già in uso credenziali diverse per lo stesso server, scolleghi prima le altre unità di quel server (<span class="mono">net use \\IP /delete</span>) e riprovi. Per cambiare la password: Funzionalità › Condivisioni di rete.</div>
+  <div class="panel"><div class="panel-title">Struttura</div><div id="sh-list"></div></div>
+  <div class="panel faint">Un'unica cartella protetta da password raccoglie tutto ciò che Jarvis crea, in sottocartelle numerate. I nomi iniziano con la data in ordine inverso (es. <span class="mono">20261002_lista-della-spesa.txt</span>), così l'ordine alfabetico è anche quello cronologico.
+    Da Windows: Esplora file → barra dell'indirizzo → incolli l'indirizzo qui sopra e inserisca utente e password (spunti «Memorizza credenziali»). Per un'unità fissa: Questo PC → «Connetti unità di rete» → stesso indirizzo, con «Connetti con credenziali diverse».
+    Se Windows risponde che sono già in uso credenziali diverse per lo stesso server, scolleghi prima le altre connessioni (<span class="mono">net use \\IP /delete</span>) e riprovi. Per cambiare la password: Funzionalità › Condivisioni di rete.</div>
 </section>

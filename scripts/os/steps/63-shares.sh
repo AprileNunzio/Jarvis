@@ -2,7 +2,9 @@
 . "$(dirname "$0")/../lib.sh"
 
 SMB_USER=jarvis-share
-SHARES_ROOT=/srv/jarvis/condivisioni
+OLD_ROOT=/srv/jarvis/condivisioni
+ARCHIVE=/srv/jarvis/condivisa
+FOLDERS=("01 Documenti" "02 Siti web" "03 Modelli 3D" "04 Codice" "05 Memoria" "06 Scambio")
 CONF=/etc/samba/smb.conf
 
 wanted() { [ "${JARVIS_SHARES:-1}" != "0" ]; }
@@ -12,18 +14,20 @@ step_check() {
     wanted || return 0
     command -v smbd >/dev/null 2>&1 || return 1
     systemctl is-active --quiet smbd || return 1
-    grep -q '^\[memoria-jarvis\]' "$CONF" 2>/dev/null || return 1
+    grep -q '^\[condivisa\]' "$CONF" 2>/dev/null || return 1
+    grep -q '^\[memoria-jarvis\]' "$CONF" 2>/dev/null && return 1
+    [ -d "$ARCHIVE/05 Memoria" ] || return 1
     [ "$(cat "$JARVIS_STATE/.shares-pass" 2>/dev/null)" = "$(password_hash)" ] || return 1
     code_current shares "$0"
 }
 
 write_conf() {
-    python3 - "$CONF" "$SMB_USER" "$SHARES_ROOT" <<'PY'
+    python3 - "$CONF" "$SMB_USER" "$ARCHIVE" "$OLD_ROOT" <<'PY'
 import re
 import sys
 from pathlib import Path
 
-conf, user, root = Path(sys.argv[1]), sys.argv[2], sys.argv[3]
+conf, user, root, old_root = Path(sys.argv[1]), sys.argv[2], sys.argv[3], sys.argv[4]
 text = conf.read_text(errors="ignore") if conf.exists() else "[global]\n   workgroup = WORKGROUP\n"
 sections = re.split(r"(?m)^(?=\[)", text)
 head = [s for s in sections if not s.startswith("[")]
@@ -37,16 +41,38 @@ for key, value in wanted.items():
     else:
         glob = glob.rstrip("\n") + f"\n   {key} = {value}\n"
 blocks["global"] = glob.rstrip("\n") + "\n\n"
-for unused in ("homes", "printers", "print$"):
+for unused in ("homes", "printers", "print$", "memoria-jarvis", "file-jarvis"):
     blocks.pop(unused, None)
+for key in [k for k, v in blocks.items() if re.search(rf"(?mi)^\s*path\s*=\s*{re.escape(old_root)}", v)]:
+    blocks.pop(key)
 common = "   browseable = yes\n   read only = no\n   create mask = 0664\n   directory mask = 2775\n   hosts allow = 127. 10. 172.16.0.0/12 192.168.\n"
-blocks["condivisa"] = (f"[condivisa]\n   comment = Cartella condivisa di Jarvis\n   path = {root}/condivisa\n{common}"
-                       f"   guest ok = yes\n   force user = nobody\n\n")
-blocks["memoria-jarvis"] = (f"[memoria-jarvis]\n   comment = Memoria e diario di Jarvis (con password)\n   path = {root}/memoria-jarvis\n{common}"
-                            f"   guest ok = no\n   valid users = {user}\n   force user = root\n\n")
+blocks["condivisa"] = (f"[condivisa]\n   comment = Creazioni di Jarvis (con password)\n   path = {root}\n{common}"
+                       f"   guest ok = no\n   valid users = {user}\n   force user = root\n\n")
 order = ["global"] + [k for k in blocks if k != "global"]
 conf.write_text("".join(head) + "".join(blocks[k] for k in order))
 PY
+}
+
+move_into() {
+    local src=$1 dst=$2
+    [ -d "$src" ] || return 0
+    mkdir -p "$dst"
+    find "$src" -mindepth 1 -maxdepth 1 -print0 | while IFS= read -r -d '' item; do
+        local name target
+        name=$(basename "$item")
+        target="$dst/$name"
+        [ -e "$target" ] && target="$dst/$(date +%Y%m%d)_migrato_$name"
+        mv "$item" "$target"
+    done
+    rmdir "$src" 2>/dev/null || true
+}
+
+migrate_old() {
+    move_into "$OLD_ROOT/memoria-jarvis" "$ARCHIVE/05 Memoria"
+    move_into "$OLD_ROOT/condivisa" "$ARCHIVE/06 Scambio"
+    move_into /srv/jarvis/file "$ARCHIVE/01 Documenti"
+    move_into /srv/jarvis/siti "$ARCHIVE/02 Siti web"
+    move_into "$OLD_ROOT" "$ARCHIVE/06 Scambio"
 }
 
 step_apply() {
@@ -66,9 +92,10 @@ step_apply() {
     printf '%s\n%s\n' "$JARVIS_SMB_PASSWORD" "$JARVIS_SMB_PASSWORD" | smbpasswd -s -a "$SMB_USER" >/dev/null
     smbpasswd -e "$SMB_USER" >/dev/null
     progress 55 "Cartelle condivise"
-    mkdir -p "$SHARES_ROOT/condivisa" "$SHARES_ROOT/memoria-jarvis"
-    chmod 2777 "$SHARES_ROOT/condivisa"
-    chmod 2775 "$SHARES_ROOT/memoria-jarvis"
+    migrate_old
+    local f
+    for f in "${FOLDERS[@]}"; do mkdir -p "$ARCHIVE/$f"; done
+    chmod 2775 "$ARCHIVE"
     if [ -f "$CONF" ] && [ ! -f "$CONF.jarvis-orig" ]; then cp "$CONF" "$CONF.jarvis-orig"; fi
     write_conf
     testparm -s >/dev/null 2>&1 || fail "Configurazione Samba non valida"
@@ -88,7 +115,7 @@ step_apply() {
     mkdir -p "$JARVIS_STATE"
     password_hash > "$JARVIS_STATE/.shares-pass"
     code_mark shares "$0"
-    progress 100 "Condivisioni attive: \\\\$(hostname -I | awk '{print $1}') (utente $SMB_USER)"
+    progress 100 "Cartella condivisa attiva: \\\\$(hostname -I | awk '{print $1}')\\condivisa (utente $SMB_USER)"
 }
 
 step_main "$@"

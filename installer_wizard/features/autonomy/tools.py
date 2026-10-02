@@ -7,6 +7,9 @@ from features.autonomy.routines import describe, parse_when, routines
       "scritto come una richiesta completa a te stesso",
       {"title": "nome breve", "when": "quando, in parole", "prompt": "cosa fare"})
 async def schedule_task(title: str, when: str, prompt: str) -> str:
+    from features.agent.registry import asked_for_recurring
+    if not asked_for_recurring():
+        raise ValueError("l'utente non ha chiesto un compito programmato: esegui subito l'azione con lo strumento adatto")
     spec = parse_when(when)
     item = routines.add(title, prompt, spec, origin="agente")
     return f"programmato «{item['title']}» {describe(spec)} (id {item['id']})"

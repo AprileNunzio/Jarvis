@@ -9,13 +9,15 @@ from pathlib import Path
 
 from config import STATE_DIR
 
+from features.shares import archive
+
 log = logging.getLogger("jarvis.actions")
 
 
 WORK_DIR = Path("/srv/jarvis")
-FILES_DIR = WORK_DIR / "file"
-SITES_DIR = WORK_DIR / "siti"
-SHARES_DIR = WORK_DIR / "condivisioni"
+FILES_DIR = archive.path("documenti")
+SITES_DIR = archive.path("siti")
+SHARES_DIR = archive.path("scambio")
 SMB_CONF = Path("/etc/samba/smb.conf")
 GAPS_FILE = STATE_DIR / "skill_gaps.json"
 

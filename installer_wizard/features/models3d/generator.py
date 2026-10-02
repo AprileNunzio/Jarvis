@@ -84,4 +84,4 @@ async def create(subject: str) -> dict:
     library.add_file(meta, f"{base}.obj", obj)
     meta = library.add_file(meta, f"{base}.mtl", mtl)
     meta["main"] = f"{base}.glb"
-    return library.save_meta(meta)
+    return library.export(library.save_meta(meta))

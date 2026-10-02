@@ -7,10 +7,10 @@ from config import DEMO
 from features.actions.common import SHARES_DIR, my_ip
 from features.actions.smb import smb_action
 from features.agent import mailer
-from features.agent.paths import WORK, resolve
+from features.agent.paths import resolve
 from features.agent.registry import tool
 
-SHARES = (WORK / "condivisioni") if DEMO else SHARES_DIR
+SHARES = SHARES_DIR
 
 
 def _list(value) -> list[str]:
@@ -41,6 +41,14 @@ async def share_folder(name: str) -> str:
         (SHARES / name).mkdir(parents=True, exist_ok=True)
         return f"(demo) cartella condivisa {name} pronta in {SHARES / name}"
     speech, _ = await smb_action(f"crea una cartella condivisa chiamata {name}")
+    return speech
+
+
+@tool("create_site", "crea e pubblica un sito web completo sulla rete di casa (contenuti generati dalla richiesta)",
+      {"request": "descrizione del sito: attività, sezioni, stile"})
+async def create_site(request: str) -> str:
+    from features.actions.sites import site_action
+    speech, _ = await site_action(str(request))
     return speech
 
 

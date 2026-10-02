@@ -71,6 +71,19 @@ def create(title: str, source: str, extra: dict | None = None) -> dict:
                       "main": "", **(extra or {})})
 
 
+def export(meta: dict) -> dict:
+    from features.shares import archive
+    try:
+        target = archive.new_path("modelli3d", meta["title"], "modello")
+        target.mkdir(parents=True, exist_ok=True)
+        for f in meta["files"]:
+            shutil.copy2(folder(meta["id"]) / f["name"], target / archive.dated(f["name"]))
+        meta["export"] = target.name
+        return save_meta(meta)
+    except OSError:
+        return meta
+
+
 def add_file(meta: dict, name: str, data: bytes, main: bool = False) -> dict:
     if len(data) > MAX_BYTES:
         raise ValueError("File troppo grande (massimo 200 MB)")

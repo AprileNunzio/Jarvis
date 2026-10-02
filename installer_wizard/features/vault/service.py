@@ -5,7 +5,7 @@ import time
 from datetime import date, datetime
 from pathlib import Path
 
-from config import DEMO, STATE_DIR, env_get
+from config import STATE_DIR, env_get
 from state import store
 
 from features.automations.bus import bus
@@ -13,7 +13,6 @@ from features.vault import diary, render
 
 log = logging.getLogger("jarvis.vault")
 FILE = STATE_DIR / "vault.json"
-SHARE = "memoria-jarvis"
 EXPORT_EVERY = 300
 DIARY_EVERY = 1800
 FINAL_AT = "23:50"
@@ -27,10 +26,8 @@ def root() -> Path:
     custom = env_get("JARVIS_VAULT_DIR", "").strip()
     if custom:
         return Path(custom)
-    if DEMO:
-        return STATE_DIR / "vault"
-    from features.actions.common import SHARES_DIR
-    return SHARES_DIR / SHARE
+    from features.shares import archive
+    return archive.path("memoria")
 
 
 class Vault:

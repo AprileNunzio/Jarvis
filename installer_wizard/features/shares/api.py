@@ -27,5 +27,7 @@ async def overview(_: str = Depends(require_admin)):
         shares.append({"name": name, "path": path.group(1).strip() if path else "", "guest": bool(guest)})
     active = "demo" if DEMO else (await sh("systemctl", "is-active", "smbd", timeout=5))[1].strip()
     ip = my_ip()
-    return {"active": active, "ip": ip, "windows": f"\\\\{ip}", "user": USER, "password": env_get("JARVIS_SMB_PASSWORD", ""),
-            "shares": shares}
+    from features.shares import archive
+    return {"active": active, "ip": ip, "windows": f"\\\\{ip}", "unc": archive.unc(ip), "user": USER,
+            "password": env_get("JARVIS_SMB_PASSWORD", ""), "shares": shares, "folders": archive.overview(),
+            "root": str(archive.ROOT)}

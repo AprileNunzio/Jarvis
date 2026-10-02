@@ -11,6 +11,10 @@ GUESS = [("html", re.compile(r"<\w+[^>]*>", re.S)), ("python", re.compile(r"^\s*
          ("javascript", re.compile(r"\b(const|let|function)\s+\w+|=>", re.S)), ("css", re.compile(r"[.#]?[\w-]+\s*\{[^}]*:[^}]*\}", re.S)),
          ("sql", re.compile(r"^\s*(select|insert|update|create table)\b", re.I | re.M)), ("bash", re.compile(r"^\s*(sudo |apt |cd |ls |#!/)", re.M))]
 MAX_CODE = 20000
+EXTENSIONS = {"html": "html", "css": "css", "javascript": "js", "js": "js", "typescript": "ts", "python": "py", "py": "py",
+              "sql": "sql", "bash": "sh", "sh": "sh", "shell": "sh", "json": "json", "yaml": "yaml", "yml": "yaml",
+              "php": "php", "java": "java", "kotlin": "kt", "c": "c", "cpp": "cpp", "c++": "cpp", "csharp": "cs",
+              "c#": "cs", "go": "go", "rust": "rs", "xml": "xml", "markdown": "md", "powershell": "ps1", "ruby": "rb"}
 KEEP = re.compile(r"\b(salva\w*|file|cartell\w*|condivi\w*|pubblic\w*|sito|invia\w*|manda\w*|mail|e-?mail|allega\w*|"
                   r"esegui\w*|lancia\w*|installa\w*|apri\w*\s+(il|la)\s+(file|sito|pagina\s+web))\b", re.I)
 
@@ -40,7 +44,26 @@ def answer(reply: str, question: str) -> tuple[str, dict] | None:
         return None
     speech, ui, intent = layout.plan_code(question, prose.splitlines(), blocks, MAX_CODE)
     ui["intent"] = intent
+    saved = save(question, blocks)
+    if saved:
+        ui["files"] = saved
     return speech, ui
+
+
+def save(question: str, blocks: list[dict]) -> list[str]:
+    from features.shares import archive
+    topic = re.sub(r"^\W*(mi\s+)?(scriv\w*|dammi|mostra\w*|fammi\s+vedere|crea\w*|genera\w*|come\s+si\s+scrive)\s+", "",
+                   question.strip().rstrip("?"), flags=re.I)
+    saved = []
+    try:
+        for block in blocks:
+            ext = EXTENSIONS.get(block["language"], "txt")
+            target = archive.new_path("codice", f"{archive.clean(topic, 'codice')[:50]}.{ext}", "codice")
+            target.write_text(block["content"].rstrip() + "\n", encoding="utf-8")
+            saved.append(target.name)
+    except OSError:
+        return saved
+    return saved
 
 
 def wanted(question: str) -> bool:
