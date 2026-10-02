@@ -1,0 +1,13 @@
+{
+  "id": "pomodoro",
+  "name": "Pomodoro Timer",
+  "icon": "\ud83c\udf45",
+  "priority": 80,
+  "size": "s",
+  "intents": [
+    "pomodoro"
+  ],
+  "description": "Focus time",
+  "ttl": 1500,
+  "demo": {}
+}

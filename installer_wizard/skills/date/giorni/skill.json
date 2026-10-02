@@ -1,0 +1,12 @@
+{
+  "id": "giorni",
+  "name": "Giorni e date",
+  "description": "Giorni mancanti a una data o festività, giorni tra due date, che giorno sarà tra N giorni.",
+  "priority": 55,
+  "patterns": [
+    "\\bquanti\\s+giorni\\b",
+    "\\bche\\s+(giorno|data)\\s+(sarà|sara|era|cade)\\b",
+    "\\b(mancano|manca)\\b.*\\b(natale|capodanno|pasqua|ferragosto|epifania|halloween|san valentino|\\d{1,2}\\s*(/|gennaio|febbraio|marzo|aprile|maggio|giugno|luglio|agosto|settembre|ottobre|novembre|dicembre))"
+  ],
+  "examples": ["quanti giorni mancano a Natale", "quanti giorni tra 3 marzo e 10 aprile", "che giorno sarà tra 45 giorni", "che giorno era 100 giorni fa"]
+}

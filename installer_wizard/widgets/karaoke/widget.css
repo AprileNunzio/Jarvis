@@ -1,0 +1,7 @@
+.w-karaoke .ka-head { font-size: 13px; letter-spacing: 0.04em; color: var(--cyan); margin-bottom: 10px; text-shadow: 0 0 12px rgba(41,224,255,0.4); }
+.w-karaoke .ka-lines { max-height: 40vh; overflow: hidden; display: flex; flex-direction: column; gap: 10px; mask-image: linear-gradient(180deg, transparent, #000 18%, #000 82%, transparent); -webkit-mask-image: linear-gradient(180deg, transparent, #000 18%, #000 82%, transparent); }
+.w-karaoke .ka-line { font-size: clamp(18px, 2.6vw, 30px); font-weight: 300; line-height: 1.3; color: rgba(214,232,247,0.35); transition: color 0.3s, transform 0.3s, text-shadow 0.3s; transform-origin: left center; }
+.w-karaoke .ka-line.past { color: rgba(214,232,247,0.22); }
+.w-karaoke .ka-line.on { color: #fff; font-weight: 500; transform: scale(1.06); text-shadow: 0 0 22px rgba(41,224,255,0.75); }
+.w-karaoke .ka-plain { max-height: 40vh; overflow: auto; white-space: pre-wrap; font-size: 18px; font-weight: 300; line-height: 1.5; color: rgba(214,232,247,0.8); }
+.w-karaoke .ka-none { font-size: 15px; color: var(--text-dim, #8aa); font-style: italic; }

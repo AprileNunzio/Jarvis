@@ -1,0 +1,19 @@
+[Unit]
+Description=Jarvis OS Ear (ascolto vocale e parola di attivazione)
+After=jarvis-supervisor.service
+PartOf=jarvis-supervisor.service
+
+[Service]
+Type=simple
+Environment=PYTHONUNBUFFERED=1
+Environment=HF_HUB_OFFLINE=1
+EnvironmentFile=-/etc/jarvis/jarvis.env
+ExecStart=/opt/jarvis-ear/venv/bin/python /opt/Jarvis/installer_wizard/features/ear/service.py
+Restart=always
+RestartSec=5
+Nice=-5
+CPUWeight=400
+MemoryMax=3G
+
+[Install]
+WantedBy=multi-user.target

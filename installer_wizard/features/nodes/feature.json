@@ -1,0 +1,16 @@
+{
+  "id": "nodes",
+  "name": "Nodi e server",
+  "icon": "🖧",
+  "category": "sistema",
+  "order": 170,
+  "panel": "nodes",
+  "pinned": true,
+  "description": "Il server principale e tutti i nodi di Jarvis (satelliti audio, display, altri server, microcontrollori): stato in tempo reale, abbinamento sicuro e comandi.",
+  "capabilities": [
+    "Stato del server principale e dei suoi sottosistemi",
+    "Abbinamento dei nodi con codice monouso e token personale",
+    "Online, ultimo contatto e risorse di ogni nodo",
+    "Nome, stanza, comandi remoti e revoca"
+  ]
+}

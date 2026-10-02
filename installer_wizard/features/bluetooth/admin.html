@@ -1,0 +1,29 @@
+<section class="tab" id="tab-bluetooth">
+  <div class="panel bt-head">
+    <div class="bt-status" id="bt-status"></div>
+    <div class="bt-tools">
+      <label class="switch"><input type="checkbox" data-bt-flag="auto_switch"> Passa da solo al preferito</label>
+      <label class="switch"><input type="checkbox" data-bt-flag="auto_connect"> Riconnetti i dispositivi noti</label>
+      <label class="switch"><input type="checkbox" data-bt-flag="announce"> Avvisa sul display</label>
+      <button class="btn primary" id="bt-scan">Cerca dispositivi</button>
+    </div>
+  </div>
+
+  <div class="grid g2 bt-orders">
+    <div class="panel">
+      <div class="panel-title">🔊 Uscita audio</div>
+      <div class="muted-note">Casse e cuffie in ordine di preferenza: Jarvis parla dal primo collegato. Trascina per riordinare.</div>
+      <div class="prio" id="bt-out"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">🎙 Microfono</div>
+      <div class="muted-note">Da quale dispositivo Jarvis ti ascolta: con gli auricolari puoi parlargli da un'altra stanza.</div>
+      <div class="prio" id="bt-in"></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">Dispositivi</div>
+    <div class="bt-grid" id="bt-devices"></div>
+  </div>
+</section>

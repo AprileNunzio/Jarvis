@@ -1,0 +1,18 @@
+.study-head { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.study-state { font-size: 16px; }
+.topics { display: flex; flex-direction: column; gap: 12px; }
+.topic { border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; background: rgba(2,8,16,0.4); cursor: pointer; }
+.topic:hover, .topic.on { border-color: var(--cyan); }
+.topic .hd { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.topic .nm { font-size: 15px; flex: 1; }
+.levels { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; margin-top: 10px; }
+.levels div { font-size: 10px; color: var(--text-faint); }
+.levels .lb { height: 6px; border-radius: 4px; background: rgba(41,224,255,0.1); overflow: hidden; margin-bottom: 4px; }
+.levels .lb i { display: block; height: 100%; background: linear-gradient(90deg, var(--blue), var(--cyan)); }
+.levels .beyond { opacity: 0.35; }
+.lesson { display: grid; grid-template-columns: 22px 1fr auto; gap: 8px; padding: 8px 4px; border-bottom: 1px dashed rgba(80,200,255,0.1); font-size: 13px; }
+.lesson details { grid-column: 2 / -1; font-size: 12px; color: var(--text-dim); }
+.lesson summary { cursor: pointer; color: var(--cyan); }
+.journal div { font-size: 12px; padding: 5px 0; border-bottom: 1px dashed rgba(80,200,255,0.08); }
+.hit { padding: 8px 0; border-bottom: 1px dashed rgba(80,200,255,0.1); font-size: 13px; }
+.hit .sc { font-family: var(--mono); font-size: 11px; color: var(--cyan); }

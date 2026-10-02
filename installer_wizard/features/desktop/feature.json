@@ -1,0 +1,16 @@
+{
+  "id": "desktop",
+  "name": "Desktop a widget",
+  "icon": "▣",
+  "category": "assistente",
+  "order": 35,
+  "pinned": true,
+  "panel": "widgets",
+  "description": "Il display è un desktop: ogni informazione è un widget indipendente che compare quando serve (musica, meteo, avvisi, allarmi), in ordine di priorità.",
+  "capabilities": [
+    "Widget scoperti dalle cartelle",
+    "Priorità modificabili",
+    "Allarmi a schermo intero",
+    "Prova di ogni widget dal pannello"
+  ]
+}

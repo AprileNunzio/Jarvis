@@ -1,0 +1,19 @@
+{
+  "id": "usb_monitor",
+  "name": "Analizzatore USB",
+  "icon": "\ud83d\udd0c",
+  "priority": 100,
+  "size": "m",
+  "intents": [
+    "usb_monitor"
+  ],
+  "description": "Dettagli hardware quando viene inserita una periferica USB.",
+  "ttl": 60,
+  "demo": {
+    "vendor": "SanDisk Corp.",
+    "product": "Cruzer Blade",
+    "serial": "4C530001...",
+    "mount": "E:\\",
+    "size": "32 GB"
+  }
+}

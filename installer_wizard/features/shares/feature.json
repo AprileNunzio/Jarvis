@@ -1,0 +1,19 @@
+{
+  "id": "shares",
+  "name": "Condivisioni di rete",
+  "icon": "🗂",
+  "category": "sistema",
+  "order": 40,
+  "panel": "shares",
+  "toggle": { "env": "JARVIS_SHARES", "apply": ["shares"] },
+  "description": "Cartelle del server visibili da Windows, Mac e telefoni della rete di casa: «condivisa» per scambiare file e «memoria-jarvis» con memoria e diario, protetta da password.",
+  "capabilities": [
+    "\\IP-del-server da Esplora file di Windows (anche nella sezione Rete)",
+    "«condivisa»: libera per la rete di casa",
+    "«memoria-jarvis»: solo con utente jarvis-share e password",
+    "Compatibile con Windows 11 (niente accesso ospite per la memoria, SMB2/3)"
+  ],
+  "settings": [
+    {"key": "JARVIS_SMB_PASSWORD", "label": "Password dell'utente jarvis-share (vuota = generata)", "type": "secret", "default": "", "apply": ["shares"]}
+  ]
+}

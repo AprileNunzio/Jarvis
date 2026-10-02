@@ -1,0 +1,25 @@
+{
+  "id": "selftest",
+  "name": "Collaudo",
+  "icon": "🧪",
+  "category": "sistema",
+  "order": 5,
+  "panel": "selftest",
+  "toggle": { "env": "JARVIS_SELFTEST", "apply": [] },
+  "description": "Jarvis prova davvero le sue funzioni ogni notte e dopo ogni aggiornamento; se un aggiornamento rompe qualcosa di essenziale torna da solo alla versione precedente e la avvisa.",
+  "capabilities": [
+    "13 prove reali: supervisore e pannello, componenti, conversazione, voce, automazioni, cervello, display, ascolto, visione, casa, suoni, spazio, aggiornamenti",
+    "Ogni notte (03:30) e cinque minuti dopo ogni aggiornamento",
+    "Ritorno automatico alla versione precedente se una prova essenziale che prima passava ora fallisce",
+    "Avviso su Telegram e sul display di ciò che si è rotto o è tornato a funzionare",
+    "Gli aggiornamenti si installano solo se hanno superato i test su GitHub",
+    "A voce: «fai il collaudo»"
+  ],
+  "settings": [
+    {"key": "JARVIS_SELFTEST_AT", "label": "Ora del collaudo notturno (HH:MM)", "type": "text", "default": "03:30"},
+    {"key": "JARVIS_SELFTEST_ROLLBACK", "label": "Se un aggiornamento rompe qualcosa di essenziale", "type": "select", "default": "1",
+     "options": [{"value": "1", "label": "Torna da solo alla versione precedente"}, {"value": "0", "label": "Avvisa soltanto"}]},
+    {"key": "JARVIS_UPDATE_REQUIRE_CI", "label": "Aggiornamenti da GitHub", "type": "select", "default": "1",
+     "options": [{"value": "1", "label": "Solo versioni con i test superati"}, {"value": "0", "label": "Qualsiasi versione"}]}
+  ]
+}

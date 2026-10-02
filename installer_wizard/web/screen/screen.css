@@ -1,0 +1,4 @@
+body.satellite .idle { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 14px; color: var(--text-dim); text-align: center; pointer-events: none; transition: opacity 0.5s; }
+body.satellite .idle b { font-size: 46px; font-weight: 200; color: var(--cyan); opacity: 0.5; letter-spacing: 0.2em; }
+body.satellite.desk-has .idle { opacity: 0; }

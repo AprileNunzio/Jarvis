@@ -1,0 +1,26 @@
+{
+  "id": "habits",
+  "name": "Abitudini",
+  "icon": "💡",
+  "category": "casa",
+  "order": 24,
+  "panel": "habits",
+  "toggle": { "env": "JARVIS_HABITS", "apply": [] },
+  "requires": { "features": ["automations"] },
+  "description": "Jarvis osserva come usa la casa, riconosce le abitudini ricorrenti e le propone come automazioni; segnala anche le situazioni insolite quando non c'è nessuno.",
+  "capabilities": [
+    "Registra luci, prese, tapparelle, termostati, media e serrature comandati a mano (non quelli mossi dalle automazioni)",
+    "Ogni notte cerca regolarità: stesso orario (tutti i giorni, feriali o fine settimana), al tramonto, all'arrivo di qualcuno",
+    "Propone a voce quando è presente: «Signore, ho notato che… Vuole che me ne occupi io?» — sì, no, più tardi",
+    "Crea da solo l'automazione accettata, con le condizioni giuste (presenza, buio)",
+    "Situazioni insolite: porta, finestra o movimento a un'ora mai vista e casa vuota → avviso a voce, allarme e Telegram"
+  ],
+  "settings": [
+    {"key": "JARVIS_HABITS_CONFIDENCE", "label": "Quanto deve essere regolare un'abitudine per proporla", "type": "select", "default": "0.7",
+     "options": [{"value": "0.6", "label": "6 volte su 10"}, {"value": "0.7", "label": "7 volte su 10"}, {"value": "0.8", "label": "8 volte su 10"}]},
+    {"key": "JARVIS_HABITS_ASK", "label": "Proposte a voce", "type": "select", "default": "1",
+     "options": [{"value": "1", "label": "Sì, quando sono presente (9-21, al massimo ogni 2 ore)"}, {"value": "0", "label": "No, solo nel pannello"}]},
+    {"key": "JARVIS_HABITS_ANOMALIES", "label": "Avvisi di situazioni insolite", "type": "select", "default": "1",
+     "options": [{"value": "1", "label": "Attivi"}, {"value": "0", "label": "Spenti"}]}
+  ]
+}

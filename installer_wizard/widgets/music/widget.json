@@ -1,0 +1,16 @@
+{
+  "id": "music",
+  "name": "Musica in ascolto",
+  "icon": "\ud83c\udfb5",
+  "priority": 35,
+  "size": "m",
+  "bind": "now_playing",
+  "description": "Il brano che suona nella stanza, riconosciuto dall'ascolto (Shazam).",
+  "demo": {
+    "title": "Caruso",
+    "artist": "Lucio Dalla",
+    "album": "Dalla/Morandi",
+    "year": "1986",
+    "duration": 318
+  }
+}

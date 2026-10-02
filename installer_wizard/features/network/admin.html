@@ -1,0 +1,12 @@
+<section class="tab" id="tab-network">
+  <div class="panel">
+    <div class="row" style="justify-content:space-between; flex-wrap:wrap; margin-bottom:14px">
+      <div><div class="panel-title" style="margin:0">Dispositivi della rete</div><div class="muted-note" id="net-info" style="margin-top:6px"></div></div>
+      <div class="row"><input id="net-filter" placeholder="Filtra…" style="max-width:220px"><button class="btn primary" id="net-scan">Scansiona ora</button></div>
+    </div>
+    <table><thead><tr><th></th><th>Dispositivo</th><th>IP</th><th>Produttore / MAC</th><th>Tipo</th><th>Servizi</th><th>Abitudini</th><th></th></tr></thead>
+      <tbody id="net-body"></tbody></table>
+    <div class="muted-note">Jarvis scansiona la sola rete locale ogni 10 minuti e studia ogni nuovo dispositivo (servizi, sistema operativo, servizi mDNS). Rinomina, assegna stanza e proprietario: tutto diventa conoscenza nel suo cervello.</div>
+  </div>
+  <div class="panel" id="net-detail" style="margin-top:18px; display:none"></div>
+</section>

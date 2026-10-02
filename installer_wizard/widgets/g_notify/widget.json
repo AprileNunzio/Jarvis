@@ -1,0 +1,17 @@
+{
+  "id": "g_notify",
+  "name": "Notifiche Google",
+  "icon": "🔔",
+  "priority": 80,
+  "size": "m",
+  "ttl": 180,
+  "description": "Nuove email, appuntamenti in arrivo e riepilogo della giornata di chi è davanti a Jarvis.",
+  "demo": {
+    "kind": "event",
+    "who": "Nunzio",
+    "title": "Dentista",
+    "text": "Via Roma 12",
+    "at": 0,
+    "icon": "📅"
+  }
+}

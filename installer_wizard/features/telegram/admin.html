@@ -1,0 +1,28 @@
+<section class="tab" id="tab-telegram">
+  <div class="grid g2">
+    <div class="panel">
+      <div class="panel-title">Bot Telegram</div>
+      <div id="tg-status" style="font-size:15px; margin-bottom:14px">—</div>
+      <form class="row" id="tg-token-form" style="margin-bottom:10px">
+        <input id="tg-token" type="password" placeholder="Token del bot (da @BotFather)" autocomplete="off">
+        <button class="btn primary">Salva</button>
+      </form>
+      <ol class="muted-note" style="line-height:1.8; padding-left:18px">
+        <li>Su Telegram apri <b>@BotFather</b>, invia <code>/newbot</code> e scegli nome e username.</li>
+        <li>Copia il token che ti restituisce e incollalo qui sopra.</li>
+        <li>Premi «Genera codice» e invia il codice al tuo bot: il primo abbinato diventa proprietario.</li>
+      </ol>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Abbinamento</div>
+      <div id="tg-code" style="font-size:44px; font-weight:200; letter-spacing:0.3em; font-family:var(--mono); margin:6px 0 4px">——————</div>
+      <div class="muted-note" id="tg-code-note" style="margin-top:0">Il codice vale 10 minuti ed è utilizzabile una sola volta.</div>
+      <div class="actions" style="margin-top:14px"><button class="btn primary" id="tg-gen">Genera codice</button></div>
+    </div>
+  </div>
+  <div class="panel" style="margin-top:18px">
+    <div class="panel-title">Chat abbinate</div>
+    <table><thead><tr><th>Persona</th><th>Ruolo</th><th>Notifiche</th><th>Risposte vocali</th><th></th></tr></thead><tbody id="tg-chats"></tbody></table>
+    <div class="muted-note">Il proprietario può anche aggiornare, riparare e riavviare Jarvis dal bot. Notifiche: arrivi e sconosciuti con foto, guasti, aggiornamenti, ricorrenze del giorno.</div>
+  </div>
+</section>

@@ -1,0 +1,20 @@
+<section class="tab stack" id="tab-autonomy">
+  <div class="panel au-head">
+    <div><div class="panel-title" style="margin:0">🧭 Jarvis in autonomia</div><div class="faint" id="au-status"></div></div>
+    <button class="btn" id="au-pilot">Esegui ora l'autopilota</button>
+  </div>
+  <div class="panel au-approvals" id="au-approvals" hidden></div>
+  <div class="panel">
+    <div class="panel-title">Compiti programmati</div>
+    <form class="au-form" id="au-form">
+      <input id="au-when" placeholder="Quando — es. ogni mattina alle 8, ogni venerdì alle 18, ogni 30 minuti, quando mi vedi arrivare">
+      <input id="au-prompt" placeholder="Cosa fare — es. mandami il meteo di oggi per email a ...">
+      <button class="btn primary">Aggiungi</button>
+    </form>
+    <div class="au-list" id="au-list"></div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">Diario</div>
+    <div class="au-journal" id="au-journal"></div>
+  </div>
+</section>

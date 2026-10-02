@@ -1,0 +1,6 @@
+.sn-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.sn-tools { display: flex; gap: 8px; flex-wrap: wrap; }
+.sn-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 8px; margin-top: 10px; }
+.sn-item { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 10px; }
+.sn-item .faint { font-size: 11px; }
+.sn-amb { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 14px; align-items: center; }

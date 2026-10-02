@@ -1,0 +1,35 @@
+{
+  "id": "google",
+  "name": "Google",
+  "icon": "🟦",
+  "category": "comunicazione",
+  "order": 140,
+  "panel": "google",
+  "description": "Ogni persona collega il proprio account Google: agenda, posta, cose da fare, rubrica, Drive e note, mostrati solo a chi Jarvis riconosce.",
+  "toggle": {
+    "env": "JARVIS_GOOGLE",
+    "apply": []
+  },
+  "requires": {
+    "env": [
+      "JARVIS_GOOGLE_CLIENT_ID"
+    ]
+  },
+  "capabilities": [
+    "Un account Google per ogni persona, token cifrati",
+    "Privacy: dati solo a chi è riconosciuto, email non lette ad alta voce davanti ad altri",
+    "Calendar: impegni, nuovi appuntamenti con avviso di sovrapposizione, cancellazione, «quando sono libero»",
+    "Gmail: non lette, ricerca per mittente o argomento, «leggimi l'ultima email»",
+    "Tasks: «ricordami di…», elenco con ritardi, «ho fatto…»",
+    "Contatti, Drive e Keep (Workspace)",
+    "Promemoria personali prima di ogni appuntamento"
+  ],
+  "settings": [
+    {
+      "key": "JARVIS_GOOGLE_REMIND_MIN",
+      "label": "Avvisami prima di un appuntamento (minuti, 0 = mai)",
+      "type": "number",
+      "default": "10"
+    }
+  ]
+}

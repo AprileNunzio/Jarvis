@@ -1,0 +1,13 @@
+{
+  "id": "context_window",
+  "name": "Context Monitor",
+  "icon": "\ud83d\udcca",
+  "priority": 30,
+  "size": "m",
+  "intents": [
+    "context_window"
+  ],
+  "description": "Uso token",
+  "ttl": 60,
+  "demo": {}
+}

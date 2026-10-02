@@ -1,0 +1,45 @@
+{
+  "id": "sounds",
+  "name": "Suoni ed effetti",
+  "icon": "🎵",
+  "category": "assistente",
+  "order": 16,
+  "panel": "sounds",
+  "toggle": { "env": "JARVIS_SOUNDS", "apply": [] },
+  "description": "Effetti sonori mentre Jarvis ascolta, pensa ed elabora, suoni di notifica e allarme, sottofondo ambientale; orari di silenzio, non disturbare e volumi notturni.",
+  "capabilities": [
+    "Attivazione, richiesta ricevuta, errore",
+    "Ciclo discreto mentre pensa, che diventa «elaborazione» se la risposta tarda",
+    "Notifiche, promemoria, allarmi e campanello (gli allarmi suonano anche in silenzio)",
+    "Sottofondo: reattore, spazio profondo, pioggia, onde, laboratorio; si abbassa mentre parla o ascolta",
+    "Orari di silenzio per giorni, non disturbare a voce («non disturbare per un'ora», «modalità notte fino a domattina»)",
+    "Di notte: effetti attenuati o muti, sottofondo spento, voce più bassa",
+    "Tre temi timbrici, tutti sintetizzati dal vivo senza file da scaricare",
+    "Usabili nelle automazioni come azione «Suono»"
+  ],
+  "settings": [
+    {"key": "JARVIS_SOUNDS_VOLUME", "label": "Volume degli effetti (0 - 100)", "type": "number", "default": "55"},
+    {"key": "JARVIS_SOUNDS_THEME", "label": "Tema dei suoni", "type": "select", "default": "jarvis", "options": [
+      {"value": "jarvis", "label": "Jarvis (cristallino, con armoniche)"},
+      {"value": "soft", "label": "Morbido (discreto, ovattato)"},
+      {"value": "classic", "label": "Classico (bip digitali)"}]},
+    {"key": "JARVIS_SOUNDS_FEEDBACK", "label": "Suoni di attivazione e richiesta", "type": "select", "default": "1", "options": [{"value": "1", "label": "Attivi"}, {"value": "0", "label": "Spenti"}]},
+    {"key": "JARVIS_SOUNDS_THINKING", "label": "Suono mentre pensa ed elabora", "type": "select", "default": "1", "options": [{"value": "1", "label": "Attivo"}, {"value": "0", "label": "Spento"}]},
+    {"key": "JARVIS_SOUNDS_NOTIFY", "label": "Suoni di notifica", "type": "select", "default": "1", "options": [{"value": "1", "label": "Attivi"}, {"value": "0", "label": "Spenti"}]},
+    {"key": "JARVIS_SOUNDS_AMBIENT", "label": "Sottofondo", "type": "select", "default": "none", "options": [
+      {"value": "none", "label": "Nessuno"}, {"value": "reactor", "label": "Reattore"}, {"value": "space", "label": "Spazio profondo"},
+      {"value": "rain", "label": "Pioggia"}, {"value": "ocean", "label": "Onde"}, {"value": "lab", "label": "Laboratorio"}]},
+    {"key": "JARVIS_SOUNDS_AMBIENT_VOLUME", "label": "Volume del sottofondo (0 - 100)", "type": "number", "default": "18"},
+    {"key": "JARVIS_QUIET_MODE", "label": "Negli orari di silenzio", "type": "select", "default": "soft", "options": [
+      {"value": "soft", "label": "Attenua: effetti e voce più bassi, niente sottofondo"},
+      {"value": "mute", "label": "Silenzio: nessun effetto (solo allarmi), voce bassa"},
+      {"value": "off", "label": "Nessun orario di silenzio"}]},
+    {"key": "JARVIS_QUIET_START", "label": "Silenzio dalle (HH:MM)", "type": "text", "default": "23:00"},
+    {"key": "JARVIS_QUIET_END", "label": "Silenzio fino alle (HH:MM)", "type": "text", "default": "07:00"},
+    {"key": "JARVIS_QUIET_DAYS", "label": "Notti di silenzio", "type": "select", "default": "all", "options": [
+      {"value": "all", "label": "Tutte"}, {"value": "weekdays", "label": "Prima dei giorni lavorativi (dom-gio)"},
+      {"value": "weekend", "label": "Solo venerdì e sabato"}]},
+    {"key": "JARVIS_QUIET_VOICE", "label": "Volume della voce in silenzio (0 - 100)", "type": "number", "default": "45"},
+    {"key": "JARVIS_QUIET_EFFECTS", "label": "Volume degli effetti in silenzio attenuato (0 - 100)", "type": "number", "default": "25"}
+  ]
+}

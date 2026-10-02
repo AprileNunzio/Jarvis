@@ -1,0 +1,18 @@
+{
+  "id": "autonomy",
+  "name": "Autonomia",
+  "icon": "🧭",
+  "category": "assistente",
+  "order": 14,
+  "pinned": true,
+  "panel": "autonomy",
+  "toggle": { "env": "JARVIS_AUTONOMY", "apply": [] },
+  "description": "Jarvis lavora da solo: esegue i compiti programmati, controlla e diagnostica i guasti, impara ciò che non sapeva fare e ogni sera ti manda il riepilogo. Le azioni delicate aspettano sempre la tua approvazione.",
+  "capabilities": [
+    "Compiti programmati a voce: «ogni mattina alle 8 mandami il meteo per email», «ogni venerdì copia i progetti nella cartella SMB»",
+    "Orari: ogni giorno, giorni della settimana, feriali, weekend, ogni N minuti/ore, una volta, quando ti vede arrivare, all'avvio",
+    "Autopilota ogni 30 minuti: diagnosi dei componenti guasti, studio delle richieste non soddisfatte, riepilogo serale",
+    "Approvazioni: email, cancellazioni e comandi di sistema restano in coda finché non dici «approva» o approvi dal pannello",
+    "Diario di tutto ciò che fa da solo, notifiche su display e Telegram"
+  ]
+}

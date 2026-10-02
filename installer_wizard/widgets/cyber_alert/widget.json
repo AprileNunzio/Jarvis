@@ -1,0 +1,18 @@
+{
+  "id": "cyber_alert",
+  "name": "Rilevatore Intrusioni",
+  "icon": "\ud83d\udee1\ufe0f",
+  "priority": 100,
+  "size": "m",
+  "intents": [
+    "cyber_alert"
+  ],
+  "description": "Avviso istantaneo per brute-force o cyber attack.",
+  "ttl": 300,
+  "demo": {
+    "threat_level": "CRITICAL",
+    "source_ip": "185.15.22.1",
+    "attack_type": "SSH Brute-Force",
+    "action_taken": "IP Banned (Firewall)"
+  }
+}

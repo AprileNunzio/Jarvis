@@ -1,0 +1,14 @@
+{
+  "id": "viewer_3d",
+  "name": "Visualizzatore 3D",
+  "icon": "🧊",
+  "priority": 85,
+  "size": "l",
+  "intents": ["viewer_3d", "3d"],
+  "description": "Modelli 3D creati da Jarvis o caricati: glTF/GLB, OBJ, STL, 3MF, AMF, PLY, FBX, DAE, 3DS, VRML, DXF, STEP, IGES, BREP. Si ruota con mouse, dita o mani.",
+  "ttl": 1800,
+  "demo": {
+    "id": "demo-head", "title": "Testa olografica", "main": "head.glb", "format": "glb", "url": "/vendor/",
+    "files": [{ "name": "head.glb", "format": "glb", "label": "glTF binario", "size": 0 }]
+  }
+}

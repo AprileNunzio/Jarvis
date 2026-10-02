@@ -1,0 +1,31 @@
+{
+  "id": "auto_update",
+  "name": "Aggiornamenti automatici",
+  "icon": "⟳",
+  "category": "sistema",
+  "order": 170,
+  "panel": "updates",
+  "description": "Jarvis si aggiorna da solo da GitHub, verifica la nuova versione e torna indietro se qualcosa non va.",
+  "toggle": {
+    "env": "JARVIS_AUTO_UPDATE",
+    "apply": []
+  },
+  "capabilities": [
+    "Controllo periodico",
+    "Verifica e rollback automatico"
+  ],
+  "settings": [
+    {
+      "key": "JARVIS_UPDATE_INTERVAL_MIN",
+      "label": "Controlla ogni (minuti)",
+      "type": "number",
+      "default": "5"
+    },
+    {
+      "key": "JARVIS_UPDATE_BRANCH",
+      "label": "Ramo GitHub",
+      "type": "text",
+      "default": "main"
+    }
+  ]
+}

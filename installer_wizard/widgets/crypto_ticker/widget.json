@@ -1,0 +1,13 @@
+{
+  "id": "crypto_ticker",
+  "name": "Crypto Prices",
+  "icon": "\ud83e\ude99",
+  "priority": 25,
+  "size": "m",
+  "intents": [
+    "crypto_ticker"
+  ],
+  "description": "BTC/ETH",
+  "ttl": 300,
+  "demo": {}
+}

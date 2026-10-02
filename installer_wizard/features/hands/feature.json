@@ -1,0 +1,58 @@
+{
+  "id": "hands",
+  "name": "Comandi con le mani",
+  "icon": "✋",
+  "category": "percezione",
+  "order": 62,
+  "description": "Controlla i widget con le mani davanti alla webcam: pizzica per afferrare, trascina, lancia di lato per cambiare schermo, due mani per lo zoom. In automatico si attiva solo se la GPU del display regge il riconoscimento senza rallentare la pagina.",
+  "toggle": {
+    "env": "JARVIS_HANDS",
+    "tri": true,
+    "apply": []
+  },
+  "requires": {
+    "video": true,
+    "features": ["vision"]
+  },
+  "capabilities": [
+    "Pizzica per afferrare e trascinare i widget",
+    "Lancio laterale per spostarli su un altro monitor",
+    "Zoom con due mani",
+    "Prova della GPU del display: in automatico si spegne da solo se è troppo lento",
+    "Si ferma da solo se rallenta la pagina"
+  ],
+  "settings": [
+    {
+      "key": "JARVIS_HANDS_FPS",
+      "label": "Analisi al secondo con una mano in vista",
+      "type": "select",
+      "default": "20",
+      "options": [
+        {"value": "10", "label": "10 (leggero)"},
+        {"value": "20", "label": "20 (bilanciato)"},
+        {"value": "30", "label": "30 (più reattivo, serve una buona GPU)"}
+      ]
+    },
+    {
+      "key": "JARVIS_HANDS_COUNT",
+      "label": "Mani riconosciute",
+      "type": "select",
+      "default": "2",
+      "options": [
+        {"value": "1", "label": "Una (metà del lavoro, niente zoom a due mani)"},
+        {"value": "2", "label": "Due (zoom a due mani)"}
+      ]
+    },
+    {
+      "key": "JARVIS_HANDS_MAX_MS",
+      "label": "Tempo massimo per analisi (in automatico oltre questo si spegne)",
+      "type": "select",
+      "default": "50",
+      "options": [
+        {"value": "30", "label": "30 ms (solo GPU veloci)"},
+        {"value": "50", "label": "50 ms (consigliato)"},
+        {"value": "90", "label": "90 ms (tollerante)"}
+      ]
+    }
+  ]
+}

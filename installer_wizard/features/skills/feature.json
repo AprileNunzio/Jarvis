@@ -1,0 +1,38 @@
+{
+  "id": "skills",
+  "name": "Algoritmi",
+  "icon": "∑",
+  "category": "conoscenza",
+  "order": 125,
+  "pinned": true,
+  "panel": "skills",
+  "description": "Calcoli, conversioni e procedure come algoritmi Python verificati: Jarvis li scrive una volta, li tiene in memoria e li riusa in millisecondi.",
+  "toggle": {
+    "env": "JARVIS_SKILLS",
+    "apply": []
+  },
+  "capabilities": [
+    "Calcolatrice, percentuali e IVA, conversioni, date",
+    "Nuovi algoritmi scritti da Jarvis",
+    "Controllo del codice e prova in ambiente isolato",
+    "Statistiche di utilizzo"
+  ],
+  "settings": [
+    {
+      "key": "JARVIS_SKILLS_GENERATE",
+      "label": "Jarvis scrive da solo nuovi algoritmi",
+      "type": "select",
+      "default": "1",
+      "options": [
+        {
+          "value": "1",
+          "label": "Sì, quando servono"
+        },
+        {
+          "value": "0",
+          "label": "No, solo quelli esistenti"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+.chat { display: flex; flex-direction: column; gap: 12px; height: 55vh; overflow: auto; padding: 4px; }
+.msg { max-width: 75%; padding: 10px 14px; border-radius: 12px; font-size: 14px; line-height: 1.5; white-space: pre-wrap; }
+.msg.me { align-self: flex-end; background: rgba(61, 123, 255, 0.22); }
+.msg.jv { align-self: flex-start; background: var(--cyan-soft); border: 1px solid var(--line); }
+.msg .meta { font-size: 11px; color: var(--text-faint); margin-top: 6px; }

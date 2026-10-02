@@ -1,0 +1,40 @@
+{
+  "id": "appearance",
+  "name": "Aspetto dell'assistente",
+  "icon": "🧑",
+  "category": "assistente",
+  "order": 40,
+  "description": "Ologramma 3D del volto in stile wireframe olografico (o nucleo leggero, scelto in base al dispositivo). Di norma mostra il viso; ruotando di lato si vede di più. Balla con la musica e dietro scorre il meteo di oggi.",
+  "capabilities": [
+    "Scelta automatica per ogni schermo",
+    "Ologramma wireframe azzurro, colore personalizzabile",
+    "Balla con la musica, sfondo meteo"
+  ],
+  "settings": [
+    {
+      "key": "JARVIS_AVATAR",
+      "label": "Aspetto",
+      "type": "select",
+      "default": "auto",
+      "options": [
+        {
+          "value": "auto",
+          "label": "Automatico (in base al dispositivo)"
+        },
+        {
+          "value": "full",
+          "label": "Ologramma 3D"
+        },
+        {
+          "value": "light",
+          "label": "Nucleo leggero"
+        }
+      ]
+    },
+    {
+      "key": "JARVIS_FACE_COLOR",
+      "label": "Colore dell'ologramma",
+      "type": "color"
+    }
+  ]
+}

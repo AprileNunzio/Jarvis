@@ -1,0 +1,37 @@
+{
+  "id": "os_networks",
+  "name": "Gestione Reti (Wi-Fi / BT)",
+  "icon": "\ud83d\udce1",
+  "priority": 85,
+  "size": "l",
+  "intents": [
+    "os_networks",
+    "wifi",
+    "bluetooth"
+  ],
+  "description": "Scansione e connessione a reti Wi-Fi e dispositivi Bluetooth.",
+  "ttl": 300,
+  "demo": {
+    "type": "wifi",
+    "devices": [
+      {
+        "name": "Jarvis_5G_Core",
+        "signal": 98,
+        "secure": true,
+        "connected": true
+      },
+      {
+        "name": "Guest_Net",
+        "signal": 45,
+        "secure": false,
+        "connected": false
+      },
+      {
+        "name": "Sony WH-1000XM5 (Bluetooth)",
+        "signal": 80,
+        "secure": true,
+        "connected": false
+      }
+    ]
+  }
+}

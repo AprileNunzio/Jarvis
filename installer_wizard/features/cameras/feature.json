@@ -1,0 +1,20 @@
+{
+  "id": "cameras",
+  "name": "Telecamere",
+  "icon": "📹",
+  "category": "percezione",
+  "order": 120,
+  "pinned": false,
+  "panel": "cameras",
+  "description": "Associa a ogni PC o nodo una webcam o una telecamera di rete (RTSP, ONVIF, Hikvision) e registra ad anello gli ultimi minuti. Registrazione spenta di default: va attivata con il consenso di chi viene ripreso.",
+  "toggle": {
+    "env": "JARVIS_CAMERAS",
+    "default": "0",
+    "apply": []
+  },
+  "capabilities": [
+    "Webcam o telecamere di rete (RTSP/ONVIF/Hikvision) per ogni nodo",
+    "Registrazione ad anello (5/15/60 minuti), credenziali cifrate",
+    "Consenso obbligatorio e indicatore di registrazione visibile"
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "id": "brain",
+  "name": "Cervello",
+  "icon": "✦",
+  "category": "assistente",
+  "order": 20,
+  "pinned": true,
+  "panel": "models",
+  "description": "I cervelli di Jarvis in un unico posto: modelli sul server e servizi cloud (OpenAI, Claude, Gemini, Grok, Mistral, DeepSeek e altri), mescolati in ordine di priorità, con il modello in uso sempre visibile.",
+  "capabilities": [
+    "Modello in uso sempre visibile, con origine e tempi",
+    "Liste di priorità miste locale e cloud",
+    "22 servizi cloud con elenchi di modelli reali e aggiornati",
+    "Chiavi cifrate sul disco",
+    "Modalità solo cloud, senza Ollama",
+    "Catalogo locale con valutazione dell'hardware e download",
+    "Instradamento automatico tra conversazione e ragionamento"
+  ]
+}

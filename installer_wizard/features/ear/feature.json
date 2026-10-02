@@ -1,0 +1,88 @@
+{
+  "id": "ear",
+  "name": "Ascolto vocale",
+  "icon": "🎙",
+  "category": "percezione",
+  "order": 70,
+  "description": "Parla a Jarvis dicendo «Jarvis» o «Ehi Jarvis»: ascolto offline con pulizia del rumore, conversazione continua e riconoscimento della persona dalla voce.",
+  "toggle": {
+    "env": "JARVIS_EAR",
+    "apply": [
+      "ear",
+      "music"
+    ]
+  },
+  "requires": {
+    "ram_gb": 3
+  },
+  "capabilities": [
+    "Attivazione istantanea «Ehi Jarvis»",
+    "Parola di attivazione «Jarvis»",
+    "Riduzione del rumore e amplificazione della voce",
+    "Conversazione continua: capisce se parli con lui",
+    "Impronta vocale di ogni persona",
+    "Trascrizione offline (faster-whisper) adattata all'hardware",
+    "Apprende le varianti del nome",
+    "Riconosce la lingua in cui parli"
+  ],
+  "settings": [
+    {
+      "key": "JARVIS_STT_MODEL",
+      "label": "Modello di ascolto",
+      "type": "select",
+      "default": "",
+      "apply": [
+        "ear"
+      ],
+      "options": [
+        {
+          "value": "",
+          "label": "Automatico (in base al processore)"
+        },
+        {
+          "value": "base",
+          "label": "base (veloce)"
+        },
+        {
+          "value": "small",
+          "label": "small (bilanciato)"
+        },
+        {
+          "value": "medium",
+          "label": "medium (preciso, lento)"
+        }
+      ]
+    },
+    {
+      "key": "JARVIS_EAR_MULTILANG",
+      "label": "Riconosci la lingua parlata",
+      "type": "select",
+      "default": "1",
+      "apply": [
+        "ear"
+      ],
+      "options": [
+        {
+          "value": "1",
+          "label": "Sì (Jarvis risponde nella tua lingua)"
+        },
+        {
+          "value": "0",
+          "label": "No, solo italiano"
+        }
+      ]
+    },
+    {
+      "key": "JARVIS_EAR_MAX_GAIN",
+      "label": "Amplificazione massima per sentire da lontano (2 - 80)",
+      "type": "number",
+      "default": "30"
+    },
+    {
+      "key": "JARVIS_EAR_TARGET_RMS",
+      "label": "Livello vocale obiettivo (0.03 - 0.2)",
+      "type": "number",
+      "default": "0.08"
+    }
+  ]
+}

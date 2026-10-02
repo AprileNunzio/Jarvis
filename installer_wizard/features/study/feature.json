@@ -1,0 +1,20 @@
+{
+  "id": "study",
+  "name": "Studio autonomo",
+  "icon": "🎓",
+  "category": "conoscenza",
+  "order": 120,
+  "panel": "study",
+  "description": "A riposo Jarvis studia le materie che scegli o che scopre dalle conversazioni, da base a esperto, e usa ciò che impara nelle risposte.",
+  "toggle": {
+    "hook": "study"
+  },
+  "requires": {
+    "ram_gb": 4
+  },
+  "capabilities": [
+    "Lezioni da fonti reali",
+    "Ripasso ed esami di livello",
+    "Memoria binaria → ternaria → coseno"
+  ]
+}

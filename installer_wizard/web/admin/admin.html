@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="it" translate="no">
+<head>
+<meta charset="UTF-8">
+<meta name="google" content="notranslate">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jarvis OS Admin</title>
+<link rel="stylesheet" href="/static/shared/jarvis.css">
+<link rel="stylesheet" href="/static/admin/admin.css">
+<jarvis-slot name="feature-styles"></jarvis-slot>
+</head>
+<body class="holo-grid">
+
+<div class="login" id="login">
+  <div class="panel">
+    <div class="brand">J.A.R.V.I.S.<small>PANNELLO DI CONTROLLO</small></div>
+    <form id="login-form" autocomplete="on">
+      <div><label for="u">Utente di sistema</label><input id="u" name="username" autocomplete="username" required></div>
+      <div><label for="p">Password</label><input id="p" name="password" type="password" autocomplete="current-password" required></div>
+      <button class="btn primary" type="submit">Accedi</button>
+      <div class="err" id="login-err"></div>
+      <div class="hint">Accesso consentito a root e agli utenti dei gruppi sudo o jarvis-admin.</div>
+    </form>
+  </div>
+</div>
+
+<div class="app" id="app">
+  <nav>
+    <div class="brand">J.A.R.V.I.S.<small>ADMIN</small></div>
+    <a data-tab="overview" class="on"><span class="ic">◉</span><span class="lb">Panoramica</span></a>
+    <a data-tab="features"><span class="ic">▦</span><span class="lb">Funzionalità</span></a>
+    <div class="sec">Preferiti</div>
+    <div id="nav-pinned" style="display:contents"></div>
+    <div class="sec">Sistema</div>
+    <a data-tab="steps"><span class="ic">☰</span><span class="lb">Installazione</span></a>
+    <a data-tab="config"><span class="ic">⚙</span><span class="lb">Configurazione</span></a>
+    <a data-tab="updates"><span class="ic">⟳</span><span class="lb">Aggiornamenti</span></a>
+    <a data-tab="logs"><span class="ic">▤</span><span class="lb">Log</span></a>
+    <a data-tab="events"><span class="ic">◷</span><span class="lb">Eventi</span></a>
+    <div class="spacer"></div>
+    <div class="who" id="who"></div>
+    <a id="logout"><span class="ic">⎋</span><span class="lb">Esci</span></a>
+  </nav>
+
+  <div class="content">
+    <div class="topbar">
+      <h1 id="title">Panoramica</h1>
+      <div class="row">
+        <span class="phase-pill"><span class="dot" id="phase-dot"></span><span id="phase-lbl">—</span></span>
+        <span class="dim mono" id="progress-lbl"></span>
+      </div>
+    </div>
+
+    <div class="panel fbar" id="fbar"></div>
+
+    <section class="tab" id="tab-features">
+      <div class="feat-tools">
+        <input id="feat-q" placeholder="Cerca una funzionalità…" autocomplete="off">
+        <div class="seg" id="feat-state"><button data-st="all" class="on">Tutte</button><button data-st="on">Attive</button><button data-st="off">Spente</button></div>
+        <button class="btn" id="feat-rescan" title="Rileggi le cartelle delle funzionalità e l'hardware">⟳ Scansiona</button>
+      </div>
+      <div class="chips" id="feat-cats"></div>
+      <div class="feat-grid" id="feat-grid"></div>
+      <div class="muted-note" id="feat-note"></div>
+    </section>
+
+    <section class="tab" id="tab-feature"><div class="panel" id="feature-page"></div></section>
+
+
+    <section class="tab on" id="tab-overview">
+      <div class="grid g4" style="margin-bottom:18px">
+        <div class="panel stat"><div class="panel-title">Processore</div><div class="v" id="s-cpu">—</div><div class="bar"><i id="b-cpu"></i></div><div class="s" id="s-load"></div></div>
+        <div class="panel stat"><div class="panel-title">Memoria</div><div class="v" id="s-mem">—</div><div class="bar"><i id="b-mem"></i></div><div class="s" id="s-mem2"></div></div>
+        <div class="panel stat"><div class="panel-title">Disco</div><div class="v" id="s-disk">—</div><div class="bar"><i id="b-disk"></i></div><div class="s" id="s-disk2"></div></div>
+        <div class="panel stat"><div class="panel-title">Sistema</div><div class="v" id="s-up">—</div><div class="s" id="s-host"></div></div>
+      </div>
+      <div class="grid g2">
+        <div class="panel">
+          <div class="panel-title">Componenti</div>
+          <table><thead><tr><th></th><th>Componente</th><th>Stato</th><th></th></tr></thead><tbody id="comp-body"></tbody></table>
+        </div>
+        <div class="panel">
+          <div class="panel-title">Azioni rapide</div>
+          <div class="actions" style="margin-bottom:16px">
+            <button class="btn primary" data-action="repair">Verifica e ripara tutto</button>
+            <button class="btn" data-action="update-check">Controlla aggiornamenti</button>
+            <button class="btn" data-action="restart-supervisor" data-confirm="Riavviare il supervisore? L'interfaccia si ricollegherà automaticamente.">Riavvia supervisore</button>
+            <button class="btn danger" data-action="reboot" data-confirm="Riavviare il sistema?">Riavvia sistema</button>
+          </div>
+          <div class="panel-title">Stato corrente</div>
+          <div id="cur-msg" style="font-size:14px"></div>
+          <div class="mono dim" id="cur-detail" style="margin-top:6px"></div>
+          <div id="cur-err" style="margin-top:8px; color:var(--red); font-size:13px"></div>
+          <div class="bar" style="margin-top:14px"><i id="b-progress"></i></div>
+          <div class="muted-note" id="boot-info"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="tab" id="tab-steps">
+      <div class="panel">
+        <div class="panel-title">Step di convergenza</div>
+        <table><thead><tr><th>Step</th><th>Stato</th><th>Tentativi</th><th>Durata</th><th>Dettaglio</th><th></th></tr></thead><tbody id="steps-body"></tbody></table>
+        <div class="muted-note">Ogni step è idempotente: a ogni avvio viene verificato e riparato solo se necessario. "Riesegui" forza la reinstallazione del componente.</div>
+      </div>
+    </section>
+
+
+    <section class="tab" id="tab-config">
+      <div class="panel">
+        <div class="panel-title">Impostazioni</div>
+        <form id="config-form"><div class="form-grid" id="config-fields"></div>
+          <div class="actions" style="margin-top:20px"><button class="btn primary">Salva e applica</button></div>
+        </form>
+        <div class="muted-note">Le modifiche vengono salvate in /etc/jarvis/jarvis.env e applicate automaticamente (riavvio dei soli componenti interessati).</div>
+      </div>
+      <div class="panel" style="margin-top:18px">
+        <div class="panel-title">Parametri rilevati dal sistema</div>
+        <table><tbody id="config-system"></tbody></table>
+      </div>
+    </section>
+
+    <section class="tab" id="tab-updates">
+      <div class="panel">
+        <div class="panel-title">Aggiornamento autonomo da GitHub</div>
+        <table><tbody id="upd-body"></tbody></table>
+        <div class="actions" style="margin-top:16px">
+          <button class="btn" data-action="update-check">Controlla ora</button>
+          <button class="btn primary" data-action="update-apply" data-confirm="Applicare l'aggiornamento? Jarvis verrà riavviato e, in caso di problemi, ripristinato automaticamente.">Aggiorna ora</button>
+        </div>
+        <div class="panel-title" style="margin-top:22px">Novità disponibili</div>
+        <pre class="log" id="upd-log" style="height:auto; max-height:40vh"></pre>
+      </div>
+    </section>
+
+    <section class="tab" id="tab-logs">
+      <div class="panel">
+        <div class="row" style="margin-bottom:12px; flex-wrap:wrap">
+          <select id="log-src" style="max-width:260px">
+            <option value="install">Installazione e step</option>
+            <option value="supervisor">Supervisore</option>
+            <option value="core">Jarvis Core</option>
+            <option value="ollama">Motore neurale</option>
+            <option value="kiosk">Display kiosk</option>
+            <option value="rollback">Rollback</option>
+          </select>
+          <button class="btn" id="log-refresh">Aggiorna</button>
+          <label class="row" style="margin:0; gap:6px"><input type="checkbox" id="log-auto" style="width:auto" checked> auto</label>
+        </div>
+        <pre class="log" id="log-text">Caricamento…</pre>
+      </div>
+    </section>
+
+    <section class="tab" id="tab-events">
+      <div class="panel events">
+        <div class="panel-title">Registro eventi (audit)</div>
+        <table><thead><tr><th>Ora</th><th>Livello</th><th>Componente</th><th>Evento</th></tr></thead><tbody id="events-body"></tbody></table>
+      </div>
+    </section>
+
+<jarvis-slot name="feature-tabs"></jarvis-slot>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<div class="link-lost" id="link"><div class="spinner"></div>Riconnessione al supervisore</div>
+
+<script src="/static/shared/core.js"></script>
+<script src="/static/admin/shell.js"></script>
+<script src="/static/admin/sortable.js"></script>
+<script src="/static/admin/features.js"></script>
+<script src="/static/admin/system.js"></script>
+<jarvis-slot name="feature-scripts"></jarvis-slot>
+<script src="/static/admin/boot.js"></script>
+</body>
+</html>

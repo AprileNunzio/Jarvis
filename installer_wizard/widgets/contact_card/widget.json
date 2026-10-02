@@ -1,0 +1,18 @@
+{
+  "id": "contact_card",
+  "name": "Directory Contatti",
+  "icon": "\ud83d\udcf1",
+  "priority": 100,
+  "size": "m",
+  "intents": [
+    "contact_card"
+  ],
+  "description": "Visualizza numeri di telefono e dettagli VCard.",
+  "ttl": 120,
+  "demo": {
+    "name": "Mario Rossi",
+    "phone": "+39 333 1234567",
+    "company": "Tech Corp OS",
+    "email": "admin@local.host"
+  }
+}

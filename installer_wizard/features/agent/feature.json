@@ -1,0 +1,23 @@
+{
+  "id": "agent",
+  "name": "Agente con strumenti",
+  "icon": "🛠",
+  "category": "assistente",
+  "order": 16,
+  "pinned": false,
+  "panel": "",
+  "toggle": { "env": "JARVIS_AGENT", "apply": [] },
+  "description": "Jarvis ragiona passo per passo e usa strumenti veri finché il compito è finito: anche richieste a catena come «creami un martello in 3D e mandalo per email a Marco».",
+  "capabilities": [
+    "File e cartelle: crea, leggi, scrivi, copia, sposta, comprimi, cerca; le cancellazioni vanno nel cestino",
+    "Display: apre, chiude e sposta i widget tra i monitor",
+    "Ologramma: azioni, espressioni, inquadrature, accessori e colore",
+    "Modelli 3D: li progetta, li mostra e li allega",
+    "Email con allegati (Gmail collegato o SMTP) e cartelle condivise SMB",
+    "Terminale e pagine web (accesso completo)",
+    "Conferma a voce prima di email, cancellazioni, comandi che modificano il sistema e scritture fuori dalla cartella di lavoro"
+  ],
+  "settings": [
+    { "key": "JARVIS_AGENT_ACCESS", "label": "Livello di accesso", "type": "select", "options": ["completo", "standard"] }
+  ]
+}

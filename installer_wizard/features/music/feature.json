@@ -1,0 +1,25 @@
+{
+  "id": "music",
+  "name": "Riconoscimento musicale",
+  "icon": "🎵",
+  "category": "percezione",
+  "order": 80,
+  "panel": "music",
+  "description": "Riconosce il brano che suona nella stanza e mostra titolo, artista, album e biografia.",
+  "toggle": {
+    "env": "JARVIS_MUSIC_ID",
+    "apply": [
+      "music"
+    ]
+  },
+  "requires": {
+    "features": [
+      "ear"
+    ]
+  },
+  "capabilities": [
+    "Brano in ascolto",
+    "Storico degli ascolti",
+    "Biografia dell'artista"
+  ]
+}

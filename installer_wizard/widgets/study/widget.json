@@ -1,0 +1,20 @@
+{
+  "id": "study",
+  "name": "Studio in corso",
+  "icon": "\ud83c\udf93",
+  "priority": 10,
+  "size": "s",
+  "bind": {
+    "attr": "study",
+    "when": {
+      "state": "studying"
+    }
+  },
+  "description": "Materia e livello che Jarvis sta studiando nei momenti di riposo.",
+  "demo": {
+    "state": "studying",
+    "topic": "Elettronica",
+    "level": "Intermedio",
+    "detail": "Lezione: il transistor come interruttore"
+  }
+}

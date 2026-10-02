@@ -1,0 +1,28 @@
+<section class="tab" id="tab-spotify">
+  <div class="grid g2">
+    <div class="panel">
+      <div class="panel-title">Account</div>
+      <div id="sp-status" style="font-size:15px; margin-bottom:14px">—</div>
+      <form id="sp-creds" class="form-grid" style="grid-template-columns:1fr">
+        <div><label>Client ID</label><input id="sp-id" autocomplete="off"></div>
+        <div><label>Client Secret</label><input id="sp-secret" type="password" autocomplete="off" placeholder="non impostato"></div>
+        <div class="actions"><button class="btn">Salva credenziali</button><button class="btn primary" type="button" id="sp-auth">Collega account</button><button class="btn danger" type="button" id="sp-off">Scollega</button></div>
+      </form>
+      <div id="sp-finish" style="display:none; margin-top:14px">
+        <label>Dopo aver accettato, incolla qui l'indirizzo della pagina che non si apre (inizia con http://127.0.0.1:8888/callback?code=…)</label>
+        <form class="row" id="sp-finish-form"><input id="sp-url" autocomplete="off"><button class="btn primary">Conferma</button></form>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Come si collega</div>
+      <ol class="muted-note" style="line-height:1.8; padding-left:18px; margin-top:0">
+        <li>Apri <a href="https://developer.spotify.com/dashboard" target="_blank" rel="noopener" style="color:var(--cyan)">developer.spotify.com/dashboard</a> e crea un'app (Web API).</li>
+        <li>In «Redirect URIs» aggiungi <code id="sp-redirect">http://127.0.0.1:8888/callback</code>.</li>
+        <li>Copia Client ID e Client Secret qui a fianco e premi «Salva credenziali».</li>
+        <li>Premi «Collega account», accetta e incolla l'indirizzo finale.</li>
+      </ol>
+      <div class="panel-title" style="margin-top:14px">In riproduzione</div>
+      <div id="sp-now" class="faint">—</div>
+    </div>
+  </div>
+</section>

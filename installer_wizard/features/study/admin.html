@@ -1,0 +1,48 @@
+<section class="tab" id="tab-study">
+  <div class="grid g4" style="margin-bottom:18px">
+    <div class="panel stat"><div class="panel-title">Stato</div><div class="study-state" id="st-state">—</div><div class="s" id="st-detail"></div></div>
+    <div class="panel stat"><div class="panel-title">Memoria a lungo termine</div><div class="v" id="st-cells">—</div><div class="s" id="st-mem"></div></div>
+    <div class="panel stat"><div class="panel-title">Tempo di studio</div><div class="v" id="st-time">—</div><div class="s" id="st-time2"></div></div>
+    <div class="panel stat"><div class="panel-title">Attività svolte</div><div class="v" id="st-tasks">—</div><div class="s" id="st-tasks2"></div></div>
+  </div>
+  <div class="grid g2">
+    <div class="grid" style="gap:18px; align-content:start">
+      <div class="panel">
+        <div class="row" style="justify-content:space-between; flex-wrap:wrap; margin-bottom:12px">
+          <div class="panel-title" style="margin:0">Materie</div>
+          <button class="btn" id="st-now">▶ Studia ora (30 min)</button>
+        </div>
+        <form id="st-add" class="form-grid" style="grid-template-columns: 2fr 1fr 1fr auto; align-items:end; gap:10px; margin-bottom:16px">
+          <div><label>Nuova materia</label><input id="st-name" placeholder="es. Elettronica, Cucina, Python…" maxlength="60"></div>
+          <div><label>Fino al livello</label><select id="st-target"></select></div>
+          <div><label>Priorità</label><select id="st-prio"><option value="1">1 bassa</option><option value="2">2</option><option value="3" selected>3 normale</option><option value="4">4</option><option value="5">5 massima</option></select></div>
+          <button class="btn primary">Aggiungi</button>
+          <div class="wide"><input id="st-focus" placeholder="Preferenze (facoltative): es. elettronica digitale, microcontrollori ESP32, riparazioni" maxlength="300"></div>
+        </form>
+        <div class="topics" id="st-topics"></div>
+        <div id="st-mentions" style="margin-top:16px"></div>
+      </div>
+      <div class="panel" id="st-detail-panel" style="display:none"></div>
+    </div>
+    <div class="grid" style="gap:18px; align-content:start">
+      <div class="panel">
+        <div class="panel-title">Impostazioni dello studio <span class="saved" id="st-saved">✓ salvato</span></div>
+        <div class="form-grid" id="st-settings"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">Interroga la memoria</div>
+        <form class="row" id="st-search"><input id="st-q" placeholder="Chiedi qualcosa che Jarvis ha studiato…"><button class="btn">Cerca</button></form>
+        <div class="muted-note" id="st-timing">Ricerca a cascata: indice binario (1 bit per dimensione) → ternario (−1/0/+1) → coseno esatto.</div>
+        <div id="st-hits"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">Consolidamento nei pesi (Soup) · sperimentale</div>
+        <div id="st-soup"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">Diario di studio</div>
+        <div class="journal" id="st-journal"></div>
+      </div>
+    </div>
+  </div>
+</section>

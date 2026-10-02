@@ -1,0 +1,13 @@
+{
+  "id": "thinking_tree",
+  "name": "Albero Decisionale",
+  "icon": "\ud83e\udde0",
+  "priority": 80,
+  "size": "l",
+  "intents": [
+    "thinking_tree"
+  ],
+  "description": "Logica dell'agente",
+  "ttl": 120,
+  "demo": {}
+}

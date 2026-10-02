@@ -1,0 +1,29 @@
+{
+  "id": "rag_sources",
+  "name": "Fonti Documentali",
+  "icon": "\ud83d\udcda",
+  "priority": 60,
+  "size": "l",
+  "intents": [
+    "rag_sources"
+  ],
+  "description": "Fonti citate",
+  "ttl": 180,
+  "demo": {
+    "query": "Analisi architetturale Agentic OS",
+    "sources": [
+      {
+        "name": "system_design_v2.pdf",
+        "relevance": 98
+      },
+      {
+        "name": "github.com/AprileNunzio/Jarvis",
+        "relevance": 91
+      },
+      {
+        "name": "Local Vector DB (Chroma)",
+        "relevance": 85
+      }
+    ]
+  }
+}

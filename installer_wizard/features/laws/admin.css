@@ -1,0 +1,10 @@
+#tab-laws .lw-list { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+#tab-laws .lw-item { display: flex; align-items: flex-start; gap: 12px; padding: 10px 12px; border-radius: 10px;
+  background: rgba(255,255,255,.03); border: 1px solid var(--line, #22303d); }
+#tab-laws .lw-fixed { border-left: 3px solid var(--cyan); }
+#tab-laws .lw-n { flex: 0 0 24px; text-align: center; font-weight: 700; color: var(--cyan); font-size: 1.05rem; }
+#tab-laws .lw-item > div:nth-child(2) { flex: 1; }
+#tab-laws .lw-item .nm { font-weight: 600; }
+#tab-laws .lw-item .nt { color: var(--dim); font-size: 13px; margin-top: 2px; }
+#tab-laws .lw-edit { flex: 1; padding: 4px 6px; border-radius: 6px; outline: none; }
+#tab-laws .lw-edit:focus { background: rgba(255,255,255,.06); box-shadow: 0 0 0 1px var(--cyan); }

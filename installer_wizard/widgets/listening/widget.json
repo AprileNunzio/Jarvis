@@ -1,0 +1,12 @@
+{
+  "id": "listening",
+  "name": "In ascolto",
+  "icon": "🎙",
+  "priority": 5,
+  "size": "s",
+  "chrome": false,
+  "overlay": true,
+  "pos": { "x": 0.12, "y": 0.86 },
+  "bind": "ear_widget",
+  "description": "Indicatore semitrasparente dell'ascolto: si accende quando Jarvis ti ascolta e segnala se il microfono non funziona."
+}

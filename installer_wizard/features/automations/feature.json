@@ -1,0 +1,20 @@
+{
+  "id": "automations",
+  "name": "Automazioni",
+  "icon": "⚙️",
+  "category": "assistente",
+  "order": 12,
+  "pinned": true,
+  "panel": "automations",
+  "toggle": { "env": "JARVIS_AUTOMATIONS", "apply": [] },
+  "description": "Motore di automazione a più stadi: inneschi multipli, condizioni annidate, azioni con rami, attese, ripetizioni, parallelo, conferme a voce, variabili e traccia passo per passo di ogni esecuzione.",
+  "capabilities": [
+    "Inneschi: orari e giorni, intervalli, alba e tramonto con spostamento, cambi di stato di dispositivi (anche soglie e durata), presenze, frasi dette a Jarvis, eventi (email, agenda, guasti, avvio), espressioni, webhook",
+    "Condizioni annidate E/O/NON: fasce orarie, stati con durata, presenze, giorno/notte, orario di silenzio, espressioni",
+    "Azioni: dispositivi Home Assistant, voce, notifiche (display, voce, Telegram, email), widget, ologramma, suoni, agente con strumenti, email, richieste web, eventi",
+    "Controllo di flusso: se/altrimenti, scelta tra più casi, rami paralleli, ripetizioni (volte, mentre, finché), attese di tempo, stato, evento o espressione, conferma a voce sì/no",
+    "Variabili per esecuzione e globali, espressioni {{ … }}, modalità singola/riavvia/coda/parallela, pausa minima tra esecuzioni",
+    "Progettazione a parole («crea un'automazione che…») con verifica automatica, modelli pronti, importa/esporta",
+    "Storico con traccia di ogni passo, durata ed errori; esecuzioni in corso fermabili"
+  ]
+}

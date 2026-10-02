@@ -1,0 +1,16 @@
+{
+  "id": "people",
+  "name": "Persone",
+  "icon": "☺",
+  "category": "casa",
+  "order": 50,
+  "pinned": true,
+  "panel": "people",
+  "description": "Anagrafe completa: volti, relazioni, ricorrenze, preferenze e abitudini di ogni persona.",
+  "capabilities": [
+    "Registrazione automatica dei volti",
+    "Compleanni e onomastici",
+    "Relazioni",
+    "Abitudini"
+  ]
+}

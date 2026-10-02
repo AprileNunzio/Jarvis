@@ -1,0 +1,13 @@
+{
+  "id": "energy_chart",
+  "name": "Energy Grid",
+  "icon": "\u26a1",
+  "priority": 30,
+  "size": "l",
+  "intents": [
+    "energy_chart"
+  ],
+  "description": "Watt usage",
+  "ttl": 300,
+  "demo": {}
+}

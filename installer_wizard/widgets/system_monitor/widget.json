@@ -1,0 +1,13 @@
+{
+  "id": "system_monitor",
+  "name": "Monitor di Sistema",
+  "icon": "\ud83d\udcca",
+  "priority": 20,
+  "size": "l",
+  "ttl": 60,
+  "intents": [
+    "system_monitor"
+  ],
+  "description": "Diagnostica CPU/RAM (Enterprise).",
+  "demo": {}
+}

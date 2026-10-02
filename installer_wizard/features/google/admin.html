@@ -1,0 +1,36 @@
+<section class="tab" id="tab-google">
+  <div class="panel gg-people-panel">
+    <div class="gg-head">
+      <div><div class="panel-title" style="margin:0">Account Google delle persone</div>
+        <div class="muted-note">Ognuno collega il proprio account: Jarvis mostra agenda, posta, attività e note solo alla persona che riconosce, e non legge le email se ci sono altre persone.</div></div>
+      <span id="gg-app-badge"></span>
+    </div>
+    <div class="gg-finish" id="gg-finish">
+      <label>Dopo aver accettato su Google, incolla qui l'indirizzo della pagina che non si apre (inizia con http://127.0.0.1:8889/?…code=…)</label>
+      <form class="row" id="gg-finish-form"><input id="gg-url" autocomplete="off"><button class="btn primary">Conferma</button></form>
+    </div>
+    <div class="gg-grid" id="gg-people"></div>
+  </div>
+
+  <div class="grid g2">
+    <div class="panel">
+      <div class="panel-title">App Google della casa</div>
+      <form id="gg-creds" class="form-grid" style="grid-template-columns:1fr">
+        <div><label>Client ID</label><input id="gg-id" autocomplete="off"></div>
+        <div><label>Client Secret</label><input id="gg-secret" type="password" autocomplete="off" placeholder="non impostato"></div>
+        <div class="actions"><button class="btn primary">Salva</button></div>
+      </form>
+      <div class="muted-note" style="margin-top:10px">Una sola app per tutta la casa: ogni persona poi collega il proprio account qui sopra.</div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Come si prepara l'app (una volta sola)</div>
+      <ol class="muted-note" style="line-height:1.8; padding-left:18px; margin-top:0">
+        <li>Apri <a href="https://console.cloud.google.com/projectcreate" target="_blank" rel="noopener noreferrer" style="color:var(--cyan)">console.cloud.google.com</a> e crea un progetto (es. «Jarvis»).</li>
+        <li>In «API e servizi → Libreria» abilita: <span id="gg-apis" class="mono"></span>.</li>
+        <li>In «Schermata consenso OAuth» scegli «Esterno», aggiungi come utenti di test le email di tutta la famiglia, poi «Pubblica app» (in modalità test Google scollega gli account ogni 7 giorni).</li>
+        <li>In «Credenziali → Crea credenziali → ID client OAuth» scegli <b>App desktop</b> e copia Client ID e Client Secret qui a fianco.</li>
+      </ol>
+      <div class="muted-note">Keep ha API solo per gli account Google Workspace (aziendali).</div>
+    </div>
+  </div>
+</section>

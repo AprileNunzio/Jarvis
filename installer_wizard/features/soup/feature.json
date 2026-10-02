@@ -1,0 +1,37 @@
+{
+  "id": "soup",
+  "name": "Consolidamento nei pesi (Soup)",
+  "icon": "🧬",
+  "category": "conoscenza",
+  "order": 130,
+  "panel": "study",
+  "description": "Di notte trasferisce ciò che ha studiato nei pesi di un modello personale (LoRA). Sperimentale: richiede una GPU adatta.",
+  "toggle": {
+    "env": "JARVIS_STUDY_FINETUNE",
+    "tri": true,
+    "default": "auto",
+    "apply": [
+      "soup"
+    ]
+  },
+  "requires": {
+    "gpu_vram_gb": 4,
+    "ram_gb": 8,
+    "features": [
+      "study"
+    ]
+  },
+  "capabilities": [
+    "Dataset dagli appunti",
+    "Addestramento notturno",
+    "Modello «jarvis-studio» in Ollama"
+  ],
+  "settings": [
+    {
+      "key": "JARVIS_STUDY_BASE_MODEL",
+      "label": "Modello base (Hugging Face)",
+      "type": "text",
+      "placeholder": "Qwen/Qwen2.5-1.5B-Instruct"
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+set -euo pipefail
+API=http://127.0.0.1:8080/api/internal
+C='\033[0;36m'; G='\033[0;32m'; R='\033[0;31m'; N='\033[0m'
+
+call() {
+    curl -fsS --max-time "${2:-30}" -X POST -H "X-Jarvis-Request: 1" "$API/$1" \
+        || { echo -e "${R}Il supervisore non risponde (systemctl status jarvis-supervisor)${N}" >&2; exit 1; }
+}
+
+case "${1:-status}" in
+    status)
+        curl -fsS --max-time 10 http://127.0.0.1/api/state | jq -r '
+          "Fase:      \(.phase_label) (\(.phase)) — \(.progress)%",
+          "Messaggio: \(.message)",
+          (if .last_error != "" then "Errore:    \(.last_error)" else empty end),
+          "Modello:   \(.llm_model)",
+          "",
+          "Componenti:", (.components | to_entries[] | "  \(.value.status | if . == "ok" then "●" else "○" end) \(.value.label): \(.value.detail)"),
+          "",
+          "Step:", (.catalog[] as $c | "  \($c.title): \(.steps[$c.id].status // "in attesa")")'
+        ;;
+    update)
+        echo -e "${C}Controllo aggiornamenti su GitHub…${N}"
+        call update 60 | jq -r '.message'
+        ;;
+    repair)
+        call repair | jq -r '.message'
+        ;;
+    logs)
+        src=${2:-install}
+        case "$src" in
+            install) tail -n 200 -f /var/log/jarvis/install.log ;;
+            supervisor|ollama) journalctl -fu "${src/supervisor/jarvis-supervisor}" ;;
+            voice|vision|ear) journalctl -fu "jarvis-$src" ;;
+            core) docker logs -f --tail 200 jarvis-core ;;
+            *) echo "Sorgenti: install supervisor core ollama voice vision ear" >&2; exit 2 ;;
+        esac
+        ;;
+    version)
+        git -c safe.directory='*' -C /opt/Jarvis log -1 --format='%h %ci %s'
+        ;;
+    *)
+        sed -n '3,10p' "$0" | sed 's/^# \{0,1\}//'
+        exit 2
+        ;;
+esac

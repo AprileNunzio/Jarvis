@@ -1,0 +1,13 @@
+{
+  "id": "active_tasks",
+  "name": "Task Attivi",
+  "icon": "\ud83e\udd16",
+  "priority": 40,
+  "size": "l",
+  "ttl": 60,
+  "intents": [
+    "active_tasks"
+  ],
+  "description": "Coda di pensiero e azioni dell'Agente.",
+  "demo": {}
+}

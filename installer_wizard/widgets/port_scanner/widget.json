@@ -1,0 +1,13 @@
+{
+  "id": "port_scanner",
+  "name": "Port Scanner",
+  "icon": "\ud83d\udd0d",
+  "priority": 85,
+  "size": "m",
+  "intents": [
+    "port_scanner"
+  ],
+  "description": "Nmap results",
+  "ttl": 180,
+  "demo": {}
+}

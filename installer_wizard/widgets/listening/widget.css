@@ -1,0 +1,9 @@
+.w-listening { background: transparent !important; border: none !important; box-shadow: none !important; padding: 0 !important; width: auto !important; }
+.ls-box { display: inline-flex; align-items: center; gap: 10px; padding: 8px 14px; border-radius: 999px;
+  background: rgba(6, 14, 26, 0.35); border: 1px solid rgba(41, 224, 255, 0.18); color: var(--text-dim);
+  font-size: 13px; opacity: 0.45; transition: opacity 0.4s, border-color 0.4s, background 0.4s, color 0.4s; backdrop-filter: blur(6px); }
+.ls-box .ls-bars { display: inline-flex; align-items: center; gap: 2px; height: 30px; }
+.ls-box .ls-bars i { display: block; width: 3px; height: 3px; border-radius: 2px; background: currentColor; transition: height 0.08s; }
+.ls-box.listening, .ls-box.transcribing { opacity: 0.95; color: #3dffa8; border-color: rgba(61, 255, 168, 0.55); background: rgba(6, 26, 18, 0.55); }
+.ls-box.transcribing { color: #b36bff; border-color: rgba(179, 107, 255, 0.55); }
+.ls-box.off { opacity: 0.85; color: var(--amber, #ffb547); border-color: rgba(255, 181, 71, 0.5); }

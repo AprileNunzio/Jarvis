@@ -1,0 +1,26 @@
+<section class="tab" id="tab-voices">
+  <div class="grid g2">
+    <div class="panel">
+      <div class="panel-title">Ordine di priorità</div>
+      <div class="muted-note" style="margin:0 0 12px">Jarvis parla con la prima voce disponibile. Se il motore non risponde o la voce non è scaricata passa alla successiva. Trascina per riordinare.</div>
+      <div class="prio" id="vo-order"></div>
+      <div class="actions" style="margin-top:12px"><button class="btn sm" id="vo-reset">Ripristina predefinito</button></div>
+      <div class="muted-note" id="vo-note"></div>
+    </div>
+    <div class="panel">
+      <div class="row" style="justify-content:space-between; flex-wrap:wrap; margin-bottom:12px">
+        <div class="panel-title" style="margin:0">Voci disponibili</div>
+        <select id="vo-lang" style="max-width:200px"></select>
+      </div>
+      <div class="muted-note" id="vo-summary" style="margin:0 0 10px"></div>
+      <div class="row" style="gap:8px; margin-bottom:10px">
+        <input id="vo-search" placeholder="Cerca per nome, lingua o motore (es. Diego, online, maschile)" style="flex:1">
+        <select id="vo-engine" style="max-width:140px"><option value="">Tutti i motori</option><option value="kokoro">Kokoro</option><option value="online">Online</option><option value="piper">Piper</option></select>
+      </div>
+      <input id="vo-text" placeholder="Frase di prova (facoltativa; predefinita nella lingua della voce)" style="margin-bottom:10px">
+      <div class="cat-list" id="vo-list"></div>
+      <div class="muted-note">★ = voce che Jarvis usa quando parla in quella lingua (senza stella la sceglie da solo e, se manca, la scarica). Chiedigli «parlami in inglese», «insegnami il tedesco» o «scarica la voce francese».</div>
+      <div class="mono dim" id="vo-pull" style="margin-top:10px; font-size:12px"></div>
+    </div>
+  </div>
+</section>

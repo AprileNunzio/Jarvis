@@ -1,0 +1,26 @@
+{
+  "id": "route",
+  "name": "Viaggio",
+  "icon": "🚗",
+  "priority": 72,
+  "size": "m",
+  "intents": [
+    "maps"
+  ],
+  "panel_type": "route",
+  "ttl": 900,
+  "description": "Percorso e tempo di viaggio con il traffico: dopo una domanda, al mattino per il lavoro e prima degli appuntamenti con un luogo.",
+  "demo": {
+    "title": "Festa da Marco",
+    "to": "Via Chiaia 20, Napoli",
+    "mode": "in auto",
+    "duration": "25 minuti",
+    "minutes": 25,
+    "delay": 6,
+    "distance": "9,4 km",
+    "via": "Tangenziale",
+    "arrive_at": "21:00",
+    "leave_by": "20:30",
+    "traffic": true
+  }
+}

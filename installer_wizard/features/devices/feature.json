@@ -1,0 +1,14 @@
+{
+  "id": "devices",
+  "name": "Audio del display",
+  "icon": "🔊",
+  "category": "percezione",
+  "order": 90,
+  "panel": "audio",
+  "description": "Casse, cuffie e microfoni del display: dispositivo in uso, volume e muto, aggiornati in tempo reale.",
+  "capabilities": [
+    "Dispositivi audio in tempo reale",
+    "Volume e muto",
+    "Profili delle schede audio"
+  ]
+}

@@ -1,0 +1,13 @@
+.w-alarm { border-color: rgba(255,77,106,0.7) !important; text-align: center;
+           background: radial-gradient(circle at center, rgba(255,40,70,0.38), rgba(20,0,6,0.92) 72%) !important;
+           box-shadow: 0 0 60px rgba(255,40,70,0.35) !important; animation: al-pulse 1.4s ease-in-out infinite; }
+.w-alarm .w-body { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; position: relative; padding: 20px; }
+.al-ring { position: absolute; width: min(320px, 60%); aspect-ratio: 1; border-radius: 50%; border: 3px solid rgba(255,77,106,0.8); top: 50%; left: 50%;
+           transform: translate(-50%, -62%); animation: al-ring 1.4s ease-out infinite; }
+.al-icon { font-size: clamp(70px, 14vh, 130px); filter: drop-shadow(0 0 30px rgba(255,77,106,0.9)); }
+.al-title { font-size: clamp(34px, 6vh, 64px); font-weight: 300; letter-spacing: 0.08em; color: #fff; text-transform: uppercase; }
+.al-room { font-size: clamp(20px, 3vh, 30px); color: #ffb3c0; }
+.al-msg { font-size: 18px; color: #ffd6dd; max-width: 720px; line-height: 1.5; }
+.al-time { font-family: var(--mono); color: rgba(255,214,221,0.6); font-size: 13px; }
+@keyframes al-pulse { 50% { box-shadow: 0 0 110px rgba(255,40,70,0.6); } }
+@keyframes al-ring { from { transform: translate(-50%, -62%) scale(0.6); opacity: 1; } to { transform: translate(-50%, -62%) scale(1.8); opacity: 0; } }

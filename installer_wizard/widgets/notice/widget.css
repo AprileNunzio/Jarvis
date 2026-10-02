@@ -1,0 +1,5 @@
+.no-row { display: flex; gap: 12px; align-items: flex-start; }
+.no-ic { font-size: 22px; }
+.no-t { font-size: 14px; font-weight: 500; }
+.no-x { font-size: 12.5px; color: var(--text-dim); margin-top: 3px; line-height: 1.45; }
+.w-notice.no-warn { border-color: rgba(255,181,71,0.5) !important; }

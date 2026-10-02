@@ -1,0 +1,22 @@
+<section class="tab" id="tab-people">
+  <div class="people-grid">
+    <div class="grid" style="gap:18px; align-content:start">
+      <div class="panel">
+        <div class="panel-title">Webcam in diretta</div>
+        <img class="cam" id="cam" alt="Webcam">
+        <div class="muted-note" id="presence-line">—</div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">Prossime ricorrenze</div>
+        <div id="reminders" class="reminders"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">Anagrafe</div>
+        <input id="people-search" placeholder="Cerca per nome, etichetta, lavoro…" style="margin-bottom:10px">
+        <form class="row" id="person-new" style="margin-bottom:12px"><input id="person-new-name" placeholder="Nome e cognome della nuova persona" maxlength="40"><button class="btn">Aggiungi</button></form>
+        <div class="people-list" id="people-list"></div>
+      </div>
+    </div>
+    <div class="panel" id="person-detail"><div class="faint">Seleziona una persona dall'anagrafe o aggiungine una nuova. Chi si presenta davanti alla webcam viene aggiunto automaticamente.</div></div>
+  </div>
+</section>

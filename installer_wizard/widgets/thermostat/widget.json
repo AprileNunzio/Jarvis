@@ -1,0 +1,18 @@
+{
+  "id": "thermostat",
+  "name": "Thermostat",
+  "icon": "\ud83c\udf21\ufe0f",
+  "priority": 45,
+  "size": "m",
+  "intents": [
+    "thermostat"
+  ],
+  "description": "Temperature",
+  "ttl": 120,
+  "demo": {
+    "current": 21.5,
+    "target": 23.0,
+    "status": "Riscaldamento Attivo",
+    "humidity": 45
+  }
+}

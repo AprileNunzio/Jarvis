@@ -1,0 +1,21 @@
+.bt-head { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 18px; }
+.bt-status { flex: 1 1 320px; font-size: 13px; }
+.bt-status b { font-size: 16px; display: block; margin-bottom: 4px; }
+.bt-tools { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+.bt-orders { margin-bottom: 18px; }
+.bt-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
+.bt-card { border: 1px solid var(--line); border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 10px; background: rgba(2, 8, 16, 0.45); }
+.bt-card.on { border-color: rgba(61, 255, 168, 0.45); }
+.bt-top { display: flex; gap: 12px; align-items: center; }
+.bt-ico { font-size: 26px; width: 44px; height: 44px; display: grid; place-items: center; border-radius: 12px; border: 1px solid var(--line-strong); flex: none; }
+.bt-name { font-weight: 600; overflow-wrap: anywhere; }
+.bt-meta { font-size: 11px; color: var(--text-faint); }
+.bt-card label { display: flex; flex-direction: column; gap: 3px; font-size: 11px; color: var(--text-faint); margin: 0; }
+.bt-card select { padding: 6px 9px; font-size: 13px; }
+.bt-card .actions { display: flex; gap: 6px; flex-wrap: wrap; }
+.bt-empty { font-size: 13px; color: var(--text-dim); line-height: 1.6; }
+@media (max-width: 720px) {
+  .bt-grid { grid-template-columns: 1fr; }
+  .bt-tools { width: 100%; }
+  .bt-tools .btn { width: 100%; }
+}

@@ -1,0 +1,54 @@
+{
+  "id": "weather",
+  "name": "Meteo",
+  "icon": "\u26c5",
+  "priority": 50,
+  "size": "m",
+  "intents": [
+    "weather"
+  ],
+  "panel_type": "forecast",
+  "ttl": 900,
+  "description": "Condizioni attuali e prossimi giorni, dopo una domanda sul tempo (resta 15 minuti).",
+  "demo": {
+    "location": "Napoli",
+    "current": {
+      "temp": 21,
+      "feels": 21,
+      "wind": 9,
+      "desc": "Parzialmente nuvoloso",
+      "icon": "partly"
+    },
+    "days": [
+      {},
+      {
+        "label": "Gioved\u00ec",
+        "icon": "clear",
+        "tmax": 23,
+        "tmin": 15,
+        "rain": 0
+      },
+      {
+        "label": "Venerd\u00ec",
+        "icon": "rain",
+        "tmax": 19,
+        "tmin": 14,
+        "rain": 70
+      },
+      {
+        "label": "Sabato",
+        "icon": "cloudy",
+        "tmax": 20,
+        "tmin": 14,
+        "rain": 20
+      },
+      {
+        "label": "Domenica",
+        "icon": "clear",
+        "tmax": 22,
+        "tmin": 15,
+        "rain": 0
+      }
+    ]
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "id": "maps",
+  "name": "Maps",
+  "icon": "🗺️",
+  "category": "assistente",
+  "order": 141,
+  "panel": "maps",
+  "description": "Indicazioni stradali, tempi con il traffico e avvisi di partenza: il tragitto per il lavoro di chi è davanti allo schermo al mattino e il percorso per gli appuntamenti in agenda.",
+  "toggle": {
+    "env": "JARVIS_MAPS",
+    "apply": []
+  },
+  "capabilities": [
+    "«Come arrivo a…», «quanto ci metto ad andare al lavoro?»",
+    "Traffico e mezzi pubblici con la chiave Google Maps (senza: OpenStreetMap)",
+    "Luoghi salvati a voce: lavoro, palestra, scuola…",
+    "Tragitto per il lavoro di ogni persona, dalla sua scheda, quando la vede al mattino",
+    "Ricorda gli appuntamenti con un luogo e quando partire"
+  ],
+  "settings": [
+    {
+      "key": "JARVIS_MAPS_MODE",
+      "label": "Mezzo predefinito",
+      "type": "select",
+      "default": "drive",
+      "options": [
+        {
+          "value": "drive",
+          "label": "Auto"
+        },
+        {
+          "value": "transit",
+          "label": "Mezzi pubblici"
+        },
+        {
+          "value": "walk",
+          "label": "A piedi"
+        },
+        {
+          "value": "bike",
+          "label": "Bici"
+        },
+        {
+          "value": "moto",
+          "label": "Moto"
+        }
+      ]
+    }
+  ]
+}

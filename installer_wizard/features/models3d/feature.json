@@ -1,0 +1,16 @@
+{
+  "id": "models3d",
+  "name": "Modelli 3D",
+  "icon": "🧊",
+  "category": "assistente",
+  "order": 37,
+  "pinned": true,
+  "panel": "models3d",
+  "description": "Jarvis crea oggetti 3D su richiesta («creami un martello in 3D») e apre qualsiasi file 3D in un widget da ruotare con il mouse, con le dita o con le mani davanti alla webcam.",
+  "capabilities": [
+    "Generazione da una frase: GLB a colori, STL in millimetri per la stampa, OBJ con materiali",
+    "Visualizzatore: glTF/GLB, OBJ+MTL, STL, 3MF, AMF, PLY, FBX, DAE, 3DS, VRML, DXF, STEP/STP, IGES/IGS, BREP",
+    "Conversione sul server: BLEND e USD/USDZ con Blender, DWG con LibreDWG",
+    "Comandi: «mostrami il modello del martello», «quali modelli hai», «chiudi il modello»"
+  ]
+}

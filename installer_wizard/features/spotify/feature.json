@@ -1,0 +1,40 @@
+{
+  "id": "spotify",
+  "name": "Spotify",
+  "icon": "🎧",
+  "category": "comunicazione",
+  "order": 145,
+  "panel": "spotify",
+  "description": "Collega il tuo account: quando sei davanti allo schermo il brano in riproduzione compare come widget.",
+  "toggle": {
+    "env": "JARVIS_SPOTIFY",
+    "apply": []
+  },
+  "requires": {
+    "env": [
+      "JARVIS_SPOTIFY_REFRESH_TOKEN"
+    ]
+  },
+  "capabilities": [
+    "Brano, artista, copertina e avanzamento",
+    "Solo quando ti vede (o sempre)"
+  ],
+  "settings": [
+    {
+      "key": "JARVIS_SPOTIFY_WHEN",
+      "label": "Quando mostrare il brano",
+      "type": "select",
+      "default": "present",
+      "options": [
+        {
+          "value": "present",
+          "label": "Solo se la webcam mi vede"
+        },
+        {
+          "value": "always",
+          "label": "Sempre"
+        }
+      ]
+    }
+  ]
+}

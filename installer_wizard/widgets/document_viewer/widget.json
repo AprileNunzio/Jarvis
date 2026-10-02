@@ -1,0 +1,19 @@
+{
+  "id": "document_viewer",
+  "name": "Visualizzatore File & Web",
+  "icon": "\ud83d\udcc4",
+  "priority": 90,
+  "size": "l",
+  "intents": [
+    "document_viewer",
+    "pdf",
+    "web"
+  ],
+  "description": "Visualizzazione unificata per PDF, Documenti Office e siti Web (IFrame).",
+  "ttl": 600,
+  "demo": {
+    "type": "web",
+    "title": "Ricerca Web Generata",
+    "url": "https://en.wikipedia.org/wiki/Special:Random"
+  }
+}

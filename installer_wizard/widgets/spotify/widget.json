@@ -1,0 +1,20 @@
+{
+  "id": "spotify",
+  "name": "Spotify",
+  "icon": "\ud83c\udfa7",
+  "priority": 45,
+  "size": "m",
+  "bind": "spotify",
+  "replaces": [
+    "music"
+  ],
+  "description": "Il brano in riproduzione sul tuo account Spotify quando sei davanti allo schermo.",
+  "demo": {
+    "source": "spotify",
+    "title": "Nel blu dipinto di blu",
+    "artist": "Domenico Modugno",
+    "album": "Volare",
+    "year": "1958",
+    "duration": 213
+  }
+}

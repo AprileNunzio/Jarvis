@@ -1,0 +1,19 @@
+{
+  "id": "telegram",
+  "name": "Telegram",
+  "icon": "✈",
+  "category": "comunicazione",
+  "order": 140,
+  "panel": "telegram",
+  "description": "Parla con Jarvis da ovunque: testo, voce e foto; notifiche di arrivi, guasti e ricorrenze.",
+  "toggle": {
+    "env": "JARVIS_TELEGRAM",
+    "apply": []
+  },
+  "capabilities": [
+    "Abbinamento con codice",
+    "Chat testo e voce",
+    "Notifiche con foto",
+    "Comandi di gestione"
+  ]
+}

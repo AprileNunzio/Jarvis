@@ -1,0 +1,12 @@
+#tab-cameras .cam-privacy { border: 1px solid rgba(255,181,71,.4); background: rgba(255,181,71,.06); }
+#tab-cameras .cam-list { display: flex; flex-direction: column; gap: 10px; }
+#tab-cameras .cam-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px; border-radius: 10px;
+  background: rgba(255,255,255,.03); border: 1px solid var(--line, #22303d); }
+#tab-cameras .cam-dot { width: 12px; height: 12px; border-radius: 50%; margin-top: 4px; flex: none;
+  background: rgba(127,163,184,.4); }
+#tab-cameras .cam-dot.on { background: #ff4d6a; box-shadow: 0 0 10px #ff4d6a; animation: cam-blink 1.4s infinite; }
+@keyframes cam-blink { 50% { opacity: .35; } }
+#tab-cameras .cam-ctrl { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-top: 8px; }
+#tab-cameras .cam-ctrl select { font: inherit; font-size: 13px; color: var(--text); background: rgba(2,8,16,.7);
+  border: 1px solid var(--line); border-radius: 8px; padding: 4px 8px; }
+#tab-cameras .cam-warn { color: var(--amber, #e6b35a); font-size: 12px; margin-top: 6px; }

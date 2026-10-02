@@ -1,0 +1,15 @@
+{
+  "id": "interesse_composto",
+  "name": "Interesse composto e semplice",
+  "description": "Capitale finale di un investimento o di un deposito a interesse composto o semplice.",
+  "priority": 70,
+  "patterns": [
+    "\\b(investo|investire|investendo|deposito|deposit\\w*|metto|capitale|risparmi\\w*)\\b.*\\d.*(%|per\\s*cento).*\\b(anni|anno|mesi)\\b",
+    "\\binteresse\\s+(composto|semplice)\\b.*\\d"
+  ],
+  "examples": [
+    "se investo 5000 euro al 3,5% di interesse composto annuo, quanto avrò dopo 12 anni?",
+    "10000 euro al 2% per 5 anni con capitalizzazione mensile",
+    "interesse semplice su 2000 euro al 4% per 3 anni"
+  ]
+}

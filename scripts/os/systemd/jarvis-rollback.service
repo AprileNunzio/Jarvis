@@ -1,0 +1,7 @@
+[Unit]
+Description=Jarvis OS — ripristino dell'ultima versione funzionante
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash /opt/Jarvis/scripts/os/rollback.sh

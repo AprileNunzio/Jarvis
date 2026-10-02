@@ -1,0 +1,13 @@
+{
+  "id": "alert_info",
+  "name": "Avviso Info",
+  "icon": "\u2139\ufe0f",
+  "priority": 85,
+  "size": "m",
+  "ttl": 15,
+  "intents": [
+    "alert_info"
+  ],
+  "description": "Notifica di sistema blu.",
+  "demo": {}
+}

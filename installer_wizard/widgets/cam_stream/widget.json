@@ -1,0 +1,16 @@
+{
+  "id": "cam_stream",
+  "name": "Videocamera di Sicurezza",
+  "icon": "\ud83d\udcf7",
+  "priority": 70,
+  "size": "l",
+  "intents": [
+    "cam_stream"
+  ],
+  "description": "RTSP Stream",
+  "ttl": 300,
+  "demo": {
+    "camera": "Ingresso Principale",
+    "motion_detected": true
+  }
+}

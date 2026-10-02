@@ -1,0 +1,13 @@
+{
+  "id": "cicd_tracker",
+  "name": "CI/CD Pipeline",
+  "icon": "\u2699\ufe0f",
+  "priority": 50,
+  "size": "l",
+  "intents": [
+    "cicd_tracker"
+  ],
+  "description": "Actions status",
+  "ttl": 120,
+  "demo": {}
+}

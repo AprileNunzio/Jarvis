@@ -1,0 +1,17 @@
+<section class="tab stack" id="tab-models3d">
+  <div class="panel">
+    <div class="panel-title">Crea un oggetto 3D</div>
+    <form class="row" id="m3-gen"><input id="m3-subject" placeholder="es. un martello, una sedia da cucina, un razzo giocattolo" autocomplete="off">
+      <button class="btn primary">Crea e mostra</button></form>
+    <div class="faint" id="m3-gen-res" style="margin-top:8px">Jarvis lo progetta con il cervello di ragionamento e lo apre sul display (GLB, STL per la stampa, OBJ).</div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">Carica un file 3D</div>
+    <div class="row"><input type="file" id="m3-file" multiple><button class="btn" id="m3-up">Carica e mostra</button></div>
+    <div class="faint" id="m3-formats" style="margin-top:8px"></div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">Modelli salvati <span class="faint" id="m3-count"></span></div>
+    <div class="m3-list" id="m3-list"></div>
+  </div>
+</section>

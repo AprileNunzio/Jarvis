@@ -1,0 +1,17 @@
+{
+  "id": "actions",
+  "name": "Azioni",
+  "icon": "⚙",
+  "category": "assistente",
+  "order": 15,
+  "description": "Jarvis esegue davvero ciò che chiedi: file, siti web, cartelle condivise, ricerca di dispositivi, velocità della connessione, aggiornamenti, programmi e calcoli verificati.",
+  "capabilities": [
+    "Crea file e siti web pubblicati sulla rete di casa",
+    "Cartelle condivise SMB",
+    "Trova un dispositivo in rete e il suo IP",
+    "Test della velocità di Internet",
+    "Controllo e installazione degli aggiornamenti",
+    "Calcoli a parole con risultato verificato",
+    "Diagnostica con comandi di sola lettura quando manca un'abilità"
+  ]
+}

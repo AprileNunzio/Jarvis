@@ -1,0 +1,25 @@
+{
+  "id": "karaoke",
+  "name": "Karaoke",
+  "icon": "🎤",
+  "priority": 30,
+  "size": "l",
+  "bind": "now_playing",
+  "chrome": false,
+  "description": "Il testo della canzone in ascolto, sincronizzato riga per riga: canta insieme a Jarvis.",
+  "demo": {
+    "title": "Caruso",
+    "artist": "Lucio Dalla",
+    "started_at": 0,
+    "duration": 318,
+    "lyrics": {
+      "synced": [
+        { "t": 0, "text": "Qui dove il mare luccica" },
+        { "t": 4, "text": "e tira forte il vento" },
+        { "t": 8, "text": "su una vecchia terrazza" },
+        { "t": 12, "text": "davanti al golfo di Surriento" },
+        { "t": 16, "text": "un uomo abbraccia una ragazza" }
+      ]
+    }
+  }
+}

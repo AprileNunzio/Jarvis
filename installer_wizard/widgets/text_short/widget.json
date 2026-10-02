@@ -1,0 +1,15 @@
+{
+  "id": "text_short",
+  "name": "Testo Breve",
+  "icon": "\ud83d\udcac",
+  "priority": 70,
+  "size": "m",
+  "intents": [
+    "text_short"
+  ],
+  "description": "Visualizza risposte testuali con enfasi HTML (grassetto, colori).",
+  "demo": {
+    "content": "Questo \u00e8 un <b>testo</b> <span style=\"color: red;\">rosso</span>."
+  },
+  "ttl": 20
+}

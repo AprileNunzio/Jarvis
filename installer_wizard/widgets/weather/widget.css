@@ -1,0 +1,11 @@
+.we-loc { font-size: 10px; letter-spacing: 0.18em; color: var(--text-faint); text-transform: uppercase; }
+.we-now { display: flex; align-items: center; gap: 12px; margin: 8px 0 12px; }
+.we-ic { font-size: 38px; }
+.we-t { font-size: 44px; font-weight: 200; line-height: 1; }
+.we-d { font-size: 13px; color: var(--text-dim); line-height: 1.4; }
+.we-days { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; text-align: center; }
+.we-days div { background: rgba(2,8,16,0.45); border: 1px solid var(--line); border-radius: 10px; padding: 7px 4px; display: flex; flex-direction: column; gap: 3px; font-size: 12px; }
+.we-days b { font-weight: 500; font-size: 11px; color: var(--text-dim); text-transform: capitalize; }
+.we-days span { font-size: 18px; }
+.we-days small { color: var(--text-faint); }
+.we-days em { font-style: normal; font-size: 10px; color: var(--blue); }

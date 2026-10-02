@@ -1,0 +1,15 @@
+{
+  "id": "laws",
+  "name": "Leggi",
+  "icon": "⚖",
+  "category": "sistema",
+  "order": 5,
+  "pinned": true,
+  "panel": "laws",
+  "description": "Le leggi fondamentali e gerarchiche che Jarvis e ogni suo agente o nodo devono sempre rispettare. Le quattro leggi di base non si possono modificare né eliminare; sotto puoi aggiungere le tue regole, sempre obbligatorie.",
+  "capabilities": [
+    "Quattro leggi fondamentali immutabili (Legge Zero, Prima, Seconda, Terza)",
+    "Regole personali aggiuntive, sempre rispettate",
+    "Iniettate in testa a ogni ragionamento del cervello, locale e cloud"
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "id": "vision",
+  "name": "Visione e volti",
+  "icon": "👁",
+  "category": "percezione",
+  "order": 60,
+  "panel": "people",
+  "description": "Webcam e riconoscimento facciale locale: chi è in casa, saluti personalizzati, nuove persone aggiunte da sole.",
+  "toggle": {
+    "env": "JARVIS_VISION",
+    "apply": [
+      "vision"
+    ]
+  },
+  "requires": {
+    "video": true,
+    "ram_gb": 2
+  },
+  "capabilities": [
+    "Riconoscimento facciale offline",
+    "Presenze in tempo reale",
+    "Ospiti registrati da soli",
+    "Filtro dei riflessi (specchi e vetri)",
+    "Oggetti che hai in mano",
+    "Lettura di etichette e testi",
+    "Riparazione guidata via webcam con i cervelli che vedono"
+  ]
+}

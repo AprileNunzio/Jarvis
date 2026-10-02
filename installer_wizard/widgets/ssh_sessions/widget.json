@@ -1,0 +1,13 @@
+{
+  "id": "ssh_sessions",
+  "name": "Active SSH",
+  "icon": "\ud83d\udd0c",
+  "priority": 90,
+  "size": "m",
+  "intents": [
+    "ssh_sessions"
+  ],
+  "description": "SSH Logins",
+  "ttl": 60,
+  "demo": {}
+}

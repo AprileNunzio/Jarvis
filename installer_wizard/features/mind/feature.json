@@ -1,0 +1,20 @@
+{
+  "id": "mind",
+  "name": "Mente",
+  "icon": "🧠",
+  "category": "assistente",
+  "order": 15,
+  "pinned": true,
+  "panel": "mind",
+  "description": "Dopo ogni scambio Jarvis valuta la frase, decide cosa tenere nella memoria a lungo o a breve termine, se richiamare un widget o un algoritmo e quali spunti mandare allo studio.",
+  "toggle": {
+    "env": "JARVIS_MIND",
+    "apply": []
+  },
+  "capabilities": [
+    "Valuta ogni frase: pertinenza, importanza, memorabilità e fiducia che si parli con lui",
+    "Memoria a lungo termine dei fatti durevoli, breve per il contesto",
+    "Diario delle decisioni",
+    "Collega conversazione, widget, algoritmi e studio"
+  ]
+}

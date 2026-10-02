@@ -1,0 +1,13 @@
+{
+  "id": "calcolatrice",
+  "name": "Calcolatrice",
+  "description": "Operazioni, potenze, radici, fattoriali e parentesi, anche a parole.",
+  "priority": 40,
+  "patterns": [
+    "\\b(quanto\\s+(fa|fanno|vale)|calcola(mi)?|risultato\\s+di)\\b.*\\d",
+    "^\\s*[-(]?\\s*\\d[\\d\\s.,+\\-*/x×÷:^()%]*[\\d)%]\\s*[?=]?\\s*$",
+    "\\d\\s*(più|meno|per|diviso|alla|al quadrato|al cubo)\\s*\\d?",
+    "\\b(radice (quadrata |cubica )?di|fattoriale di)\\s+\\d"
+  ],
+  "examples": ["quanto fa 12 per 7,5", "(3+4)^2", "radice quadrata di 144", "fattoriale di 6", "2 alla 10"]
+}

@@ -1,0 +1,21 @@
+{
+  "id": "kanban_board",
+  "name": "Kanban Agente",
+  "icon": "\ud83d\udccb",
+  "priority": 65,
+  "size": "l",
+  "intents": [
+    "kanban_board"
+  ],
+  "description": "Tasks",
+  "ttl": 300,
+  "demo": {
+    "doing": [
+      "Scansione anomalie di rete",
+      "Training demone background"
+    ],
+    "todo": [
+      "Invia report giornaliero"
+    ]
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "id": "notice",
+  "name": "Avvisi",
+  "icon": "\ud83d\udd14",
+  "priority": 60,
+  "size": "s",
+  "ttl": 120,
+  "description": "Promemoria e messaggi dei moduli (compleanni, dispositivi nuovi, avvisi di sistema).",
+  "demo": {
+    "icon": "\ud83c\udf82",
+    "title": "Oggi \u00e8 il compleanno di Maria",
+    "text": "Compie 34 anni."
+  }
+}

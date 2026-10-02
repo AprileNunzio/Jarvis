@@ -1,0 +1,16 @@
+#tab-mind .mn-stats { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 10px; color: var(--dim); }
+#tab-mind .mn-stats b { color: var(--cyan); font-size: 1.15rem; }
+#tab-mind .mn-diary { display: flex; flex-direction: column; gap: 10px; max-height: 62vh; overflow-y: auto; }
+#tab-mind .mn-entry { border-left: 2px solid var(--line, #2a3a4a); padding: 6px 0 8px 12px; }
+#tab-mind .mn-head { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; }
+#tab-mind .mn-said { font-style: italic; }
+#tab-mind .mn-tags { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 4px 0; }
+#tab-mind .mn-bars { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 4px 0; }
+#tab-mind .mn-score { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--dim); min-width: 150px; }
+#tab-mind .mn-score span { flex: 0 0 74px; }
+#tab-mind .mn-track { flex: 1; height: 5px; border-radius: 3px; background: rgba(255,255,255,.08); overflow: hidden; }
+#tab-mind .mn-track i { display: block; height: 100%; background: linear-gradient(90deg, var(--cyan), #7aa2ff); }
+#tab-mind .mn-score b { flex: 0 0 34px; text-align: right; color: var(--fg, #cfe); }
+#tab-mind .mn-learned { font-size: 12px; color: var(--amber, #e6b35a); margin: 2px 0; }
+#tab-mind .mn-sugg { margin-top: 10px; padding: 10px 12px; border-radius: 10px; background: rgba(41,224,255,.07);
+  border: 1px solid rgba(41,224,255,.25); display: flex; align-items: center; justify-content: space-between; gap: 10px; }

@@ -1,0 +1,13 @@
+{
+  "id": "docker_matrix",
+  "name": "Docker Matrix",
+  "icon": "\ud83d\udc33",
+  "priority": 35,
+  "size": "l",
+  "intents": [
+    "docker_matrix"
+  ],
+  "description": "Containers",
+  "ttl": 60,
+  "demo": {}
+}

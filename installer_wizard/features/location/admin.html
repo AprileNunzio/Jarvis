@@ -1,0 +1,19 @@
+<section class="tab" id="tab-location">
+  <div class="grid g2">
+    <div class="panel">
+      <div class="panel-title">Posizione</div>
+      <div id="loc-current" style="font-size:15px; margin-bottom:12px">—</div>
+      <div id="loc-warn"></div>
+      <label class="switch" style="margin-bottom:14px"><select id="loc-mode" style="max-width:420px">
+        <option value="auto">Automatica: posizione precisa del display o del Wi-Fi, poi quella predefinita</option>
+        <option value="fixed">Fissa: usa sempre la posizione predefinita</option></select></label>
+      <label>Posizione predefinita</label>
+      <div id="loc-default" class="dim" style="font-size:13px; margin-bottom:10px">—</div>
+      <form class="row" id="loc-search"><input id="loc-q" placeholder="Cerca città o indirizzo (es. Napoli, Via Toledo 100 Napoli)"><button class="btn">Cerca</button></form>
+      <div class="loc-results" id="loc-results"></div>
+      <div class="panel-title" style="margin-top:18px">Fonti</div>
+      <table><tbody id="loc-sources"></tbody></table>
+      <div class="muted-note">Per la massima precisione invia la posizione dal telefono al bot Telegram (📎 → Posizione), oppure dì a Jarvis «abito a …». L'indirizzo IP è usato solo come ultima risorsa: gli operatori spesso escono su Internet da Milano o Roma.</div>
+    </div>
+  </div>
+</section>

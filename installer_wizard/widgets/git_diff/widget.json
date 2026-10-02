@@ -1,0 +1,13 @@
+{
+  "id": "git_diff",
+  "name": "Git Diff Visualizer",
+  "icon": "\ud83d\udc19",
+  "priority": 75,
+  "size": "l",
+  "intents": [
+    "git_diff"
+  ],
+  "description": "Code diff",
+  "ttl": 300,
+  "demo": {}
+}

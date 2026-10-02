@@ -1,0 +1,13 @@
+{
+  "id": "audio_spectrum",
+  "name": "Audio Visualizer",
+  "icon": "\ud83c\udfb5",
+  "priority": 50,
+  "size": "l",
+  "intents": [
+    "audio_spectrum"
+  ],
+  "description": "Spectrum",
+  "ttl": 120,
+  "demo": {}
+}

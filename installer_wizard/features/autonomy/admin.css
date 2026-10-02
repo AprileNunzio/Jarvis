@@ -1,0 +1,8 @@
+.au-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.au-form { display: grid; grid-template-columns: 1fr 1.4fr auto; gap: 8px; margin-bottom: 14px; }
+.au-list, .au-journal { display: grid; gap: 8px; }
+.au-item { display: flex; justify-content: space-between; gap: 14px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; }
+.au-item.off { opacity: 0.55; }
+.au-approvals { border-color: var(--amber, #ffb547); }
+.au-log { display: grid; grid-template-columns: 24px 1fr; gap: 8px; font-size: 13px; padding: 6px 0; border-bottom: 1px solid var(--line); }
+@media (max-width: 800px) { .au-form { grid-template-columns: 1fr; } }

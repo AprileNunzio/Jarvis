@@ -1,0 +1,13 @@
+{
+  "id": "alert_warning",
+  "name": "Avviso Warning",
+  "icon": "\u26a0\ufe0f",
+  "priority": 90,
+  "size": "l",
+  "ttl": 30,
+  "intents": [
+    "alert_warning"
+  ],
+  "description": "Avviso di attenzione arancione.",
+  "demo": {}
+}

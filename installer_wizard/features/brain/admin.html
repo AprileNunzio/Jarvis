@@ -1,0 +1,97 @@
+<section class="tab" id="tab-models">
+  <div class="panel br-now">
+    <div class="br-now-head">
+      <div class="panel-title" style="margin:0">In uso adesso</div>
+      <div class="seg" id="br-routing">
+        <button data-r="auto">Automatico</button><button data-r="1">Sempre due cervelli</button><button data-r="0">Un solo cervello</button></div>
+    </div>
+    <div class="br-now-grid">
+      <div class="br-now-card" id="br-now-chat"></div>
+      <div class="br-now-card" id="br-now-deep"></div>
+    </div>
+    <div class="br-last" id="br-last"></div>
+    <form class="route-box" id="br-test"><input id="br-q" placeholder="Prova una frase: quale cervello risponderebbe?"><button class="btn">Prova</button></form>
+    <div class="route-res" id="br-res"></div>
+  </div>
+
+  <div class="grid g2 br-lists">
+    <div class="panel">
+      <div class="panel-title">⚡ Conversazione veloce</div>
+      <div class="muted-note">Saluti e domande brevi. Trascina per cambiare l'ordine: risponde il primo disponibile.</div>
+      <div class="prio" id="br-chat" data-kind="chat"></div>
+      <div class="actions" style="margin-top:10px"><button class="btn sm" data-br-reset="chat">Automatico</button></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">🧠 Ragionamento</div>
+      <div class="muted-note">Spiegazioni, analisi, codice, testi lunghi, azioni.</div>
+      <div class="prio" id="br-deep" data-kind="deep"></div>
+      <div class="actions" style="margin-top:10px"><button class="btn sm" data-br-reset="deep">Automatico</button></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">Aggiungi cervelli</div>
+    <div class="br-source" id="br-source">
+      <button data-v="local" class="on"><b>🖥 Modelli locali</b><span>Ollama, gira su questo server, gratis e privato</span></button>
+      <button data-v="servers"><b>🖧 Altri server</b><span>Altri computer con Ollama, LM Studio, vLLM o LocalAI, quanti ne vuoi</span></button>
+      <button data-v="cloud"><b>🔑 Servizi cloud</b><span>OpenAI, Claude, Gemini, Grok e altri con la tua chiave API</span></button>
+    </div>
+
+    <div class="br-view on" id="br-view-local">
+      <div class="br-ollama">
+        <div class="br-sub dim">Server Ollama <span class="faint">— vuoto = questo server; un indirizzo = usa un altro computer (es. con GPU) e libera la memoria qui</span></div>
+        <form class="row" id="ol-form"><input id="ol-url" placeholder="locale (127.0.0.1:11434) — oppure es. 192.168.1.50:11434" autocomplete="off">
+          <button type="button" class="btn" id="ol-test">Prova</button><button class="btn primary">Salva</button></form>
+        <div class="faint" id="ol-res"></div>
+      </div>
+      <div class="grid g2">
+        <div>
+          <div class="row br-sub"><span class="dim">Catalogo dei modelli locali</span><span class="faint" id="br-hw"></span></div>
+          <div class="cat-list" id="br-catalog"></div>
+        </div>
+        <div class="grid" style="gap:18px; align-content:start">
+          <div>
+            <div class="br-sub dim">Scarica un altro modello</div>
+            <div class="row"><input id="pull-name" placeholder="nome Ollama, es. mistral o llama3.2:3b"><button class="btn primary" id="pull-btn">Scarica</button></div>
+            <div id="pull-status" class="mono dim" style="margin-top:12px"></div>
+            <div class="bar" style="margin-top:8px"><i id="pull-bar"></i></div>
+          </div>
+          <div>
+            <div class="br-sub dim">Modelli installati</div>
+            <table><thead><tr><th>Modello</th><th>Dimensione</th><th>Stato</th><th></th></tr></thead><tbody id="models-body"></tbody></table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="br-view" id="br-view-servers">
+      <div class="cl-intro-text dim" style="margin-bottom:12px">Aggiungi tutti i server che vuoi: ognuno mette a disposizione i suoi modelli, che puoi mettere in ⚡ Conversazione o in 🧠 Ragionamento insieme ai modelli di questo server e ai servizi cloud. Esempio: un PC con GPU per il ragionamento e un mini PC per le risposte veloci.</div>
+      <form class="sv-form" id="sv-form">
+        <label>Nome<input id="sv-name" placeholder="es. PC studio" autocomplete="off"></label>
+        <label>Tipo<select id="sv-flavor"><option value="ollama">Ollama</option><option value="openai">Compatibile OpenAI (LM Studio, vLLM, LocalAI, llama.cpp)</option></select></label>
+        <label class="wide">Indirizzo<input id="sv-url" placeholder="es. 192.168.1.50:11434" autocomplete="off"></label>
+        <label>Chiave (facoltativa)<input id="sv-key" type="password" autocomplete="off"></label>
+        <div class="actions"><button type="button" class="btn" id="sv-test">Prova</button><button class="btn primary">Aggiungi</button></div>
+      </form>
+      <div class="faint" id="sv-res"></div>
+      <div class="row br-sub"><span class="dim">Catalogo dei modelli remoti</span><span class="faint" id="sv-stamp"></span></div>
+      <div class="cl-grid" id="sv-list"></div>
+    </div>
+
+    <div class="br-view" id="br-view-cloud">
+      <div class="cl-intro">
+        <div class="cl-intro-text dim">Collega i servizi di intelligenza artificiale che preferisci: puoi usarli insieme ai modelli locali oppure da soli, senza Ollama. Le chiavi sono cifrate sul disco e non escono mai dal server.</div>
+        <div class="cl-only">
+          <label>⚡ Conversazione<select id="cl-only-chat"></select></label>
+          <label>🧠 Ragionamento<select id="cl-only-deep"></select></label>
+          <button class="btn primary" id="cl-only-btn">Usa solo il cloud</button>
+        </div>
+      </div>
+      <div class="cl-filter">
+        <input id="cl-search" placeholder="Cerca un fornitore…" autocomplete="off">
+        <div class="seg" id="cl-show"><button data-f="all" class="on">Tutti</button><button data-f="on">Collegati</button></div>
+      </div>
+      <div class="cl-grid" id="cl-grid"></div>
+    </div>
+  </div>
+</section>

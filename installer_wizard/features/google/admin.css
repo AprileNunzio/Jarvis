@@ -1,0 +1,21 @@
+.gg-people-panel { margin-bottom: 18px; }
+.gg-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+.gg-finish { display: none; border: 1px solid var(--cyan); background: var(--cyan-soft); border-radius: 12px; padding: 12px; margin-bottom: 14px; }
+.gg-finish.show { display: block; }
+.gg-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 14px; }
+.gg-card { border: 1px solid var(--line); border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 10px; background: rgba(2, 8, 16, 0.45); }
+.gg-card.on { border-color: rgba(61, 255, 168, 0.45); }
+.gg-name { font-weight: 600; font-size: 16px; }
+.gg-sub { font-size: 12px; color: var(--text-faint); overflow-wrap: anywhere; }
+.gg-services { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px 10px; }
+.gg-services label { display: flex; gap: 6px; align-items: center; font-size: 12px; text-transform: none; letter-spacing: 0; margin: 0; }
+.gg-services input { width: auto; }
+.gg-card .actions { display: flex; gap: 6px; flex-wrap: wrap; }
+.gg-preview { font-size: 12px; border-top: 1px solid var(--line); padding-top: 8px; }
+.gg-preview:empty { display: none; }
+.gg-preview .blk { margin-bottom: 8px; }
+.gg-preview .blk b { display: block; font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-dim); }
+@media (max-width: 720px) {
+  .gg-grid { grid-template-columns: 1fr; }
+  .gg-services { grid-template-columns: 1fr; }
+}

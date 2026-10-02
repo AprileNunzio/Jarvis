@@ -1,0 +1,7 @@
+.hb-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.hb-list { display: grid; gap: 8px; }
+.hb-item { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; }
+.hb-item.accepted { border-color: var(--green, #3dffa8); }
+.hb-item.rejected { opacity: 0.5; }
+.hb-bar { height: 4px; border-radius: 2px; background: var(--line); margin-top: 6px; overflow: hidden; }
+.hb-bar i { display: block; height: 100%; background: var(--cyan); }

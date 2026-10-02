@@ -1,0 +1,14 @@
+.w-music .mu-label, .w-spotify .mu-label { font-size: 10px; letter-spacing: 0.18em; color: var(--text-faint); text-transform: uppercase; margin-bottom: 8px; }
+.w-spotify .mu-label { color: #1ed760; }
+.mu-row { display: grid; grid-template-columns: 72px 1fr; gap: 14px; align-items: center; }
+.mu-cover { width: 72px; height: 72px; border-radius: 10px; background: rgba(41,224,255,0.08) center/cover no-repeat; border: 1px solid var(--line);
+            display: grid; place-items: center; font-size: 26px; color: var(--cyan); }
+.mu-title { font-size: 15px; font-weight: 500; line-height: 1.3; }
+.mu-artist { font-size: 13px; color: var(--cyan); margin-top: 2px; }
+.w-spotify .mu-artist { color: #1ed760; }
+.mu-meta { font-size: 11px; color: var(--text-faint); margin-top: 4px; }
+.mu-prog { display: flex; align-items: center; gap: 8px; margin-top: 12px; font-size: 10px; color: var(--text-faint); font-family: var(--mono); }
+.mu-track { flex: 1; height: 3px; border-radius: 3px; background: rgba(41,224,255,0.12); overflow: hidden; }
+.mu-track i { display: block; height: 100%; width: 0; background: var(--cyan); transition: width 1s linear; }
+.w-spotify .mu-track i { background: #1ed760; }
+.mu-bio { font-size: 11.5px; line-height: 1.45; color: var(--text-dim); margin-top: 10px; }

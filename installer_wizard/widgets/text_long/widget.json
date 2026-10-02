@@ -1,0 +1,13 @@
+{
+  "id": "text_long",
+  "name": "Testo Lungo",
+  "icon": "\ud83d\udcc4",
+  "priority": 65,
+  "size": "l",
+  "ttl": 120,
+  "intents": [
+    "text_long"
+  ],
+  "description": "Testo esteso con overflow automatico.",
+  "demo": {}
+}

@@ -1,0 +1,18 @@
+<section class="tab" id="tab-cameras">
+  <div class="panel cam-privacy" style="margin-bottom:16px">
+    <div class="panel-title">⚠ Privacy — leggi prima di registrare</div>
+    <div class="muted-note">La registrazione è spenta di default. Attivala solo con il consenso di chi può essere ripreso. Chi è presente deve poter sapere che la telecamera registra (indicatore acceso). I video restano sul dispositivo per la durata dell'anello scelto e vengono poi cancellati. Rispetta le leggi locali. L'analisi automatica dei video (lettura del labiale, riconoscimento di chi parla) <b>non è attiva</b>.</div>
+  </div>
+  <div class="panel" style="margin-bottom:16px">
+    <div class="panel-title">Aggiungi una telecamera</div>
+    <form class="form-grid" id="cam-add">
+      <div><label>Nome</label><input id="cam-name" maxlength="60" placeholder="Es. Ingresso, Studio PC"></div>
+      <div><label>Tipo</label><select id="cam-kind"><option value="rtsp">Telecamera di rete (RTSP)</option><option value="onvif">ONVIF</option><option value="hikvision">Hikvision</option><option value="webcam">Webcam locale</option></select></div>
+      <div style="grid-column:1/-1"><label>Indirizzo (URL rtsp://… oppure numero/percorso della webcam)</label><input id="cam-url" maxlength="300" placeholder="rtsp://utente:password@192.168.1.50:554/stream"></div>
+      <div><label>Nodo / PC</label><input id="cam-node" maxlength="60" placeholder="Es. salotto, server"></div>
+      <div><label>Anello</label><select id="cam-ret"><option value="5">5 minuti</option><option value="15">15 minuti</option><option value="60">1 ora</option></select></div>
+      <div style="grid-column:1/-1"><button class="btn primary">Aggiungi</button></div>
+    </form>
+  </div>
+  <div class="panel"><div class="panel-title">Telecamere</div><div id="cam-list" class="cam-list"></div></div>
+</section>

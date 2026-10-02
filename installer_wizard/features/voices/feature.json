@@ -1,0 +1,75 @@
+{
+  "id": "voices",
+  "name": "Voci",
+  "icon": "🗣",
+  "category": "assistente",
+  "order": 30,
+  "pinned": true,
+  "panel": "voices",
+  "description": "Oltre 600 voci in più di 60 lingue (una trentina in italiano): scegli, ascolta e scarica; mettile in ordine. Jarvis risponde nella lingua in cui gli parli o in quella che gli chiedi («parlami in inglese», «insegnami il tedesco») e scarica da solo la voce che gli manca.",
+  "capabilities": [
+    "Voci neurali Kokoro (9 lingue)",
+    "Catalogo Piper completo, scaricabile",
+    "Voci online naturalissime (Microsoft Edge)",
+    "Voce preferita per ogni lingua",
+    "Download automatico delle lingue nuove",
+    "Ordine di priorità",
+    "Anteprima di ogni voce"
+  ],
+  "settings": [
+    {
+      "key": "JARVIS_VOICE_SPEED",
+      "label": "Velocità della voce (0.6 - 1.6)",
+      "type": "number",
+      "default": "1.0"
+    },
+    {
+      "key": "JARVIS_VOICE_PITCH",
+      "label": "Tono della voce (-6 grave … +6 acuto)",
+      "type": "number",
+      "default": "0"
+    },
+    {
+      "key": "JARVIS_VOICE_VOLUME",
+      "label": "Volume della voce (0.4 - 2.0)",
+      "type": "number",
+      "default": "1.0"
+    },
+    {
+      "key": "JARVIS_VOICE_ONLINE",
+      "label": "Voci online",
+      "type": "select",
+      "default": "auto",
+      "options": [
+        {
+          "value": "auto",
+          "label": "Automatico (solo se in elenco o se manca una voce offline)"
+        },
+        {
+          "value": "1",
+          "label": "Attive"
+        },
+        {
+          "value": "0",
+          "label": "Mai (il testo non esce dal server)"
+        }
+      ]
+    },
+    {
+      "key": "JARVIS_VOICE_AUTO_DOWNLOAD",
+      "label": "Scarica da solo le voci delle lingue nuove",
+      "type": "select",
+      "default": "1",
+      "options": [
+        {
+          "value": "1",
+          "label": "Sì"
+        },
+        {
+          "value": "0",
+          "label": "No"
+        }
+      ]
+    }
+  ]
+}

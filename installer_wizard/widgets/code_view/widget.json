@@ -1,0 +1,16 @@
+{
+  "id": "code_view",
+  "name": "Visualizzatore Codice",
+  "icon": "\ud83d\udcbb",
+  "priority": 80,
+  "size": "l",
+  "intents": [
+    "code_view"
+  ],
+  "description": "Mostra snippet di codice con formattazione preservata.",
+  "demo": {
+    "language": "html",
+    "content": "<hr style=\"border: 1px solid white;\">"
+  },
+  "ttl": 180
+}

@@ -1,0 +1,13 @@
+{
+  "id": "net_topology",
+  "name": "Network Mesh",
+  "icon": "\ud83d\udd78\ufe0f",
+  "priority": 20,
+  "size": "l",
+  "intents": [
+    "net_topology"
+  ],
+  "description": "LAN Map",
+  "ttl": 300,
+  "demo": {}
+}

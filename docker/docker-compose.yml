@@ -1,0 +1,57 @@
+name: jarvis
+
+services:
+  jarvis-core:
+    image: jarvis-core:local
+    build:
+      context: ..
+      dockerfile: docker/core/Dockerfile
+      args:
+        JARVIS_SRC_HASH: ${JARVIS_SRC_HASH:-dev}
+    container_name: jarvis-core
+    restart: unless-stopped
+    network_mode: host
+    env_file:
+      - path: /etc/jarvis/jarvis.env
+        required: false
+    environment:
+      JARVIS_ENV: production
+      JARVIS_HOST: 0.0.0.0
+      JARVIS_PORT: "8443"
+      OLLAMA_BASE_URL: ${JARVIS_OLLAMA_URL:-http://127.0.0.1:11434}
+      QDRANT_HOST: 127.0.0.1
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ../data/db:/app/data/db
+      - ../data/certs:/app/data/certs
+      - ../data/models:/app/data/models
+    depends_on:
+      - jarvis-qdrant
+
+  jarvis-qdrant:
+    image: qdrant/qdrant:latest
+    container_name: jarvis-qdrant
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:6333:6333"
+      - "127.0.0.1:6334:6334"
+    volumes:
+      - ../data/qdrant:/qdrant/storage
+
+  jarvis-inference:
+    profiles: ["gpu"]
+    build:
+      context: ..
+      dockerfile: docker/inference/Dockerfile
+    image: jarvis-inference:local
+    container_name: jarvis-inference
+    restart: unless-stopped
+    ports:
+      - "8444:8444"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]

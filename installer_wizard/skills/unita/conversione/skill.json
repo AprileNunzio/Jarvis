@@ -1,0 +1,12 @@
+{
+  "id": "conversione",
+  "name": "Conversione di unità",
+  "description": "Lunghezze, pesi, volumi, velocità, superfici, temperature e dati digitali.",
+  "priority": 55,
+  "patterns": [
+    "\\bconvert\\w*\\b.*\\d",
+    "\\d\\s*\\w+.*\\b(in|a)\\s+(mm|cm|m|km|metri|chilometri|miglia|pollici|piedi|iarde|grammi|kg|chili|libbre|once|litri|ml|galloni|celsius|fahrenheit|kelvin|nodi|mph|km/h|m/s|ettari|acri|mq|gb|mb|kb|tb)\\b",
+    "\\bquant[ie]\\s+(mm|cm|metri|chilometri|km|miglia|pollici|piedi|grammi|kg|chili|libbre|litri|ml|galloni|gradi|ettari|mq)\\s+(sono|fanno|ci sono)\\b"
+  ],
+  "examples": ["converti 10 km in miglia", "100 fahrenheit in celsius", "quanti grammi sono 3 libbre", "90 km/h in m/s"]
+}

@@ -1,0 +1,29 @@
+{
+  "id": "chat",
+  "name": "Parla con Jarvis",
+  "icon": "✉",
+  "category": "assistente",
+  "order": 10,
+  "pinned": true,
+  "panel": "chat",
+  "description": "Conversazione di prova con l'assistente, con il modello che ha risposto e i tempi.",
+  "capabilities": [
+    "Chat testuale",
+    "Mostra quale cervello ha risposto",
+    "Tempi di risposta"
+  ],
+  "settings": [
+    {
+      "key": "JARVIS_ADDRESSEE_THRESHOLD",
+      "label": "Quanto deve essere sicuro che parli con lui prima di rispondere (0.2 timido - 0.95 prudente)",
+      "type": "number",
+      "default": "0.5"
+    },
+    {
+      "key": "JARVIS_ADDRESSEE_ALONE",
+      "label": "Fiducia in più quando sei solo nella stanza (0 - 1)",
+      "type": "number",
+      "default": "0.35"
+    }
+  ]
+}

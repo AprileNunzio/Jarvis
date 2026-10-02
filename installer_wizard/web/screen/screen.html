@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="it" translate="no">
+<head>
+<meta charset="UTF-8">
+<meta name="google" content="notranslate">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jarvis · Schermo</title>
+<link rel="stylesheet" href="/static/shared/jarvis.css">
+<link rel="stylesheet" href="/static/display/display.css">
+<link rel="stylesheet" href="/static/screen/screen.css">
+</head>
+<body class="holo-grid satellite">
+<div class="hud">
+  <header>
+    <div class="brand">J.A.R.V.I.S.<small id="screen-name">SCHERMO</small></div>
+    <div class="clock"><b id="clock">--:--</b><span id="date"></span></div>
+  </header>
+  <div class="desk" id="desk"></div>
+  <div class="idle" id="idle"><b>⟵ ⟶</b><span>Trascina qui un widget dal bordo dell'altro schermo,<br>oppure chiedi a Jarvis di spostarlo.</span></div>
+</div>
+<div class="link-lost" id="link"><div class="spinner"></div>Riconnessione al supervisore</div>
+<script src="/static/shared/core.js"></script>
+<script src="/static/display/desk.js"></script>
+<script src="/static/screen/screen.js"></script>
+</body>
+</html>

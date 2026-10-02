@@ -1,0 +1,13 @@
+{
+  "id": "firewall_logs",
+  "name": "Firewall Drops",
+  "icon": "\ud83d\udee1\ufe0f",
+  "priority": 95,
+  "size": "l",
+  "intents": [
+    "firewall_logs"
+  ],
+  "description": "Blocked IPs",
+  "ttl": 120,
+  "demo": {}
+}

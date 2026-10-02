@@ -1,0 +1,45 @@
+<section class="tab" id="tab-home">
+  <div class="panel" id="hm-connect" style="display:none; margin-bottom:18px"></div>
+  <div class="grid g4" style="margin-bottom:18px">
+    <div class="panel stat"><div class="panel-title">Home Assistant</div><div class="v" id="hm-status" style="font-size:18px">—</div><div class="s" id="hm-status2"></div></div>
+    <div class="panel stat"><div class="panel-title">Stanze</div><div class="v" id="hm-areas">—</div><div class="s" id="hm-areas2"></div></div>
+    <div class="panel stat"><div class="panel-title">Dispositivi</div><div class="v" id="hm-devices">—</div><div class="s" id="hm-devices2"></div></div>
+    <div class="panel stat"><div class="panel-title">Comandi</div><div class="v" id="hm-cmds">—</div><div class="s" id="hm-cmds2"></div></div>
+  </div>
+  <div class="panel" style="margin-bottom:18px">
+    <div class="row" style="justify-content:space-between; flex-wrap:wrap; margin-bottom:12px">
+      <div class="panel-title" style="margin:0">Protocolli</div>
+      <div class="row"><button class="btn" id="hm-sync">⟳ Ristudia la casa</button></div>
+    </div>
+    <div class="chips" id="hm-protos" style="margin:0"></div>
+    <div class="muted-note" id="hm-summary" style="margin-top:10px"></div>
+  </div>
+  <div class="panel" style="margin-bottom:18px">
+    <div class="panel-title">Prova un comando</div>
+    <div class="row" style="flex-wrap:wrap"><input id="hm-q" placeholder="es. accendi le luci della cucina al 40% · c'è qualcuno in salotto?" style="flex:1; min-width:240px">
+      <button class="btn" id="hm-try">Analizza</button><button class="btn primary" id="hm-run">Esegui</button></div>
+    <div id="hm-out"></div>
+  </div>
+  <div class="panel" style="margin-bottom:18px">
+    <div class="panel-title">Stanze, movimento e presenza</div>
+    <div class="rooms" id="hm-rooms"></div>
+    <div class="muted-note">Una stanza è occupata se un sensore di presenza è attivo, se c'è movimento o se l'ultimo movimento è recente. «Altri nomi» sono i modi in cui la chiami tu (es. «sala» per Soggiorno): Jarvis li usa subito.</div>
+  </div>
+  <div class="panel" style="margin-bottom:18px">
+    <div class="row" style="justify-content:space-between; flex-wrap:wrap; margin-bottom:14px">
+      <div class="panel-title" style="margin:0">Dispositivi</div>
+      <div class="row" style="flex-wrap:wrap"><input id="hm-filter" placeholder="Filtra…" style="max-width:200px">
+        <select id="hm-proto" style="max-width:170px"><option value="">Tutti i protocolli</option></select>
+        <select id="hm-area" style="max-width:170px"><option value="">Tutte le stanze</option></select></div>
+    </div>
+    <table><thead><tr><th>Dispositivo</th><th>Stanza</th><th>Produttore / modello</th><th>Protocollo</th><th>Integrazione</th><th>Entità</th></tr></thead>
+      <tbody id="hm-body"></tbody></table>
+  </div>
+  <div class="panel" id="hm-detail" style="display:none; margin-bottom:18px"></div>
+  <div class="grid g2">
+    <div class="panel"><div class="panel-title">Attività (24 ore)</div><div class="journal" id="hm-activity" style="max-height:360px; overflow:auto"></div></div>
+    <div class="panel"><div class="row" style="justify-content:space-between"><div class="panel-title" style="margin:0">Ultimi comandi</div>
+      <button class="btn sm" id="hm-forget" title="Dimentica le frasi tradotte dal cervello">Dimentica frasi imparate</button></div>
+      <div class="journal" id="hm-commands" style="max-height:360px; overflow:auto; margin-top:10px"></div></div>
+  </div>
+</section>

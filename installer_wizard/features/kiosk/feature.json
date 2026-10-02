@@ -1,0 +1,27 @@
+{
+  "id": "kiosk",
+  "name": "Display",
+  "icon": "🖥",
+  "category": "sistema",
+  "order": 160,
+  "description": "Schermo dedicato a Jarvis in modalità kiosk, sicuro e sempre acceso.",
+  "toggle": {
+    "env": "JARVIS_KIOSK",
+    "apply": [
+      "kiosk"
+    ]
+  },
+  "capabilities": [
+    "Chromium dedicato",
+    "Riavvio automatico",
+    "Nessun popup o traduttore",
+    "Driver video NVIDIA ufficiale quando la scheda lo supporta, con verifica dopo il riavvio e ritorno automatico al driver libero"
+  ],
+  "settings": [
+    {"key": "JARVIS_GPU_DRIVER", "label": "Driver video", "type": "select", "default": "auto", "options": [
+      {"value": "auto", "label": "Automatico: NVIDIA ufficiale se la scheda è supportata"},
+      {"value": "nouveau", "label": "Solo driver libero (nouveau)"}]},
+    {"key": "JARVIS_GPU_DRIVER_REBOOT", "label": "Riavvio per attivare il driver", "type": "select", "default": "night", "options": [
+      {"value": "night", "label": "Di notte (04:15)"}, {"value": "now", "label": "Subito (tra 2 minuti)"}]}
+  ]
+}

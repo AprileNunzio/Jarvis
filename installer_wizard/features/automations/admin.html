@@ -1,0 +1,56 @@
+<section class="tab stack" id="tab-automations">
+  <div class="panel am-head">
+    <div><div class="panel-title" style="margin:0">⚙️ Automazioni</div><div class="faint" id="am-status"></div></div>
+    <div class="am-tools">
+      <input id="am-search" placeholder="Cerca per nome o etichetta">
+      <button class="btn primary" id="am-new">Nuova</button>
+      <select id="am-template"><option value="">Da un modello…</option></select>
+      <button class="btn" id="am-export">Esporta</button>
+      <label class="btn">Importa<input type="file" id="am-import" accept=".json" hidden></label>
+    </div>
+  </div>
+  <div class="panel am-gen">
+    <div class="panel-title">Descriva l'automazione a parole</div>
+    <div class="am-gen-row">
+      <textarea id="am-gen-text" rows="2" placeholder="Es.: se dopo le 22 la porta d'ingresso resta aperta più di 5 minuti e non c'è nessuno, chiudi la serratura, avvisami su Telegram e accendi la luce del portico per 10 minuti"></textarea>
+      <button class="btn primary" id="am-gen">Progetta</button>
+    </div>
+  </div>
+  <div class="panel am-active" id="am-active" hidden></div>
+  <div class="am-layout">
+    <div class="panel am-list-wrap">
+      <div class="panel-title">Elenco</div>
+      <div class="am-list" id="am-list"></div>
+    </div>
+    <div class="panel am-editor" id="am-editor" hidden>
+      <div class="am-ed-head">
+        <div class="panel-title" id="am-ed-title" style="margin:0">Automazione</div>
+        <div class="am-tools">
+          <button class="btn sm" id="am-view">Vista JSON</button>
+          <button class="btn sm" id="am-validate">Verifica</button>
+          <button class="btn sm" id="am-try">Prova ora</button>
+          <button class="btn sm primary" id="am-save">Salva</button>
+          <button class="btn sm" id="am-close">Chiudi</button>
+        </div>
+      </div>
+      <div class="am-errors" id="am-errors" hidden></div>
+      <div id="am-form"></div>
+      <textarea id="am-json" class="mono" rows="28" hidden spellcheck="false"></textarea>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="am-runs-head"><div class="panel-title" style="margin:0">Esecuzioni</div><span class="faint" id="am-runs-filter"></span></div>
+    <div class="am-runs" id="am-runs"></div>
+    <div class="am-trace" id="am-trace" hidden></div>
+  </div>
+  <div class="panel am-side">
+    <div><div class="panel-title">Variabili globali</div><div class="mono am-globals" id="am-globals"></div></div>
+    <div><div class="panel-title">Ultimi eventi</div><div class="am-events" id="am-events"></div></div>
+    <div><div class="panel-title">Prova un'espressione</div>
+      <div class="am-gen-row"><input id="am-expr" class="mono" placeholder="state('sun.sun') == 'below_horizon' and present()"><button class="btn" id="am-expr-go">Calcola</button></div>
+      <div class="mono faint" id="am-expr-out"></div>
+      <div class="faint">Funzioni: state, attr, since, is_state, present, people, quiet, hour, minute, weekday, today, hm, num, round, min, max, contains, join, len.</div>
+    </div>
+  </div>
+  <datalist id="am-entities"></datalist>
+</section>

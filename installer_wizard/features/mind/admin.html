@@ -1,0 +1,33 @@
+<section class="tab" id="tab-mind">
+  <div class="panel" style="margin-bottom:18px">
+    <div class="row" style="justify-content:space-between; flex-wrap:wrap; gap:10px">
+      <div class="panel-title">La mente di Jarvis</div>
+      <div class="actions">
+        <label class="switch"><input type="checkbox" id="mn-long"> memoria a lungo termine</label>
+        <label class="switch"><input type="checkbox" id="mn-llm"> estrazione fatti col cervello</label>
+        <label class="switch"><input type="checkbox" id="mn-study"> spunti allo studio</label>
+      </div>
+    </div>
+    <div class="mn-stats" id="mn-stats"></div>
+    <div class="row" style="align-items:center; gap:10px; margin-top:8px">
+      <label style="font-size:13px; color:var(--dim)">Soglia per ricordare a lungo termine</label>
+      <input id="mn-thr" type="range" min="0.2" max="0.9" step="0.05" style="flex:1; max-width:260px">
+      <b id="mn-thr-v" class="mono"></b>
+    </div>
+    <div class="muted-note" id="mn-note"></div>
+    <div id="mn-suggest"></div>
+  </div>
+  <div class="grid g2">
+    <div class="panel">
+      <div class="row" style="justify-content:space-between">
+        <div class="panel-title">Memoria a lungo termine</div>
+        <button class="btn sm danger" id="mn-clear">Svuota</button>
+      </div>
+      <div id="mn-facts" class="cat-list"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Diario delle valutazioni</div>
+      <div id="mn-diary" class="mn-diary"></div>
+    </div>
+  </div>
+</section>

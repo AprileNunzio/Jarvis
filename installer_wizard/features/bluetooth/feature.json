@@ -1,0 +1,23 @@
+{
+  "id": "bluetooth",
+  "name": "Bluetooth",
+  "icon": "ᛒ",
+  "category": "percezione",
+  "order": 95,
+  "panel": "bluetooth",
+  "description": "Casse, cuffie, microfoni e auricolari Bluetooth: abbinamento, ordine di preferenza per uscita e microfono, profilo audio e riconnessione automatica. Con gli auricolari puoi parlare con Jarvis da un'altra stanza.",
+  "toggle": {
+    "env": "JARVIS_BLUETOOTH",
+    "apply": [
+      "bluetooth"
+    ]
+  },
+  "capabilities": [
+    "Ricerca e abbinamento dei dispositivi",
+    "Ordine di preferenza per uscita audio e microfono",
+    "Profilo alta qualità o auricolare con microfono",
+    "Passaggio automatico al dispositivo preferito",
+    "Riconnessione dei dispositivi noti",
+    "Installazione automatica quando colleghi una chiavetta"
+  ]
+}

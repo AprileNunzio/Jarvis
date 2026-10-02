@@ -1,0 +1,11 @@
+.git
+**/__pycache__
+**/*.pyc
+**/node_modules
+client_apk
+client_web
+client_satellite
+data
+installer_wizard/venv
+*.log
+ssh_debug*

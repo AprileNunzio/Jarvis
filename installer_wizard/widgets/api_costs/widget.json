@@ -1,0 +1,13 @@
+{
+  "id": "api_costs",
+  "name": "API Cost Tracker",
+  "icon": "\ud83d\udcb8",
+  "priority": 25,
+  "size": "m",
+  "intents": [
+    "api_costs"
+  ],
+  "description": "Costi LLM",
+  "ttl": 300,
+  "demo": {}
+}

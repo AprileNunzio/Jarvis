@@ -1,0 +1,17 @@
+{
+  "id": "alert_error",
+  "name": "Avviso Errore",
+  "icon": "\ud83d\udea8",
+  "priority": 95,
+  "size": "l",
+  "intents": [
+    "alert_error",
+    "error"
+  ],
+  "description": "Notifiche di errore critiche di sistema.",
+  "demo": {
+    "title": "Connessione Fallita",
+    "content": "Il nodo locale non \u00e8 raggiungibile."
+  },
+  "ttl": 45
+}

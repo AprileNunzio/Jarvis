@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="it" translate="no">
+<head>
+<meta charset="UTF-8">
+<meta name="google" content="notranslate">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jarvis OS</title>
+<link rel="stylesheet" href="/static/shared/jarvis.css">
+<link rel="stylesheet" href="/static/monitor/monitor.css">
+</head>
+<body class="holo-grid">
+<div class="shell">
+  <header>
+    <div class="brand">J.A.R.V.I.S.<small>SISTEMA OPERATIVO COGNITIVO</small></div>
+    <div class="hdr-right">
+      <span class="dim" id="host">—</span>
+      <span class="dim mono" id="ip">—</span>
+      <span class="clock mono" id="clock">--:--:--</span>
+    </div>
+  </header>
+
+  <main>
+    <section class="col">
+      <div class="panel steps-panel" style="flex:1; min-height:0">
+        <div class="steps-head"><h3 class="panel-title">Sequenza di attivazione</h3><span class="count" id="steps-count"></span></div>
+        <ul class="steps" id="steps"></ul>
+        <div class="steps-rail"><i id="steps-rail"></i></div>
+      </div>
+    </section>
+
+    <section class="center">
+      <div class="reactor-wrap">
+        <canvas id="reactor"></canvas>
+        <div class="pct"><b id="pct">0%</b><span id="pct-lbl">completato</span></div>
+      </div>
+      <div class="phase">
+        <h1 id="phase">Connessione al supervisore</h1>
+        <div class="msg" id="msg"></div>
+        <div class="detail" id="detail"></div>
+        <div class="err" id="err"></div>
+      </div>
+    </section>
+
+    <section class="col">
+      <div class="panel">
+        <h3 class="panel-title">Telemetria</h3>
+        <div class="metric"><div class="row"><span>Processore</span><b id="cpu">—</b></div><div class="bar"><i id="cpu-bar"></i></div></div>
+        <div class="metric"><div class="row"><span>Memoria</span><b id="mem">—</b></div><div class="bar"><i id="mem-bar"></i></div></div>
+        <div class="metric"><div class="row"><span>Archiviazione</span><b id="disk">—</b></div><div class="bar"><i id="disk-bar"></i></div></div>
+        <div class="kv">
+          <span>Rete ↓ / ↑</span><span id="net">—</span>
+          <span>Temperatura</span><span id="temp">—</span>
+          <span>Uptime</span><span id="uptime">—</span>
+          <span>Tempo di fase</span><span id="elapsed">—</span>
+        </div>
+      </div>
+      <div class="panel" style="flex:1; min-height:0">
+        <h3 class="panel-title">Sottosistemi</h3>
+        <div class="comps" id="comps"><div class="faint">In attesa della prima diagnosi…</div></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="panel console" id="console"></footer>
+</div>
+
+<div class="link-lost" id="link"><div class="spinner"></div>Riconnessione al supervisore</div>
+<div class="handoff" id="handoff"><h2>ONLINE</h2><p>Tutti i sistemi sono operativi</p></div>
+
+<script src="/static/shared/core.js"></script>
+<script src="/static/monitor/monitor.js"></script>
+</body>
+</html>

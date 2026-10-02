@@ -1,0 +1,17 @@
+[Unit]
+Description=Jarvis OS Voice (sintesi vocale neurale Kokoro)
+After=jarvis-supervisor.service
+PartOf=jarvis-supervisor.service
+
+[Service]
+Type=simple
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/opt/jarvis-voice/kokoro/venv/bin/python /opt/Jarvis/installer_wizard/features/voices/service.py
+Restart=always
+RestartSec=5
+MemoryMax=2G
+Nice=-3
+CPUWeight=300
+
+[Install]
+WantedBy=multi-user.target

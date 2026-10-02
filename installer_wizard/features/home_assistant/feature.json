@@ -1,0 +1,65 @@
+{
+  "id": "home_assistant",
+  "name": "Casa (Home Assistant)",
+  "icon": "🏠",
+  "category": "casa",
+  "order": 110,
+  "panel": "home",
+  "description": "Jarvis studia tutta la casa da Home Assistant: stanze, piani, dispositivi Zigbee, Thread, Matter, Wi-Fi, Z-Wave e Bluetooth con modelli e capacità. Li comanda a voce in pochi millisecondi e sa in quali stanze c'è movimento o presenza.",
+  "toggle": {
+    "env": "JARVIS_HOME_ASSISTANT",
+    "apply": []
+  },
+  "requires": {
+    "env": [
+      "HOME_ASSISTANT_URL",
+      "HOME_ASSISTANT_TOKEN"
+    ]
+  },
+  "capabilities": [
+    "Studio automatico di stanze, dispositivi, modelli e protocolli",
+    "Database locale sempre aggiornato in tempo reale",
+    "Comandi a voce istantanei (luci, colori, tapparelle, clima, TV, scene…)",
+    "Movimento e presenza per stanza",
+    "Temperatura, umidità, porte e finestre aperte",
+    "Conferma per serrature, allarme, cancelli e garage",
+    "Impara le frasi nuove e le ricorda"
+  ],
+  "settings": [
+    {
+      "key": "HOME_ASSISTANT_URL",
+      "label": "Indirizzo di Home Assistant",
+      "type": "text",
+      "placeholder": "http://homeassistant.local:8123"
+    },
+    {
+      "key": "HOME_ASSISTANT_TOKEN",
+      "label": "Token di accesso a lunga durata",
+      "type": "secret"
+    },
+    {
+      "key": "JARVIS_HOME_ROOM",
+      "label": "Stanza in cui si trova Jarvis",
+      "type": "text",
+      "placeholder": "es. Soggiorno"
+    },
+    {
+      "key": "JARVIS_HOME_MOTION_MIN",
+      "label": "Minuti di occupazione dopo l'ultimo movimento",
+      "type": "number",
+      "default": "5"
+    },
+    {
+      "key": "JARVIS_HOME_CONFIRM",
+      "label": "Chiedi conferma per serrature, allarme, cancelli e garage",
+      "type": "bool",
+      "default": "1"
+    },
+    {
+      "key": "HOME_ASSISTANT_VERIFY_SSL",
+      "label": "Verifica il certificato HTTPS",
+      "type": "bool",
+      "default": "1"
+    }
+  ]
+}

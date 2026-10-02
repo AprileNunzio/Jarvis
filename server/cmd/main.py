@@ -1,0 +1,104 @@
+import logging
+import uvicorn
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from server.config.env import settings
+from server.shared.errors.global_handler import register_global_error_handlers
+from server.core.security_guard.zero_trust_interceptor import ZeroTrustMiddleware
+from server.core.agent_registry.pool_manager import agent_pool
+from server.features.home_assistant_bridge.ha_agent import HomeAssistantAgent
+from server.features.vision_surveillance.surveillance_agent import VisionSurveillanceAgent
+from server.features.self_healing_coder.coder_agent import SelfHealingCoderAgent
+from server.features.sysops_automation.sysops_agent import SysOpsAutomationAgent
+from server.cmd.api_routes import router
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(name)s] %(levelname)s: %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
+logger = logging.getLogger("jarvis.main")
+
+
+
+def create_application() -> FastAPI:
+    app = FastAPI(
+        title="Jarvis Autonomous Cognitive Orchestrator",
+        version="2.0.0",
+        docs_url="/docs",
+        redoc_url="/redoc",
+    )
+
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+    app.add_middleware(ZeroTrustMiddleware)
+
+    register_global_error_handlers(app)
+
+    agent_pool.register_agent(HomeAssistantAgent())
+    agent_pool.register_agent(VisionSurveillanceAgent())
+    agent_pool.register_agent(SelfHealingCoderAgent())
+    agent_pool.register_agent(SysOpsAutomationAgent())
+    logger.info("Core agents registered: %s", agent_pool.list_agents())
+
+    app.include_router(router)
+
+    @app.on_event("startup")
+    async def on_startup() -> None:
+        from server.core.cognitive_audit.embedding_engine import embedding_engine
+        from server.core.context_graph.graph_client import graph_client
+
+        model_ok = await embedding_engine.ensure_model_available()
+        if not model_ok:
+            logger.warning(
+                "Embedding model not found! Run: ollama pull nomic-embed-text"
+            )
+
+        logger.info(
+            "Jarvis v2.0.0 online — %d agents, %d graph nodes, %d graph edges",
+            len(agent_pool.list_agents()),
+            graph_client.node_count(),
+            graph_client.edge_count(),
+        )
+
+    @app.get("/health")
+    async def health_check():
+        from server.core.context_graph.graph_client import graph_client
+        return {
+            "status": "HEALTHY",
+            "version": "2.0.0",
+            "orchestrator": "ONLINE",
+            "active_agents": agent_pool.list_agents(),
+            "knowledge_graph": {
+                "nodes": graph_client.node_count(),
+                "edges": graph_client.edge_count(),
+            },
+            "upgrades": [
+                "llm_intent_classifier",
+                "react_reasoning_loop",
+                "task_planner",
+                "persistent_knowledge_graph",
+                "real_embeddings",
+                "skill_synthesis",
+                "self_critique",
+                "tool_protocol",
+            ],
+        }
+
+    return app
+
+
+app = create_application()
+
+if __name__ == "__main__":
+    uvicorn.run(
+        "server.cmd.main:app",
+        host=settings.JARVIS_HOST,
+        port=settings.JARVIS_PORT,
+        reload=(settings.JARVIS_ENV == "development"),
+    )

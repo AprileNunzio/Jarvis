@@ -1,0 +1,23 @@
+[Unit]
+Description=Jarvis OS Supervisor (installazione, avvio, auto-riparazione, aggiornamenti)
+Documentation=https://github.com/AprileNunzio/Jarvis
+After=network-online.target docker.service
+Wants=network-online.target
+StartLimitIntervalSec=600
+StartLimitBurst=5
+OnFailure=jarvis-rollback.service
+
+[Service]
+Type=simple
+Environment=PYTHONUNBUFFERED=1
+Environment=JARVIS_DIR=/opt/Jarvis
+ExecStartPre=/bin/bash /opt/Jarvis/scripts/os/prestart.sh
+ExecStart=/opt/Jarvis/installer_wizard/venv/bin/python /opt/Jarvis/installer_wizard/backend/jarvis_supervisor.py
+Restart=always
+RestartSec=3
+TimeoutStartSec=900
+KillMode=mixed
+TimeoutStopSec=20
+
+[Install]
+WantedBy=multi-user.target

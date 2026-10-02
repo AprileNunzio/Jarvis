@@ -1,0 +1,13 @@
+{
+  "id": "percentuali",
+  "name": "Percentuali, sconti e IVA",
+  "description": "Percentuale di un numero, sconti, aumenti, IVA da aggiungere o da scorporare.",
+  "priority": 60,
+  "patterns": [
+    "\\d\\s*(%|per\\s*cento)",
+    "\\biva\\b",
+    "\\bscont\\w*\\b.*\\d",
+    "\\b(che|quale) percentuale\\b"
+  ],
+  "examples": ["il 20% di 150", "sconto del 30% su 80 euro", "100 euro più iva", "scorporo iva da 122", "che percentuale è 30 di 120"]
+}

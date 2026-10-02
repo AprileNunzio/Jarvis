@@ -1,0 +1,13 @@
+{
+  "id": "vram_allocator",
+  "name": "VRAM Monitor",
+  "icon": "\ud83d\udcbe",
+  "priority": 40,
+  "size": "m",
+  "intents": [
+    "vram_allocator"
+  ],
+  "description": "GPU Mem",
+  "ttl": 60,
+  "demo": {}
+}
