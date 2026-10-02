@@ -1,7 +1,4 @@
 import asyncio
-import tempfile
-import os
-import sys
 from typing import Tuple
 from server.config.env import settings
 from server.shared.errors.domain_errors import SandboxSecurityException
@@ -13,27 +10,15 @@ class SandboxRunner:
     async def execute_in_sandbox(self, python_code: str) -> Tuple[bool, str, str]:
         self._inspect_code_safety(python_code)
         
-        with tempfile.NamedTemporaryFile("w", suffix=".py", delete=False) as temp_file:
-            temp_file.write(python_code)
-            temp_path = temp_file.name
-
-        try:
-            proc = await asyncio.create_subprocess_exec(
-                sys.executable,
-                "-I",
-                temp_path,
-                stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.PIPE
-            )
-            stdout_data, stderr_data = await asyncio.wait_for(proc.communicate(), timeout=self._timeout)
-            success = (proc.returncode == 0)
-            return success, stdout_data.decode("utf-8", errors="replace"), stderr_data.decode("utf-8", errors="replace")
-        except asyncio.TimeoutError:
-            proc.kill()
-            raise SandboxSecurityException("Sandbox execution timed out exceeding safety limits")
-        finally:
-            if os.path.exists(temp_path):
-                os.remove(temp_path)
+        from server.core.orchestrator.sandbox import EphemeralSandbox
+        sandbox = EphemeralSandbox()
+        
+        loop = asyncio.get_event_loop()
+        result = await loop.run_in_executor(None, sandbox.run_code, python_code, self._timeout)
+        
+        if result.get("error"):
+            return False, result.get("stdout") or "", result.get("error")
+        return True, result.get("stdout") or "", ""
 
     def _inspect_code_safety(self, code_str: str) -> None:
         forbidden_tokens = ["os.system(", "subprocess.Popen(", "shutil.rmtree('/'", "open('/etc/shadow'"]

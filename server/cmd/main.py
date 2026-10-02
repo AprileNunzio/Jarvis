@@ -40,6 +40,13 @@ def create_application() -> FastAPI:
 
     register_global_error_handlers(app)
 
+    # Inizializza OpenTelemetry (Pilastro 2)
+    try:
+        from server.core.observability.telemetry import setup_telemetry
+        setup_telemetry(app)
+    except ImportError:
+        logger.warning("Modulo Telemetry non trovato. Ignoro OpenTelemetry.")
+
     agent_pool.register_agent(HomeAssistantAgent())
     agent_pool.register_agent(VisionSurveillanceAgent())
     agent_pool.register_agent(SelfHealingCoderAgent())
@@ -50,6 +57,13 @@ def create_application() -> FastAPI:
 
     @app.on_event("startup")
     async def on_startup() -> None:
+        # Inizializza Database (Pilastro 1)
+        try:
+            from server.core.db.database import engine, Base
+            Base.metadata.create_all(bind=engine)
+            logger.info("Database ORM Inizializzato (Tabelle sincronizzate).")
+        except Exception as e:
+            logger.error("Impossibile connettersi al database: %s", str(e))
         from server.core.cognitive_audit.embedding_engine import embedding_engine
         from server.core.context_graph.graph_client import graph_client
 
