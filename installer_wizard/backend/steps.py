@@ -20,6 +20,7 @@ class Step:
     description: str
     weight: int
     critical: bool = True
+    background: bool = False
 
 
 STEPS = [
@@ -40,13 +41,13 @@ STEPS = [
          critical=False),
     Step("shares", "63-shares.sh", "Condivisioni di rete", "Cartelle visibili da Windows e Mac, memoria con password", 1,
          critical=False),
-    Step("office", "64-office.sh", "Ufficio", "LibreOffice e caratteri per documenti Office, ODF e PDF", 2,
-         critical=False),
+    Step("office", "64-office.sh", "Ufficio", "LibreOffice, caratteri e librerie per documenti Office, ODF e PDF", 2,
+         critical=False, background=True),
     Step("convert3d", "62-convert3d.sh", "Conversione 3D", "Blender e LibreDWG per aprire BLEND, USD e DWG", 1,
-         critical=False),
+         critical=False, background=True),
     Step("models", "60-models.sh", "Reti neurali", "Modello linguistico e memoria semantica", 30),
     Step("soup", "67-soup.sh", "Consolidamento dello studio", "Addestramento con Soup (solo con GPU adatta)", 1,
-         critical=False),
+         critical=False, background=True),
     Step("core", "70-core.sh", "Jarvis Core", "Compilazione dell'orchestratore cognitivo", 20),
     Step("services", "80-services.sh", "Servizi cognitivi", "Core, memoria vettoriale e agenti", 7),
     Step("maintenance", "90-maintenance.sh", "Manutenzione autonoma", "Aggiornamenti di sicurezza e log", 2,
@@ -58,7 +59,8 @@ TOTAL_WEIGHT = sum(s.weight for s in STEPS)
 
 
 def step_catalog() -> list:
-    return [{"id": s.id, "title": s.title, "description": s.description, "critical": s.critical} for s in STEPS]
+    return [{"id": s.id, "title": s.title, "description": s.description, "critical": s.critical,
+             "background": s.background} for s in STEPS]
 
 
 def _record(step: Step) -> dict:
@@ -238,6 +240,11 @@ async def run_pipeline(only: list[str] | None = None, force: bool = False) -> bo
     ok = True
     for step in STEPS:
         if only and step.id not in only:
+            continue
+        if step.background and not only:
+            rec = store.steps[step.id]
+            if rec.get("status") != "done":
+                rec.update(status="background", message="In background dopo l'avvio")
             continue
         if not await converge_step(step, force=force):
             if step.critical:

@@ -60,5 +60,8 @@ async def answer(text: str) -> tuple[str, dict]:
         raise LookupError
     background(_job(text))
     project = jobs.wants_project(text)
-    return (f"Subito, signore. Preparo {'il progetto con tutti i documenti collegati' if project else 'il documento'}: "
-            "ci vorrà qualche minuto, la avviso appena è pronto.", {"mode": "face"})
+    what = "il progetto con tutti i documenti collegati" if project else "il documento"
+    if jobs.missing(["pdf"] if project else jobs.builder.formats(text)):
+        return (f"Subito, signore. Installo prima i componenti per i documenti, poi preparo {what}: ci vorrà qualche "
+                "minuto in più, la avviso appena è pronto.", {"mode": "face"})
+    return f"Subito, signore. Preparo {what}: ci vorrà qualche minuto, la avviso appena è pronto.", {"mode": "face"}

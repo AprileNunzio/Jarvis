@@ -1,4 +1,6 @@
 import asyncio
+import importlib
+import importlib.util
 import json
 import os
 import re
@@ -174,8 +176,30 @@ async def project(request: str) -> dict:
     return entry
 
 
+LIBRARIES = {"docx": "python-docx", "openpyxl": "openpyxl", "pptx": "python-pptx", "matplotlib": "matplotlib"}
+
+
+def missing(fmts: list[str]) -> list[str]:
+    importlib.invalidate_caches()
+    out = [name for module, name in LIBRARIES.items() if importlib.util.find_spec(module) is None]
+    if any(f in ("odt", "ods", "odp", "pdf") for f in fmts) and not convert.office():
+        out.append("LibreOffice")
+    return out
+
+
+async def prepare(fmts: list[str]) -> None:
+    if not missing(fmts):
+        return
+    from orchestrator import orch
+    await orch.ensure(["office"], "servono per preparare i documenti")
+    still = missing(fmts)
+    if still:
+        raise RuntimeError("non sono riuscito a installare " + ", ".join(still))
+
+
 async def run(request: str) -> dict:
     started = time.time()
+    await prepare(["pdf"] if wants_project(request) else builder.formats(request))
     entry = await (project(request) if wants_project(request) else single(request))
     entry["seconds"] = round(time.time() - started)
     store.event("INFO", f"Documenti creati: {entry['title']} ({entry['summary']})", "documents")

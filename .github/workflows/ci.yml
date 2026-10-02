@@ -41,7 +41,7 @@ jobs:
           cache-dependency-path: installer_wizard/backend/requirements.txt
 
       - name: Install Supervisor Dependencies
-        run: python -m pip install -r installer_wizard/backend/requirements.txt
+        run: python -m pip install -r installer_wizard/backend/requirements.txt -r installer_wizard/features/documents/requirements.txt
 
       - name: Unit and API Tests
         working-directory: ./installer_wizard

@@ -481,6 +481,15 @@ ricostruire solo se il codice è cambiato), `compose`, `has_usable_gpu`, `hw_pro
 
 L'ordine di esecuzione è quello della lista `STEPS` in `backend/steps.py` (non quello numerico dei file).
 
+**Passi in background.** I passi pesanti e facoltativi (`office`, `convert3d`, `soup`, con `background=True` in
+`STEPS`) non rallentano l'avvio: la pipeline li salta (stato «in background dopo l'avvio»), Jarvis diventa subito
+operativo e `orch.install_background()` li installa subito dopo, uno alla volta, senza cambiare lo stato del
+sistema. Una funzionalità che ha bisogno di un passo non ancora pronto chiama `await orch.ensure(["office"], motivo)`:
+il passo viene installato in quel momento e poi il lavoro prosegue (così fanno i documenti). Le librerie Python
+specifiche di una funzionalità stanno nel suo `requirements.txt` (es. `features/documents/requirements.txt`) e
+le installa il suo passo, non l'avvio del supervisore: solo `backend/requirements.txt` viene installato prima
+dell'avvio.
+
 Quando si cambia una configurazione dal pannello, `backend/settings.py` sa quali passi rieseguire
 (`STEP_TRIGGERS`): per esempio cambiare `JARVIS_OLLAMA_URL` rilancia `ollama`, `models`, `warmup` e
 `services`; cambiare la voce rilancia `voice`; cambiare `JARVIS_SHARES` rilancia `shares`. Anche il campo

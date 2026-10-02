@@ -2,7 +2,7 @@
   const { fmt, Reactor, connectState } = Jarvis;
   const $ = (id) => document.getElementById(id);
   const reactor = new Reactor($("reactor"));
-  const STATUS_TEXT = { pending: "in attesa", checking: "verifica", running: "", retrying: "nuovo tentativo", done: "ok", failed: "errore", skipped: "saltato" };
+  const STATUS_TEXT = { pending: "in attesa", checking: "verifica", running: "", retrying: "nuovo tentativo", done: "ok", failed: "errore", skipped: "saltato", background: "dopo l'avvio" };
   let state = null;
 
   setInterval(() => {
@@ -26,7 +26,7 @@
       }
       if (list.children[i] !== li) list.insertBefore(li, list.children[i] || null);
       const rec = s.steps[c.id] || { status: "pending" };
-      if (rec.status === "done" || rec.status === "skipped") done++;
+      if (rec.status === "done" || rec.status === "skipped" || rec.status === "background") done++;
       li.className = `${rec.status}${s.current_step === c.id ? " active" : ""}`;
       li.querySelector(".s").textContent = rec.status === "running" ? `${rec.progress || 0}%` : (STATUS_TEXT[rec.status] ?? "");
     });

@@ -1,7 +1,7 @@
 (() => {
   const A = window.JarvisAdmin, { $, fmt } = A;
   const PHASE_DOT = { READY: "ok", DEGRADED: "warn", ERROR: "down", INSTALLING: "warn", BOOTING: "warn", UPDATING: "warn" };
-  const STEP_STATUS = { pending: "in attesa", checking: "verifica", running: "in corso", retrying: "nuovo tentativo", done: "operativo", failed: "errore" };
+  const STEP_STATUS = { pending: "in attesa", checking: "verifica", running: "in corso", retrying: "nuovo tentativo", done: "operativo", failed: "errore", skipped: "saltato", background: "in background dopo l'avvio" };
   const RESTARTABLE = { core: 1, qdrant: 1, ollama: 1, docker: 1, kiosk: 1 };
 
   function renderPhase(s) {

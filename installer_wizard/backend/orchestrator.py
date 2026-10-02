@@ -7,7 +7,7 @@ import sysinfo
 import updater
 from config import DEMO, VERSION
 from state import store
-from steps import STEPS, run_pipeline
+from steps import STEP_BY_ID, STEPS, converge_step, run_pipeline
 
 log = logging.getLogger("jarvis.supervisor")
 
@@ -19,6 +19,7 @@ class Orchestrator:
     def __init__(self) -> None:
         self.lock = asyncio.Lock()
         self.busy = False
+        self.installer: asyncio.Task | None = None
 
     async def boot(self) -> None:
         store.boot_count += 1
@@ -72,6 +73,36 @@ class Orchestrator:
         health.publish(await health.probe_all())
         store.progress = 100
         store.set_phase("READY", "Tutti i sistemi operativi")
+        if not DEMO:
+            self.installer = asyncio.create_task(self.install_background())
+
+    async def _quiet_step(self, step_id: str) -> bool:
+        saved = (store.message, store.detail)
+        try:
+            return await converge_step(STEP_BY_ID[step_id])
+        finally:
+            store.current_step = ""
+            store.message, store.detail = saved
+            store.touch()
+
+    async def install_background(self) -> None:
+        for step in [s for s in STEPS if s.background]:
+            if store.steps.get(step.id, {}).get("status") == "done":
+                continue
+            async with self.lock:
+                store.event("INFO", f"Installazione in background: {step.title}", step.id)
+                ok = await self._quiet_step(step.id)
+            store.event("INFO" if ok else "WARN", f"{step.title}: {'pronto' if ok else 'non riuscito, riprovo al prossimo avvio'}", step.id)
+            await asyncio.sleep(1)
+
+    async def ensure(self, step_ids: list[str], reason: str = "") -> bool:
+        ok = True
+        async with self.lock:
+            for step_id in step_ids:
+                if step_id in STEP_BY_ID:
+                    store.event("INFO", f"Installo ora «{STEP_BY_ID[step_id].title}»{': ' + reason if reason else ''}", step_id)
+                    ok = await self._quiet_step(step_id) and ok
+        return ok
 
     async def converge(self, only: list[str] | None = None, reason: str = "", force: bool = False) -> bool:
         if self.lock.locked():
