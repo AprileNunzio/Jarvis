@@ -1,6 +1,6 @@
 import base64
 from typing import Dict, Any
-from fastapi import APIRouter, Response, WebSocket, WebSocketDisconnect
+from fastapi import APIRouter, HTTPException, Request, Response, WebSocket, WebSocketDisconnect
 from pydantic import BaseModel
 from server.core.orchestrator.dispatcher import orchestrator_dispatcher
 from server.core.context_graph.graph_client import graph_client
@@ -30,8 +30,12 @@ class KnowledgeNodePayload(BaseModel):
     label: str
     properties: Dict[str, Any] = {}
 
+LOOPBACK = {"127.0.0.1", "::1", "localhost"}
+
 @router.post("/auth/exchange")
-async def exchange_token(payload: AuthExchangeRequest) -> Dict[str, Any]:
+async def exchange_token(payload: AuthExchangeRequest, request: Request) -> Dict[str, Any]:
+    if not request.client or request.client.host not in LOOPBACK:
+        raise HTTPException(status_code=403, detail="Token rilasciati solo al supervisore locale")
     token = token_provider.issue_token(
         subject=payload.client_id,
         claims={"device_type": payload.device_type, "role": "OPERATOR"}

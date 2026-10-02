@@ -18,7 +18,14 @@ up_to_date() {
     fi
 }
 
+ensure_secret() {
+    [ -n "${JARVIS_SECRET_KEY:-}" ] && [ -n "${JARVIS_SECRET_KEY//0/}" ] && return 0
+    set_env JARVIS_SECRET_KEY "$(openssl rand -hex 32 2>/dev/null || python3 -c 'import secrets; print(secrets.token_hex(32))')"
+    info "Chiave segreta del Core generata"
+}
+
 step_check() {
+    [ -n "${JARVIS_SECRET_KEY:-}" ] && [ -n "${JARVIS_SECRET_KEY//0/}" ] || return 1
     running jarvis-core && running jarvis-qdrant \
         && up_to_date jarvis-core && up_to_date jarvis-qdrant \
         && core_healthy
@@ -37,6 +44,7 @@ remove_foreign_containers() {
 
 step_apply() {
     progress 10 "Pulizia configurazioni precedenti"
+    ensure_secret
     remove_foreign_containers
     [ -d /etc/timezone ] && rmdir /etc/timezone 2>/dev/null || true
     mkdir -p "$JARVIS_DIR/data/db" "$JARVIS_DIR/data/certs" "$JARVIS_DIR/data/qdrant" "$JARVIS_DIR/data/models"

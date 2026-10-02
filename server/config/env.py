@@ -1,3 +1,4 @@
+import secrets
 from typing import Literal
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -24,3 +25,5 @@ class ServerSettings(BaseSettings):
     )
 
 settings = ServerSettings()
+if not settings.JARVIS_SECRET_KEY.strip("0"):
+    settings.JARVIS_SECRET_KEY = secrets.token_hex(32)

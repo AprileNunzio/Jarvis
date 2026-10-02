@@ -5,8 +5,11 @@ import uuid
 from config import STATE_DIR
 from state import store
 
+from features.laws.defaults import SEED_VERSION, behaviour
+
 LAWS_DIR = STATE_DIR / "laws"
 RULES_FILE = LAWS_DIR / "rules.json"
+SEEDED_FILE = LAWS_DIR / "seeded.json"
 MAX_RULES = 50
 
 FIXED = [
@@ -34,7 +37,23 @@ class Laws:
             self.rules = [r for r in json.loads(RULES_FILE.read_text(encoding="utf-8")) if r.get("id") not in _FIXED_IDS]
         except (OSError, ValueError):
             self.rules = []
+        self.seed()
         self.publish()
+
+    def seed(self) -> None:
+        try:
+            done = set(json.loads(SEEDED_FILE.read_text(encoding="utf-8")))
+        except (OSError, ValueError):
+            done = set()
+        if SEED_VERSION in done:
+            return
+        known = {r["text"] for r in self.rules}
+        now = time.time()
+        fresh = [{"id": uuid.uuid4().hex[:8], "text": t[:400], "created": now, "origin": SEED_VERSION}
+                 for t in behaviour() if t not in known]
+        self.rules = (fresh + self.rules)[:MAX_RULES]
+        self.save()
+        SEEDED_FILE.write_text(json.dumps(sorted(done | {SEED_VERSION})), encoding="utf-8")
 
     def save(self) -> None:
         tmp = RULES_FILE.with_suffix(".tmp")

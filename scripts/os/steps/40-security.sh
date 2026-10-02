@@ -2,7 +2,8 @@
 . "$(dirname "$0")/../lib.sh"
 
 SYSCTL_FILE=/etc/sysctl.d/99-jarvis-hardening.conf
-PORTS_TCP=(22 80 8080 8443)
+PORTS_TCP=(22 80 8080)
+CLOSED_TCP=(8443)
 PORTS_UDP=(51820 50505)
 
 sysctl_conf() {
@@ -33,6 +34,8 @@ step_check() {
     echo "$status" | grep -q "Status: active" || return 1
     for p in "${PORTS_TCP[@]}"; do echo "$status" | grep -qE "^${p}/tcp +ALLOW" || return 1; done
     for p in "${PORTS_UDP[@]}"; do echo "$status" | grep -qE "^${p}/udp +ALLOW" || return 1; done
+    for p in "${CLOSED_TCP[@]}"; do echo "$status" | grep -qE "^${p}/tcp +ALLOW" && return 1; done
+    return 0
 }
 
 step_apply() {
@@ -47,6 +50,7 @@ step_apply() {
     local p
     for p in "${PORTS_TCP[@]}"; do ufw allow "${p}/tcp" >/dev/null; done
     for p in "${PORTS_UDP[@]}"; do ufw allow "${p}/udp" >/dev/null; done
+    for p in "${CLOSED_TCP[@]}"; do ufw --force delete allow "${p}/tcp" >/dev/null 2>&1 || true; done
     progress 80 "Attivazione firewall"
     ufw --force enable >/dev/null
     info "Porte aperte: TCP ${PORTS_TCP[*]} — UDP ${PORTS_UDP[*]}"
