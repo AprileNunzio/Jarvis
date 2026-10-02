@@ -49,7 +49,8 @@ def create_application() -> FastAPI:
 
     # Carica tutti i tool dinamici (Maps, 3D, ecc.) prima di avviare gli agenti
     try:
-        import server.features.agent_tools.maps_tool  # noqa
+        import server.features.agent_tools.maps_tool
+        _ = server.features.agent_tools.maps_tool
         logger.info("Tool dinamici caricati e pronti all'uso.")
     except ImportError as e:
         logger.warning("Nessun tool dinamico caricato: %s", str(e))
