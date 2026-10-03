@@ -1,4 +1,6 @@
 import logging
+from typing import List
+
 import httpx
 from server.config.env import settings
 
@@ -33,6 +35,15 @@ class OllamaEmbeddingEngine:
         except Exception:
             logger.error("Cannot reach Ollama at %s", self._url)
             return False
+
+    async def embed(self, text: str) -> List[float]:
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            response = await client.post(f"{self._url}/api/embeddings", json={"model": self._model, "prompt": text})
+            response.raise_for_status()
+            vector = response.json().get("embedding", [])
+        if not vector:
+            raise ValueError("embedding model returned no vector")
+        return [float(v) for v in vector]
 
 
 embedding_engine = OllamaEmbeddingEngine()

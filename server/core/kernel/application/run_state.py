@@ -13,6 +13,8 @@ class NodeRun:
     result: Optional[NodeResult] = None
     error: Optional[ErrorPayload] = None
     history: List[NodeState] = field(default_factory=list)
+    last_attempt: Optional[NodeResult] = None
+    episode_ids: List[str] = field(default_factory=list)
 
     def move(self, state: NodeState) -> None:
         self.state = state

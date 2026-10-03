@@ -1,4 +1,4 @@
-from typing import Mapping, Optional, Protocol
+from typing import Mapping, Optional, Protocol, Sequence
 
 from server.core.kernel.domain.dag import ExecutionDag
 from server.core.kernel.domain.node import NodeSpec, NodeState
@@ -24,6 +24,14 @@ class ValidatorRegistry(Protocol):
 
 class ConsensusPort(Protocol):
     async def vote(self, dag: ExecutionDag) -> ConsensusVerdict: ...
+
+
+class FailureMemoryPort(Protocol):
+    async def warnings_for(self, node: NodeSpec) -> Sequence[str]: ...
+
+    async def record_failure(self, node: NodeSpec, approach: str, error: ErrorPayload) -> str: ...
+
+    def record_resolution(self, episode_ids: Sequence[str], summary: str) -> None: ...
 
 
 class RunObserver(Protocol):

@@ -7,6 +7,7 @@ from typing import Dict, Optional
 from server.core.kernel.application.ports import (
     Checkpoint,
     ConsensusPort,
+    FailureMemoryPort,
     NodeExecutor,
     RunObserver,
     ValidatorRegistry,
@@ -14,9 +15,11 @@ from server.core.kernel.application.ports import (
 from server.core.kernel.application.run_state import DagRun
 from server.core.kernel.domain.dag import ExecutionDag
 from server.core.kernel.domain.node import NodeSpec, NodeState, RiskLevel
-from server.core.kernel.domain.outcome import ErrorPayload
+from server.core.kernel.domain.outcome import ErrorPayload, NodeResult
 
 logger = logging.getLogger("jarvis.kernel.scheduler")
+
+MEMORY_WARNING = "memory_warning"
 
 
 @dataclass(frozen=True)
@@ -40,6 +43,7 @@ class DagScheduler:
         consensus: Optional[ConsensusPort] = None,
         observer: Optional[RunObserver] = None,
         checkpoint: Optional[Checkpoint] = None,
+        memory: Optional[FailureMemoryPort] = None,
         max_parallel: int = 2,
         clock=time.monotonic,
     ) -> None:
@@ -48,6 +52,7 @@ class DagScheduler:
         self._consensus = consensus
         self._observer = observer
         self._checkpoint = checkpoint
+        self._memory = memory
         self._slots = asyncio.Semaphore(max_parallel)
         self._clock = clock
 
@@ -106,7 +111,7 @@ class DagScheduler:
     async def _attempt_until_accepted(self, run: DagRun, spec: NodeSpec) -> None:
         node = run.nodes[spec.node_id]
         deadline = self._clock() + spec.retry.deadline_seconds
-        feedback: Optional[ErrorPayload] = None
+        feedback = await self._known_dead_ends(spec)
         while node.attempts < spec.retry.max_attempts:
             remaining = deadline - self._clock()
             if remaining <= 0:
@@ -116,9 +121,11 @@ class DagScheduler:
             await self._move(run, spec.node_id, NodeState.RUNNING)
             feedback = await self._attempt(run, spec, feedback, remaining)
             if feedback is None:
+                self._remember_resolution(node)
                 await self._move(run, spec.node_id, NodeState.ACCEPTED)
                 return
             node.error = feedback
+            await self._remember_failure(spec, node, feedback)
             await self._move(run, spec.node_id, NodeState.HEALING)
         await self._move(run, spec.node_id, NodeState.FAILED)
 
@@ -133,6 +140,7 @@ class DagScheduler:
         except Exception as exc:
             logger.warning("node %s raised %s", spec.node_id, exc.__class__.__name__)
             return ErrorPayload("exception", f"{exc.__class__.__name__}: {exc}")
+        node.last_attempt = result
         await self._move(run, spec.node_id, NodeState.VALIDATING)
         try:
             verdict = await self._validators.resolve(spec.validator_id).judge(spec, result)
@@ -148,3 +156,36 @@ class DagScheduler:
         run.nodes[node_id].move(state)
         if self._observer:
             await self._observer.on_transition(node_id, state, run.completed_count(), len(run.nodes))
+
+    async def _known_dead_ends(self, spec: NodeSpec) -> Optional[ErrorPayload]:
+        if self._memory is None:
+            return None
+        try:
+            warnings = await self._memory.warnings_for(spec)
+        except Exception:
+            logger.warning("failure memory unavailable for node %s", spec.node_id)
+            return None
+        return ErrorPayload(MEMORY_WARNING, "\n".join(warnings)) if warnings else None
+
+    async def _remember_failure(self, spec: NodeSpec, node, feedback: ErrorPayload) -> None:
+        if self._memory is None or feedback.kind == MEMORY_WARNING:
+            return
+        try:
+            node.episode_ids.append(await self._memory.record_failure(spec, _summarise(node.last_attempt), feedback))
+        except Exception:
+            logger.warning("could not record failure of node %s", spec.node_id)
+
+    def _remember_resolution(self, node) -> None:
+        if self._memory is None or not node.episode_ids or node.last_attempt is None:
+            return
+        try:
+            self._memory.record_resolution(node.episode_ids, _summarise(node.last_attempt))
+        except Exception:
+            logger.warning("could not record resolution")
+
+
+def _summarise(result: Optional[NodeResult]) -> str:
+    if result is None:
+        return ""
+    code = result.output.get("code")
+    return str(code if isinstance(code, str) and code.strip() else result.speech)[:300]

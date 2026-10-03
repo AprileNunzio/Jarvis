@@ -60,4 +60,6 @@ class SwarmBroker:
     def _query(node: NodeSpec, feedback: Optional[ErrorPayload]) -> str:
         if feedback is None:
             return node.description
+        if feedback.kind == "memory_warning":
+            return f"{node.description}\n\nEsperienza passata da tenere presente:\n{feedback.message}"
         return f"{node.description}\n\nIl tentativo precedente è fallito: {feedback.to_prompt()}\nCorreggi e riprova."
