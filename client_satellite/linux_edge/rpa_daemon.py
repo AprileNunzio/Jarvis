@@ -192,9 +192,10 @@ def region_contrast(frame: Frame, region: list) -> float:
     values = [frame.rgb[(y * frame.width + x) * 3:(y * frame.width + x) * 3 + 3] for y in range(y0, y0 + h, 2) for x in range(x0, x0 + w, 2)]
     if not values:
         return 0.0
-    luma = [(v[0] * 299 + v[1] * 587 + v[2] * 114) / 1000 for v in values]
-    mean = sum(luma) / len(luma)
-    return (sum((v - mean) ** 2 for v in luma) / len(luma)) ** 0.5
+    luma = [v[0] * 299 + v[1] * 587 + v[2] * 114 for v in values]
+    count, total = len(luma), sum(luma)
+    spread = count * sum(v * v for v in luma) - total * total
+    return (spread ** 0.5) / count / 1000 if spread > 0 else 0.0
 
 
 def _framebuffer() -> Frame:
