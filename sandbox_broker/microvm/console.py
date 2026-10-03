@@ -49,8 +49,8 @@ def parse(console: bytes, cap: int) -> GuestReport:
     )
 
 
-def tail(console_bytes: bytes, process_stderr: bytes, lines: int = 4, limit: int = 420) -> str:
-    kept = [ln.strip() for ln in console_bytes.decode("utf-8", "replace").splitlines() if ln.strip() and MARK.decode() not in ln]
+def tail(console_bytes: bytes, process_stderr: bytes, lines: int = 7, limit: int = 560) -> str:
+    kept = [ln.strip() for ln in console_bytes.decode("utf-8", "replace").splitlines() if ln.strip() and MARK.decode() not in ln and "[anonymous-instance" not in ln]
     err = " ".join(process_stderr.decode("utf-8", "replace").split())[-160:]
     text = " / ".join(kept[-lines:])
     return f"console: {text[-limit:]}" + (f" | vmm: {err}" if err else "")
