@@ -2,7 +2,7 @@
 . "$(dirname "$0")/../lib.sh"
 
 SYSCTL_FILE=/etc/sysctl.d/99-jarvis-hardening.conf
-PORTS_TCP=(22 80 8080)
+PORTS_TCP=(22 80 443 8080)
 CLOSED_TCP=(8443)
 PORTS_UDP=(51820 50505)
 

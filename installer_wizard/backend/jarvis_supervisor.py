@@ -18,6 +18,7 @@ from feature_registry import registry
 from features.brain import api as brain_api
 from features.brain import routing as brain_routing
 from features.presentation import api as presentation_api
+from features.secure import api as secure_api
 from features.actions import api as actions_api
 from features.bluetooth import api as bluetooth_api
 from features.bluetooth.service import service as bluetooth_service
@@ -79,7 +80,7 @@ log = logging.getLogger("jarvis.supervisor")
 logging.getLogger("httpx").setLevel(logging.WARNING)
 logging.getLogger("httpcore").setLevel(logging.WARNING)
 
-FEATURE_APIS = (presentation_api, actions_api, bluetooth_api, chat_api, cloud_api, voices_api, vision_api, devices_api, location_api,
+FEATURE_APIS = (secure_api, presentation_api, actions_api, bluetooth_api, chat_api, cloud_api, voices_api, vision_api, devices_api, location_api,
                 people_api, music_api, study_api, soup_api, network_api, telegram_api, home_api, brain_api,
                 desktop_api, spotify_api, google_api, maps_api, skills_api, nodes_api, mind_api, laws_api, cameras_api,
                 models3d_api, documents_api, ear_api, autonomy_api, automations_api, sounds_api, selftest_api, habits_api, vault_api, shares_api)
@@ -104,6 +105,30 @@ public = build(admin=False)
 admin = build(admin=True)
 
 
+def secure_server():
+    import os
+    import tls
+    from config import STATE_DIR
+    port = int(os.environ.get("JARVIS_TLS_PORT", 8002 if DEMO else 443))
+    try:
+        material = tls.ensure_certificates(STATE_DIR / "tls", tls.local_names(), tls.local_addresses())
+        server = uvicorn.Server(uvicorn.Config(public, host="0.0.0.0", port=port, log_level="warning",
+                                               ssl_certfile=str(material.cert), ssl_keyfile=str(material.key),
+                                               timeout_graceful_shutdown=3))
+    except Exception as exc:
+        log.warning("HTTPS non disponibile: %s", exc)
+        return None
+    secure_api.announce(port)
+    return server
+
+
+async def serve_optional(server) -> None:
+    try:
+        await server.serve()
+    except (SystemExit, Exception) as exc:
+        log.warning("Il server HTTPS si è fermato: %s", exc)
+
+
 async def main() -> None:
     servers = [
         uvicorn.Server(uvicorn.Config(public, host="0.0.0.0", port=PUBLIC_PORT, log_level="warning",
@@ -111,6 +136,7 @@ async def main() -> None:
         uvicorn.Server(uvicorn.Config(admin, host="0.0.0.0", port=ADMIN_PORT, log_level="warning",
                                      timeout_graceful_shutdown=3)),
     ]
+    https = secure_server()
     log.info("Jarvis OS Supervisor v%s — utente :%d — admin :%d%s", VERSION, PUBLIC_PORT, ADMIN_PORT,
              " (DEMO)" if DEMO else "")
     tasks = [asyncio.create_task(job) for job in (
@@ -120,7 +146,7 @@ async def main() -> None:
         object_tips.run(), node_beacon.run(), cameras_recorder.run(), autonomy.run(), automations_engine.run(), selftest.loop(), habits.run(), vault.run(), display_driver.guard(), brain_routing.run(),
     )]
     try:
-        await asyncio.gather(*(s.serve() for s in servers))
+        await asyncio.gather(*(s.serve() for s in servers), *([serve_optional(https)] if https else []))
     finally:
         for t in tasks:
             t.cancel()

@@ -1,10 +1,11 @@
 import time
 
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Request, WebSocket
 
 from access import require_display
 from config import env_get
 from features.desktop.desk import desk
+from features.ear import proxy
 from state import store
 
 public_routes = APIRouter()
@@ -25,3 +26,8 @@ async def ear_client(request: Request):
     elif body.get("ok") and previous.get("error"):
         store.event("INFO", f"Microfono del display di nuovo attivo: {store.mic['label'] or 'predefinito'}", "ear")
     return {"ok": True}
+
+
+@public_routes.websocket("/ws/ear")
+async def ear_socket(socket: WebSocket):
+    await proxy.proxy(socket)

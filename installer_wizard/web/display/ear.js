@@ -4,6 +4,11 @@
   let lastAlone = null, wsFails = 0, restarting = false, lastTry = Date.now(), heardAt = 0;
   const stats = { opens: 0, msgs: 0, sends: 0, mic: 0, made: 0 };
   const PAGE = Math.random().toString(36).slice(2, 8);
+  const OPT_IN = "jarvis-remote-mic";
+  const optedIn = () => { try { return localStorage.getItem(OPT_IN) === "1"; } catch (e) { return false; } };
+  const secure = () => window.isSecureContext && !!navigator.mediaDevices;
+  const micAllowed = () => D.local || (secure() && optedIn());
+  const socketUrl = () => (location.protocol === "https:" ? `wss://${location.host}/ws/ear` : `ws://${location.hostname}:8093`);
   let parked = false;
   document.addEventListener("visibilitychange", () => {
     send({ type: "client", page: PAGE, visible: document.visibilityState });
@@ -97,7 +102,7 @@
   }
 
   function reconcile() {
-    if (!D.local || parked) return;
+    if (!micAllowed() || parked) return;
     const confirmed = Date.now() - heardAt < 10000;
     if (confirmed && state === "off") setState("idle");
     else if (!confirmed && state !== "off" && !(ws && ws.readyState === 1 && micLive())) setState("off", "Microfono non attivo");
@@ -110,7 +115,7 @@
 
   function connect() {
     if (ws && ws.readyState <= 1) return;
-    const sock = ws = new WebSocket(`ws://${location.hostname}:8093`);
+    const sock = ws = new WebSocket(socketUrl());
     stats.made++;
     sock.binaryType = "arraybuffer";
     const stuck = setTimeout(() => {
@@ -170,15 +175,36 @@
   async function start() {
     for (let i = 0; i < 12; i++) { const b = document.createElement("i"); $("ear-bars").appendChild(b); bars.push(b); }
     for (let i = 0; i < 28; i++) { const b = document.createElement("i"); $("listen-wave").appendChild(b); waveBars.push(b); }
-    $("btn-mic").addEventListener("click", () => Ear.listen());
-    if (!D.local) { setState("off", "Microfono solo sul display"); return; }
+    $("btn-mic").addEventListener("click", () => {
+      if (!micAllowed()) return enableRemote();
+      Ear.listen();
+    });
+    if (!micAllowed()) { setState("off", offReason()); return; }
+    await activate();
+  }
+
+  function offReason() {
+    if (secure()) return "Tocca il microfono per usare quello di questo dispositivo";
+    return "Microfono di questo dispositivo: apri Jarvis con https:// (vedi il certificato su /jarvis-ca.crt)";
+  }
+
+  let activated = false;
+  async function activate() {
+    if (activated) return;
+    activated = true;
     setInterval(reconcile, 5000);
     connect();
     if (await openMic() && ws && ws.readyState === 1) setState("idle");
   }
 
+  async function enableRemote() {
+    if (!secure()) { setState("off", offReason()); return; }
+    try { localStorage.setItem(OPT_IN, "1"); } catch (e) {}
+    await activate();
+  }
+
   async function restartMic() {
-    if (!D.local || restarting) return;
+    if (!micAllowed() || restarting) return;
     restarting = true;
     try {
       try { stream && stream.getTracks().forEach((t) => t.stop()); } catch (e) {}
