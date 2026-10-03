@@ -142,6 +142,23 @@
       return (nx - cx) ** 2 + (ny - cy) ** 2 < r * r;
     });
   }
+  const PIN_GAP = 14;
+  const hits = (a, b) => a.x < b.x + b.w + PIN_GAP && a.x + a.w + PIN_GAP > b.x && a.y < b.y + b.h + PIN_GAP && a.y + a.h + PIN_GAP > b.y;
+  function clearSpot(want, blocked, box) {
+    let spot = { x: want.x, y: want.y };
+    for (let n = 0; n < blocked.length * 2 + 2; n++) {
+      const o = blocked.find((b) => hits({ x: spot.x, y: spot.y, w: want.w, h: want.h }, b));
+      if (!o) return spot;
+      const options = [
+        { x: spot.x, y: o.y + o.h + PIN_GAP }, { x: spot.x, y: o.y - want.h - PIN_GAP },
+        { x: o.x + o.w + PIN_GAP, y: spot.y }, { x: o.x - want.w - PIN_GAP, y: spot.y },
+      ].filter((p) => p.x >= box.x0 && p.x + want.w <= box.x1 && p.y >= box.y0 && p.y + want.h <= box.y1);
+      if (!options.length) return spot;
+      options.sort((a, b) => Math.hypot(a.x - want.x, a.y - want.y) - Math.hypot(b.x - want.x, b.y - want.y));
+      spot = options[0];
+    }
+    return spot;
+  }
   const measure = (card, w) => { card.el.style.width = `${Math.round(w)}px`; card.el.style.height = ""; return card.el.offsetHeight; };
 
   function layoutGrid() {
@@ -187,13 +204,16 @@
     let zone = null;
     ordered.forEach((c) => c.el.classList.remove("pinned"));
 
+    const blocked = [];
     for (const c of pinned) {
       if (takeover) { c.el.classList.add("hidden"); continue; }
       const w = Math.max(240, Math.min(400, W * 0.26));
       const h = measure(c, w);
       const x = Math.max(M, Math.min(W - M - w, c.inst.pos.x * W - w / 2));
       const y = Math.max(TOP, Math.min(BOTTOM - h, c.inst.pos.y * H - h / 2));
-      place(c, x, y, w);
+      const spot = clearSpot({ x, y, w, h }, blocked, { x0: M, y0: TOP, x1: W - M, y1: BOTTOM });
+      place(c, spot.x, spot.y, w);
+      blocked.push({ x: spot.x, y: spot.y, w, h });
       c.el.classList.add("pinned");
     }
 
@@ -214,9 +234,16 @@
       for (const c of normal) {
         const h = measure(c, colW);
         const col = heights.indexOf(Math.max(...heights));
-        if (heights[col] - h < limit) { c.el.classList.add("hidden"); continue; }
-        heights[col] -= h + GAP;
-        place(c, M + col * (colW + GAP), heights[col] + GAP, colW);
+        const x = M + col * (colW + GAP);
+        let y = heights[col] - h;
+        for (let n = 0; n <= blocked.length; n++) {
+          const o = blocked.find((b) => hits({ x, y, w: colW, h }, b));
+          if (!o) break;
+          y = o.y - h - PIN_GAP;
+        }
+        if (y < limit) { c.el.classList.add("hidden"); continue; }
+        heights[col] = y - GAP;
+        place(c, x, y, colW);
       }
       const used = Math.min(...heights);
       zone = { x: M, y: TOP - 20, w: W - 2 * M, h: Math.max(160, used - TOP - 50) };
@@ -224,12 +251,24 @@
       const colW = Math.max(280, Math.min(400, W * 0.26));
       const cols = { right: TOP, left: TOP };
       let usedLeft = false, usedRight = false;
+      const slot = (side, h) => {
+        const x = side === "right" ? W - M - colW : M;
+        let y = cols[side];
+        for (let n = 0; n <= blocked.length; n++) {
+          const o = blocked.find((b) => hits({ x, y, w: colW, h }, b));
+          if (!o) break;
+          y = o.y + o.h + PIN_GAP;
+        }
+        return { x, y };
+      };
       for (const c of normal) {
         const h = measure(c, colW);
-        const side = cols.right + h <= BOTTOM || !usedRight ? "right" : cols.left + h <= BOTTOM || !usedLeft ? "left" : null;
-        if (!side || cols[side] + h > BOTTOM + 40) { c.el.classList.add("hidden"); continue; }
-        place(c, side === "right" ? W - M - colW : M, cols[side], colW);
-        cols[side] += h + GAP;
+        const right = slot("right", h), left = slot("left", h);
+        const side = right.y + h <= BOTTOM || !usedRight ? "right" : left.y + h <= BOTTOM || !usedLeft ? "left" : null;
+        const spot = side === "right" ? right : left;
+        if (!side || spot.y + h > BOTTOM + 40) { c.el.classList.add("hidden"); continue; }
+        place(c, spot.x, spot.y, colW);
+        cols[side] = spot.y + h + GAP;
         if (side === "right") usedRight = true; else usedLeft = true;
       }
       const x0 = usedLeft ? M + colW + GAP * 2 : M, x1 = usedRight ? W - M - colW - GAP * 2 : W - M;
