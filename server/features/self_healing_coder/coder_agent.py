@@ -1,5 +1,6 @@
-import time
 import logging
+import os
+import time
 from typing import List, Dict, Any
 from server.core.agent_registry.interfaces import BaseAgent, AgentTaskRequest, AgentTaskResponse
 from server.features.self_healing_coder.sandbox_runner import sandbox_runner
@@ -7,8 +8,13 @@ from server.features.llm_gateway.gateway import llm_gateway
 from server.features.llm_gateway.contracts import LLMRequest, LLMMessage
 from server.core.reasoning.react_loop import ReActLoop
 from server.core.reasoning.self_critique import self_critique_engine
+from server.features.deep_memory.composition import deep_memory
+from server.features.self_healing_coder.workspace_files import WorkspaceError, WorkspaceFiles
 
 logger = logging.getLogger("jarvis.coder_agent")
+
+_structure = deep_memory.workspace("workspace")
+workspace_files = WorkspaceFiles(os.path.join("data", "workspace"), lambda: _structure)
 
 
 class SelfHealingCoderAgent(BaseAgent):
@@ -155,31 +161,17 @@ class SelfHealingCoderAgent(BaseAgent):
         )
         
         async def create_directory(path: str) -> str:
-            import os
             try:
-                base_path = os.path.abspath("data/workspace")
-                full = os.path.abspath(os.path.join(base_path, path))
-                if not full.startswith(base_path):
-                    return "ERROR: Path traversal detected"
-                os.makedirs(full, exist_ok=True)
-                return f"Directory {path} creata con successo."
-            except Exception as e:
-                return f"ERROR: {str(e)}"
-                
+                return workspace_files.make_directory(path)
+            except (WorkspaceError, OSError) as exc:
+                return f"ERROR: {exc}"
+
         async def write_file(path: str, content: str) -> str:
-            import os
             try:
-                base_path = os.path.abspath("data/workspace")
-                full = os.path.abspath(os.path.join(base_path, path))
-                if not full.startswith(base_path):
-                    return "ERROR: Path traversal detected"
-                os.makedirs(os.path.dirname(full), exist_ok=True)
-                with open(full, "w", encoding="utf-8") as f:
-                    f.write(content)
-                return f"File {path} scritto con successo."
-            except Exception as e:
-                return f"ERROR: {str(e)}"
-                
+                return workspace_files.write(path, content)
+            except (WorkspaceError, OSError) as exc:
+                return f"ERROR: {exc}"
+
         loop.register_tool("create_directory", "Crea una cartella nel workspace (usa per strutturare progetti)", create_directory)
         loop.register_tool("write_file", "Scrive il contenuto in un file nel workspace (usa per salvare codice PHP, HTML, CSS, JS)", write_file)
 
