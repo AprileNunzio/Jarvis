@@ -6,12 +6,15 @@ BASE_IMAGE=python:3.11-slim-bookworm
 UNIT_SRC="$JARVIS_DIR/scripts/os/systemd/jarvis-sandbox.service"
 UNIT_DST=/etc/systemd/system/jarvis-sandbox.service
 DAEMON_JSON=/etc/docker/daemon.json
-RUNSC_BIN=/usr/local/bin/runsc
+GVISOR_DIR=/usr/local/bin
+RUNSC_BIN="$GVISOR_DIR/runsc"
+GVISOR_BASE=https://storage.googleapis.com/gvisor/releases/release/latest
 SOCKET=/run/jarvis/sandbox/broker.sock
 
 sources() {
     find "$JARVIS_DIR/sandbox_broker" "$JARVIS_DIR/server/features/sandbox" -name '*.py' | sort
     echo "$UNIT_SRC"
+    echo "$JARVIS_DIR/scripts/os/steps/32-sandbox.sh"
     echo "$JARVIS_DIR/docker/sandbox/Dockerfile"
 }
 
@@ -28,12 +31,14 @@ fetch_runsc() {
     local arch url tmp
     arch=$(uname -m)
     case "$arch" in x86_64|aarch64) ;; *) return 1 ;; esac
-    url="https://storage.googleapis.com/gvisor/releases/release/latest/$arch"
+    command -v bzip2 >/dev/null 2>&1 || apt_install bzip2 || return 1
+    url="$GVISOR_BASE/$arch"
     tmp=$(mktemp -d)
-    if retry 3 5 curl -fsSL -o "$tmp/runsc" "$url/runsc" \
-        && retry 3 5 curl -fsSL -o "$tmp/runsc.sha512" "$url/runsc.sha512" \
-        && (cd "$tmp" && sha512sum -c runsc.sha512 >/dev/null); then
-        install -m 0755 "$tmp/runsc" "$RUNSC_BIN"
+    if retry 3 10 curl -fsSL -o "$tmp/gvisor.tar.bz2" "$url/gvisor.tar.bz2" \
+        && retry 3 5 curl -fsSL -o "$tmp/gvisor.tar.bz2.sha512" "$url/gvisor.tar.bz2.sha512" \
+        && (cd "$tmp" && sha512sum -c gvisor.tar.bz2.sha512 >/dev/null) \
+        && tar -xjf "$tmp/gvisor.tar.bz2" -C "$GVISOR_DIR" runsc containerd-shim-runsc-v1 gvisor-bin; then
+        chmod 0755 "$RUNSC_BIN"
         rm -rf "$tmp"
         return 0
     fi

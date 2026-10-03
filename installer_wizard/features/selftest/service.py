@@ -7,7 +7,8 @@ from datetime import datetime
 from config import DEMO, STATE_DIR, env_get
 from state import store
 
-from features.selftest.checks import CHECKS, Skip
+from features.selftest.checks import CHECKS
+from features.selftest.skip import Skip
 
 log = logging.getLogger("jarvis.selftest")
 FILE = STATE_DIR / "selftest.json"

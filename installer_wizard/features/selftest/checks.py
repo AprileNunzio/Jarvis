@@ -6,14 +6,12 @@ import httpx
 import psutil
 
 from config import ADMIN_PORT, DEMO, PUBLIC_PORT, STATE_DIR
+from features.selftest.sandbox_check import sandbox_isolation
+from features.selftest.skip import Skip
 from state import store
 
 LOCAL = "http://127.0.0.1"
 HEADERS = {"X-Jarvis-Request": "1", "Content-Type": "application/json"}
-
-
-class Skip(Exception):
-    pass
 
 
 async def supervisor_api():
@@ -167,5 +165,6 @@ CHECKS = [
     ("home", "Casa (Home Assistant)", False, home),
     ("sounds", "Suoni", False, sounds),
     ("storage", "Spazio e memoria", False, storage),
+    ("sandbox", "Sandbox isolata", False, sandbox_isolation),
     ("updates", "Aggiornamenti da GitHub", False, updates),
 ]
