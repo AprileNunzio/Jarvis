@@ -174,7 +174,7 @@ class RegistryTest(unittest.TestCase):
     def test_describe_and_readiness(self):
         registry = BackendRegistry([FakeBackend("c", Strength.CONTAINER, ready=False)])
         self.assertFalse(registry.any_available())
-        self.assertEqual(registry.describe(), [{"name": "c", "strength": 1, "available": False}])
+        self.assertEqual(registry.describe(), [{"name": "c", "strength": 1, "available": False, "note": ""}])
 
 
 class EngineTest(unittest.TestCase):

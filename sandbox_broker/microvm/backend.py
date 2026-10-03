@@ -39,16 +39,22 @@ class MicroVmBackend(Backend):
         return self._ready
 
     def refresh(self) -> None:
-        self._ready = self.prerequisites_met() and self._smoke_test()
+        missing = self.missing_prerequisites()
+        self.note = "mancano: " + ", ".join(missing) if missing else ""
+        self._ready = not missing and self._smoke_test()
+
+    def missing_prerequisites(self) -> List[str]:
+        checks = {
+            "kvm": os.access(self._config.kvm_device, os.R_OK | os.W_OK),
+            "firecracker": os.access(self._config.firecracker_bin, os.X_OK),
+            "kernel": os.path.isfile(self._kernel),
+            "rootfs": os.path.isfile(self._rootfs),
+            "setpriv": shutil.which("setpriv") is not None,
+        }
+        return [name for name, present in checks.items() if not present]
 
     def prerequisites_met(self) -> bool:
-        return (
-            os.access(self._config.kvm_device, os.R_OK | os.W_OK)
-            and os.access(self._config.firecracker_bin, os.X_OK)
-            and os.path.isfile(self._kernel)
-            and os.path.isfile(self._rootfs)
-            and shutil.which("setpriv") is not None
-        )
+        return not self.missing_prerequisites()
 
     def run(self, spec: ExecutionSpec, workspace: Workspace) -> RawResult:
         if spec.network is not NetworkPolicy.NONE:
@@ -117,6 +123,9 @@ class MicroVmBackend(Backend):
         try:
             with Workspace(self._config.work_dir, _SMOKE_SPEC, self._config.sandbox_uid) as workspace:
                 result = self.run(_SMOKE_SPEC, workspace)
-        except (OSError, SandboxUnavailableError):
+        except (OSError, SandboxUnavailableError) as exc:
+            self.note = f"avvio fallito: {exc}"[:200]
             return False
-        return result.exit_code == 0 and b"jarvis-microvm-ok" in result.stdout and time.monotonic() - started < 60
+        healthy = result.exit_code == 0 and b"jarvis-microvm-ok" in result.stdout and time.monotonic() - started < 60
+        self.note = "" if healthy else f"prova fallita: exit={result.exit_code} stderr={result.stderr[-160:].decode('utf-8', 'replace')}"
+        return healthy

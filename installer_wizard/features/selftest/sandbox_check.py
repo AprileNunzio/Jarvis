@@ -25,4 +25,9 @@ async def sandbox_isolation():
         raise AssertionError(f"risposta illeggibile: {err.decode('utf-8', 'replace')[-160:] or sys.executable}")
     if not outcome["ok"]:
         raise AssertionError("; ".join(outcome["problems"]))
-    return f"codice eseguito in isolamento ({outcome['backend']}): niente rete, disco di sola lettura, utente non root"
+    return (f"codice eseguito in isolamento ({outcome['backend']}): niente rete, disco di sola lettura, utente non root"
+            f" | backend: {_backends(outcome.get('backends') or [])}")
+
+
+def _backends(items):
+    return ", ".join(f"{b['name']}={'ok' if b['available'] else 'no'}{' (' + b['note'] + ')' if b.get('note') else ''}" for b in items)[:260]

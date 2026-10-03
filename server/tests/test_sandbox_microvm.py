@@ -187,6 +187,8 @@ class BackendTest(unittest.TestCase):
         self.backend.refresh()
         self.assertFalse(self.backend.available())
         self.assertEqual((self.backend.name, self.backend.strength), ("firecracker", Strength.MICROVM))
+        for missing in ("kvm", "firecracker", "kernel", "rootfs"):
+            self.assertIn(missing, self.backend.note)
 
 
 class StubBackend(Backend):

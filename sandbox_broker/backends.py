@@ -36,6 +36,7 @@ class RawResult:
 class Backend(ABC):
     name: str
     strength: Strength
+    note: str = ""
 
     def supports_egress(self) -> bool:
         return False

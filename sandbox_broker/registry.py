@@ -22,7 +22,7 @@ class BackendRegistry:
             backend.refresh()
 
     def describe(self) -> List[dict]:
-        return [{"name": b.name, "strength": int(b.strength), "available": b.available()} for b in self._backends]
+        return [{"name": b.name, "strength": int(b.strength), "available": b.available(), "note": b.note} for b in self._backends]
 
     def any_available(self) -> bool:
         return any(b.available() for b in self._backends)

@@ -55,7 +55,17 @@ def run_selfcheck(config: BrokerConfig) -> Dict[str, Any]:
     status, payload = signed_request(config, "POST", wire.EXECUTE_PATH, spec.to_wire(), timeout=60)
     if status != 200:
         return {"ok": False, "backend": "", "strength": 0, "problems": [payload.get("error", f"http {status}")]}
-    return evaluate(ExecutionReport.from_wire(payload))
+    outcome = evaluate(ExecutionReport.from_wire(payload))
+    outcome["backends"] = describe_backends(config)
+    return outcome
+
+
+def describe_backends(config: BrokerConfig) -> List[Dict[str, Any]]:
+    try:
+        status, payload = signed_request(config, "GET", wire.STATUS_PATH, None, timeout=10)
+    except (OSError, ValueError):
+        return []
+    return payload.get("backends", []) if status == 200 else []
 
 
 def main() -> int:
