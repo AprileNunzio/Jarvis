@@ -141,3 +141,58 @@ def _check_meshes(meshes: list, accessors: list, problems: List[str]) -> int:
             elif index is not None:
                 triangles += accessors[index].get("count", 0) // 3
     return triangles
+
+
+def check_dxf(text: str) -> FormatReport:
+    lines = [line.strip() for line in text.splitlines()]
+    problems: List[str] = []
+    if len(lines) % 2:
+        problems.append("odd number of lines: group codes and values must pair up")
+    pairs = list(zip(lines[0::2], lines[1::2]))
+    for number, (code, _) in enumerate(pairs, start=1):
+        if not code.lstrip("-").isdigit():
+            problems.append(f"pair {number}: invalid group code {code!r}")
+            break
+    if pairs and pairs[-1] != ("0", "EOF"):
+        problems.append("missing EOF marker")
+    if ("0", "SECTION") not in pairs or ("2", "ENTITIES") not in pairs:
+        problems.append("missing ENTITIES section")
+    faces = sum(1 for pair in pairs if pair == ("0", "3DFACE"))
+    for index, (code, value) in enumerate(pairs):
+        if code in {str(c) for c in (10, 11, 12, 13, 20, 21, 22, 23, 30, 31, 32, 33)} and not _all_finite([value]):
+            problems.append(f"pair {index + 1}: invalid coordinate {value!r}")
+            break
+    if faces == 0:
+        problems.append("no 3DFACE entities")
+    return FormatReport(problems[:20], faces=faces)
+
+
+def check_autolisp(text: str) -> FormatReport:
+    depth, in_string, in_comment, line = 0, False, False, 1
+    problems: List[str] = []
+    for char in text:
+        if char == "\n":
+            line += 1
+            in_comment = False
+        elif in_comment:
+            continue
+        elif char == '"':
+            in_string = not in_string
+        elif in_string:
+            continue
+        elif char == ";":
+            in_comment = True
+        elif char == "(":
+            depth += 1
+        elif char == ")":
+            depth -= 1
+            if depth < 0:
+                problems.append(f"line {line}: unbalanced closing parenthesis")
+                break
+    if in_string:
+        problems.append("unterminated string")
+    if depth > 0:
+        problems.append(f"{depth} unclosed parentheses")
+    if not text.strip():
+        problems.append("empty script")
+    return FormatReport(problems)

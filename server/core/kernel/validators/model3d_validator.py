@@ -2,9 +2,21 @@ from typing import Callable, Dict
 
 from server.core.kernel.domain.node import NodeSpec
 from server.core.kernel.domain.outcome import NodeResult, Verdict
-from server.core.kernel.validators.model3d_formats import MAX_FILE_BYTES, FormatReport, check_gltf, check_obj
+from server.core.kernel.validators.model3d_formats import (
+    MAX_FILE_BYTES,
+    FormatReport,
+    check_autolisp,
+    check_dxf,
+    check_gltf,
+    check_obj,
+)
 
-_CHECKERS: Dict[str, Callable[[str], FormatReport]] = {".obj": check_obj, ".gltf": check_gltf}
+_CHECKERS: Dict[str, Callable[[str], FormatReport]] = {
+    ".obj": check_obj,
+    ".gltf": check_gltf,
+    ".dxf": check_dxf,
+    ".lsp": check_autolisp,
+}
 
 
 class Model3DArtifactValidator:

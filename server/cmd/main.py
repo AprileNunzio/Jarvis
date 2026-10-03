@@ -10,6 +10,7 @@ from server.features.home_assistant_bridge.ha_agent import HomeAssistantAgent
 from server.features.vision_surveillance.surveillance_agent import VisionSurveillanceAgent
 from server.features.self_healing_coder.coder_agent import SelfHealingCoderAgent
 from server.features.analytic_agent.analytic_agent import AnalyticReasonerAgent
+from server.features.parametric.designer_agent import ParametricDesignerAgent
 from server.features.sysops_automation.sysops_agent import SysOpsAutomationAgent
 from server.cmd.api_routes import router
 
@@ -65,6 +66,7 @@ def create_application() -> FastAPI:
     agent_pool.register_agent(SelfHealingCoderAgent())
     agent_pool.register_agent(SysOpsAutomationAgent())
     agent_pool.register_agent(AnalyticReasonerAgent())
+    agent_pool.register_agent(ParametricDesignerAgent())
     logger.info("Core agents registered: %s", agent_pool.list_agents())
 
     app.include_router(router)
