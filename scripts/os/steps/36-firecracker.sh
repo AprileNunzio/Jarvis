@@ -32,7 +32,7 @@ unsupported_reason() {
 }
 
 tried_recently() {
-    [ -f "$TRIED_FILE" ] && [ $(( $(date +%s) - $(stat -c %Y "$TRIED_FILE") )) -lt "$RETRY_AFTER_SECONDS" ]
+    [ -f "$TRIED_FILE" ]         && [ "$(cat "$TRIED_FILE")" = "$(_code_hash $(sources))" ]         && [ $(( $(date +%s) - $(stat -c %Y "$TRIED_FILE") )) -lt "$RETRY_AFTER_SECONDS" ]
 }
 
 assets_ready() {
@@ -90,7 +90,7 @@ build_rootfs() {
 step_apply() {
     local reason
     mkdir -p "$JARVIS_STATE" "$FC_DIR"
-    touch "$TRIED_FILE"
+    _code_hash $(sources) > "$TRIED_FILE"
     if reason=$(unsupported_reason); then
         mark_status "non disponibile: $reason"
         exit 0
