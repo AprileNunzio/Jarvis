@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from server.features.sandbox.domain.spec import ExecutionSpec, Language
+from server.features.sandbox.domain.spec import ExecutionSpec, Language, NetworkPolicy
 
 _ENTRYPOINTS = {
     Language.PYTHON: ("main.py", ["python", "-I", "-B", "/in/main.py"]),
@@ -23,12 +23,15 @@ def build_run_argv(
     out_dir: str,
     uid: int,
     runtime: Optional[str] = None,
+    network: str = "",
+    proxy_url: str = "",
 ) -> List[str]:
     limits = spec.limits
+    allowlist = spec.network is NetworkPolicy.ALLOWLIST and bool(network and proxy_url)
     argv = [
         docker_bin, "run", "--rm", "--init",
         "--name", name,
-        "--network", "none",
+        "--network", network if allowlist else "none",
         "--read-only",
         "--cap-drop", "ALL",
         "--security-opt", "no-new-privileges",
@@ -48,6 +51,9 @@ def build_run_argv(
         "--env", "PYTHONDONTWRITEBYTECODE=1",
         "--env", "PYTHONUNBUFFERED=1",
     ]
+    if allowlist:
+        for name in ("HTTP_PROXY", "HTTPS_PROXY", "http_proxy", "https_proxy"):
+            argv += ["--env", f"{name}={proxy_url}"]
     if runtime:
         argv += ["--runtime", runtime]
     argv.append(image)

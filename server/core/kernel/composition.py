@@ -4,7 +4,7 @@ from server.core.agent_registry.pool_manager import AgentPoolManager
 from server.core.kernel.application.ports import Checkpoint, ConsensusPort, RunObserver
 from server.core.kernel.application.scheduler import DagScheduler
 from server.core.kernel.application.validators import DEFAULT_VALIDATOR_ID, ValidatorCatalog
-from server.core.kernel.consensus.factory import build_consensus_panel
+from server.core.kernel.consensus.instance import consensus_panel
 from server.core.kernel.domain.node import NodeKind
 from server.core.kernel.infrastructure.failure_memory import DeepMemoryFailureAdapter
 from server.core.kernel.swarm.broker import SwarmBroker
@@ -14,6 +14,8 @@ from server.core.kernel.validators.model3d_validator import Model3DArtifactValid
 from server.core.reasoning.self_critique import CriticGate, LanguageCritic, self_critique_engine
 from server.features.deep_memory.composition import deep_memory
 from server.features.self_healing_coder.sandbox_runner import sandbox_gateway
+from server.features.skill_synthesis.application.validator import ToolArtifactValidator
+from server.features.skill_synthesis.composition import tool_runner, tool_store
 
 
 def build_validator_catalog() -> ValidatorCatalog:
@@ -21,7 +23,7 @@ def build_validator_catalog() -> ValidatorCatalog:
     gate = CriticGate(
         deterministic={
             NodeKind.CODE: code,
-            NodeKind.TOOL_SYNTHESIS: code,
+            NodeKind.TOOL_SYNTHESIS: ToolArtifactValidator(tool_store, tool_runner),
             NodeKind.PARAMETRIC: Model3DArtifactValidator(),
         },
         language_critic=LanguageCritic(self_critique_engine),
@@ -33,7 +35,6 @@ def build_validator_catalog() -> ValidatorCatalog:
 
 validator_catalog = build_validator_catalog()
 lane_governor = LaneGovernor()
-consensus_panel = build_consensus_panel()
 failure_memory = DeepMemoryFailureAdapter(deep_memory.failures)
 
 

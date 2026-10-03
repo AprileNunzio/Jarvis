@@ -1,8 +1,9 @@
 import base64
+import ipaddress
 import re
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Dict, Mapping
+from typing import Any, Dict, Mapping, Tuple
 
 from server.features.sandbox.domain.errors import SpecError
 from server.features.sandbox.domain.strength import Strength
@@ -16,6 +17,8 @@ MAX_MEMORY_MB = 1024
 MAX_PIDS = 256
 MAX_CPUS = 2.0
 _NAME = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$")
+MAX_EGRESS_HOSTS = 8
+HOST_PATTERN = re.compile(r"^(\*\.)?([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}$")
 
 
 class Language(str, Enum):
@@ -25,6 +28,17 @@ class Language(str, Enum):
 
 class NetworkPolicy(str, Enum):
     NONE = "none"
+    ALLOWLIST = "allowlist"
+
+
+def valid_egress_host(host: str) -> bool:
+    if not HOST_PATTERN.match(host):
+        return False
+    try:
+        ipaddress.ip_address(host)
+    except ValueError:
+        return True
+    return False
 
 
 @dataclass(frozen=True)
@@ -56,6 +70,7 @@ class ExecutionSpec:
     inputs: Mapping[str, bytes] = field(default_factory=dict)
     network: NetworkPolicy = NetworkPolicy.NONE
     min_strength: Strength = Strength.CONTAINER
+    egress_hosts: Tuple[str, ...] = ()
 
     def validate(self) -> None:
         self.limits.validate()
@@ -72,6 +87,17 @@ class ExecutionSpec:
             total += len(content)
         if total > MAX_INPUT_BYTES:
             raise SpecError("inputs too large")
+        self._validate_network()
+
+    def _validate_network(self) -> None:
+        if self.network is NetworkPolicy.NONE and self.egress_hosts:
+            raise SpecError("egress_hosts requires the allowlist network policy")
+        if self.network is NetworkPolicy.ALLOWLIST:
+            if not 1 <= len(self.egress_hosts) <= MAX_EGRESS_HOSTS:
+                raise SpecError(f"allowlist needs 1 to {MAX_EGRESS_HOSTS} hosts")
+            for host in self.egress_hosts:
+                if not valid_egress_host(host):
+                    raise SpecError(f"invalid egress host: {host!r}")
 
     def to_wire(self) -> Dict[str, Any]:
         return {
@@ -87,6 +113,7 @@ class ExecutionSpec:
             "inputs": {n: base64.b64encode(c).decode("ascii") for n, c in self.inputs.items()},
             "network": self.network.value,
             "min_strength": int(self.min_strength),
+            "egress_hosts": list(self.egress_hosts),
         }
 
     @classmethod
@@ -101,6 +128,7 @@ class ExecutionSpec:
                 inputs=inputs,
                 network=NetworkPolicy(data.get("network", "none")),
                 min_strength=Strength(int(data.get("min_strength", 1))),
+                egress_hosts=tuple(str(h) for h in data.get("egress_hosts") or ()),
             )
         except (KeyError, TypeError, ValueError) as exc:
             raise SpecError(f"malformed spec: {exc}") from exc

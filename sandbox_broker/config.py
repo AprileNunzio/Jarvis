@@ -18,6 +18,11 @@ class BrokerConfig:
     probe_timeout_seconds: int = 90
     sandbox_uid: int = _SANDBOX_UID
     container_prefix: str = "jarvis-sbx-"
+    egress_network: str = "jarvis-sbx"
+    egress_bridge: str = "jarvis-sbx0"
+    egress_subnet: str = "172.29.240.0/24"
+    egress_gateway: str = "172.29.240.1"
+    egress_ports: tuple = (38000, 38099)
 
     @classmethod
     def from_env(cls) -> "BrokerConfig":

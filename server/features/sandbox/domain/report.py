@@ -21,6 +21,7 @@ class ExecutionReport:
     duration_ms: int = 0
     artifacts: Tuple[Artifact, ...] = ()
     artifacts_truncated: bool = False
+    egress_denied: Tuple[str, ...] = ()
 
     @property
     def succeeded(self) -> bool:
@@ -38,6 +39,7 @@ class ExecutionReport:
             "duration_ms": self.duration_ms,
             "artifacts": {a.name: base64.b64encode(a.content).decode("ascii") for a in self.artifacts},
             "artifacts_truncated": self.artifacts_truncated,
+            "egress_denied": list(self.egress_denied),
         }
 
     @classmethod
@@ -54,4 +56,5 @@ class ExecutionReport:
             duration_ms=int(data.get("duration_ms", 0)),
             artifacts=artifacts,
             artifacts_truncated=bool(data.get("artifacts_truncated", False)),
+            egress_denied=tuple(str(h) for h in data.get("egress_denied") or ()),
         )

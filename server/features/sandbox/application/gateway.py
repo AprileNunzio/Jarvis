@@ -1,9 +1,9 @@
-from typing import Mapping, Optional
+from typing import Mapping, Optional, Sequence
 
 from server.features.sandbox.application.ports import SandboxPort
 from server.features.sandbox.domain.errors import SandboxRejectedError
 from server.features.sandbox.domain.report import ExecutionReport
-from server.features.sandbox.domain.spec import ExecutionSpec, Language, ResourceLimits
+from server.features.sandbox.domain.spec import ExecutionSpec, Language, NetworkPolicy, ResourceLimits
 from server.features.sandbox.domain.strength import Strength
 
 
@@ -32,6 +32,7 @@ class SandboxGateway:
         limits: Optional[ResourceLimits] = None,
         inputs: Optional[Mapping[str, bytes]] = None,
         min_strength: Strength = Strength.CONTAINER,
+        egress_hosts: Sequence[str] = (),
     ) -> ExecutionReport:
         spec = ExecutionSpec(
             language=language,
@@ -39,5 +40,7 @@ class SandboxGateway:
             limits=limits or ResourceLimits(),
             inputs=dict(inputs or {}),
             min_strength=min_strength,
+            network=NetworkPolicy.ALLOWLIST if egress_hosts else NetworkPolicy.NONE,
+            egress_hosts=tuple(egress_hosts),
         )
         return await self.run(spec)

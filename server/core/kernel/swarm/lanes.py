@@ -12,6 +12,7 @@ class Lane(str, Enum):
     CODING = "coding"
     PARAMETRIC = "parametric"
     ACTUATION = "actuation"
+    SYNTHESIS = "synthesis"
 
 
 @dataclass(frozen=True)
@@ -24,6 +25,7 @@ class LaneSpec:
 LANES: Tuple[LaneSpec, ...] = (
     LaneSpec(Lane.ANALYTIC, ("analytic_reasoner",), 2),
     LaneSpec(Lane.CODING, ("agent_self_healing_coder",), 1),
+    LaneSpec(Lane.SYNTHESIS, ("tool_builder",), 1),
     LaneSpec(Lane.PARAMETRIC, ("parametric_designer",), 1),
     LaneSpec(Lane.ACTUATION, (), 2),
 )
@@ -31,7 +33,7 @@ LANES: Tuple[LaneSpec, ...] = (
 LANE_BY_KIND: Dict[NodeKind, Lane] = {
     NodeKind.REASONING: Lane.ANALYTIC,
     NodeKind.CODE: Lane.CODING,
-    NodeKind.TOOL_SYNTHESIS: Lane.CODING,
+    NodeKind.TOOL_SYNTHESIS: Lane.SYNTHESIS,
     NodeKind.PARAMETRIC: Lane.PARAMETRIC,
     NodeKind.RPA: Lane.ACTUATION,
     NodeKind.DESTRUCTIVE_IO: Lane.ACTUATION,

@@ -40,4 +40,5 @@ class Engine:
             duration_ms=raw.duration_ms,
             artifacts=artifacts,
             artifacts_truncated=truncated,
+            egress_denied=raw.egress_denied,
         )

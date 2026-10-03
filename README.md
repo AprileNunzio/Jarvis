@@ -1644,6 +1644,15 @@ Lato Core il codice è in `server/features/sandbox/` (`domain/` contratti puri, 
 `infrastructure/` client del broker); `self_healing_coder/sandbox_runner.py` lo usa e restituisce l'errore
 all'agente per l'auto‑correzione.
 
+**Uscita controllata verso le API.** Per default il codice non ha alcuna rete. Una richiesta può dichiarare fino a
+8 host (`egress_hosts`, nomi esatti o `*.dominio`; mai indirizzi IP, `localhost` o reti private). In quel caso il
+container entra in una rete Docker **interna** (`jarvis-sbx`, senza route verso l'esterno) e raggiunge solo un
+proxy temporaneo del broker, uno per esecuzione, che accetta soltanto le porte 80 e 443, soltanto gli host
+dichiarati, risolve il nome da sé e rifiuta ogni risposta che includa un indirizzo non pubblico (protezione da
+SSRF e da DNS rebinding), con tetto di traffico e di durata. Gli host rifiutati tornano nel rapporto
+(`egress_denied`) e finiscono nel messaggio di correzione. Il passo `sandbox` apre la sola porta del proxy
+(38000‑38099) sul ponte `jarvis-sbx0` nel firewall.
+
 ### Cognitive Kernel (orchestrazione multi‑agente)
 
 Il Core non esegue più un compito con un solo prompt: `core/planner/task_decomposer.py` trasforma la richiesta in
@@ -1661,6 +1670,18 @@ esiti), `application/` (scheduler, porte), `infrastructure/` (adattatori), `swar
 
 Un ripiego del gateway LLM (`deterministic-core-v1`) produceva risposte sintetiche indistinguibili da quelle vere:
 ora è riconoscibile (`is_synthetic`) e non viene mai accettato come risposta, voto o specifica.
+
+### Strumenti dinamici (`features/skill_synthesis/`)
+
+Quando manca uno strumento, Jarvis lo scrive: `ToolSynthesizer` chiede al modello uno script Python o Bash che
+legge i parametri da `/in/input.json` e stampa un oggetto JSON come ultima riga, lo controlla (AST, contratto), lo
+**esegue solo in sandbox** con un input di prova e, se fallisce, rimanda al modello l'errore esatto e gli host
+bloccati, fino a tre tentativi. Gli strumenti riusciti sono salvati in `data/dynamic_tools/` e li usa
+`DynamicToolsAgent`, che li sceglie per somiglianza con la richiesta. Uno strumento che chiede internet deve
+prima essere approvato dal pannello di consenso, che vede host e codice (la guardia deterministica riconosce
+anche comandi distruttivi dentro lo script). Il vecchio meccanismo caricava nel Core, con tutti i suoi
+privilegi, il codice generato dal modello: non esiste più. Nei DAG i nodi `tool_synthesis` hanno una corsia
+propria (`ToolBuilderAgent`) e un validatore che riesegue lo strumento in modo indipendente.
 
 ### Memoria profonda (`features/deep_memory/`)
 

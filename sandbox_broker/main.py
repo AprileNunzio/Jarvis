@@ -4,6 +4,7 @@ import threading
 
 from sandbox_broker.backends import DockerBackend
 from sandbox_broker.config import BrokerConfig
+from sandbox_broker.egress_network import EgressNetwork
 from sandbox_broker.engine import Engine
 from sandbox_broker.housekeeping import remove_stale_workspaces, remove_stray_containers
 from sandbox_broker.registry import BackendRegistry
@@ -14,10 +15,10 @@ from server.features.sandbox.domain.strength import Strength
 logger = logging.getLogger("jarvis.sandbox_broker")
 
 
-def build_registry(config: BrokerConfig) -> BackendRegistry:
+def build_registry(config: BrokerConfig, network: EgressNetwork) -> BackendRegistry:
     return BackendRegistry([
-        DockerBackend(config, "gvisor", Strength.USERSPACE_KERNEL, "runsc"),
-        DockerBackend(config, "container", Strength.CONTAINER, None),
+        DockerBackend(config, "gvisor", Strength.USERSPACE_KERNEL, "runsc", network),
+        DockerBackend(config, "container", Strength.CONTAINER, None, network),
     ])
 
 
@@ -26,10 +27,12 @@ def main() -> None:
     config = BrokerConfig.from_env()
     remove_stray_containers(config)
     remove_stale_workspaces(config)
-    registry = build_registry(config)
+    network = EgressNetwork(config)
+    logger.info("egress network ready: %s", network.ensure())
+    registry = build_registry(config, network)
     registry.refresh()
     logger.info("backends: %s", registry.describe())
-    registry.keep_fresh(config.probe_interval_seconds, lambda: (remove_stray_containers(config), remove_stale_workspaces(config)))
+    registry.keep_fresh(config.probe_interval_seconds, lambda: (network.ensure(), remove_stray_containers(config), remove_stale_workspaces(config)))
     engine = Engine(config, registry, config.sandbox_uid)
     handler = bind_handler(engine, registry, secret_provider(config.env_file), config.max_body_bytes)
     server = serve_unix(config.socket_path, handler)

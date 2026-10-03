@@ -6,6 +6,7 @@ AGENT_BRAIN_ENV: Dict[str, str] = {
     "research": "JARVIS_LLM_RICERCATORE_ORDER",
     "domotics": "JARVIS_LLM_DOMOTICO_ORDER",
     "skill_synthesizer": "JARVIS_LLM_STUDIO_ORDER",
+    "tool_builder": "JARVIS_LLM_STUDIO_ORDER",
     "genera_modello_3d": "JARVIS_LLM_3D_ORDER",
     "parametric_designer": "JARVIS_LLM_3D_ORDER",
     "agent_self_healing_coder": "JARVIS_LLM_CODER_ORDER",
