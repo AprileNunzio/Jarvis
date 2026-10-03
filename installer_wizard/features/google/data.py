@@ -8,6 +8,9 @@ from datetime import date, datetime, timedelta
 import httpx
 
 
+UNREAD_QUERY = "is:unread in:inbox"
+
+
 class GoogleData:
     async def events(self, start: datetime, end: datetime, limit: int = 25) -> list[dict]:
         cals = (await self._get("https://www.googleapis.com/calendar/v3/users/me/calendarList",
@@ -50,10 +53,20 @@ class GoogleData:
                     "end": {"dateTime": (start + timedelta(minutes=minutes)).isoformat()}}
         return await self._call("POST", "https://www.googleapis.com/calendar/v3/calendars/primary/events", json=body)
 
-    async def mails(self, query: str = "is:unread in:inbox", limit: int = 5) -> tuple[int, list[dict]]:
+    async def unread_threads(self, fallback: int = 0) -> int:
+        try:
+            label = await self._get("https://gmail.googleapis.com/gmail/v1/users/me/labels/INBOX")
+        except Exception:
+            return fallback
+        count = label.get("threadsUnread")
+        return count if isinstance(count, int) and count >= 0 else fallback
+
+    async def mails(self, query: str = UNREAD_QUERY, limit: int = 5) -> tuple[int, list[dict]]:
         base = "https://gmail.googleapis.com/gmail/v1/users/me"
         data = await self._get(f"{base}/messages", q=query, maxResults=str(max(1, limit)))
         total = data.get("resultSizeEstimate", 0)
+        if query == UNREAD_QUERY:
+            total = await self.unread_threads(total)
         out = []
         for m in data.get("messages", [])[:limit]:
             msg = await self._get(f"{base}/messages/{m['id']}", format="metadata",
