@@ -11,9 +11,9 @@ class BackendRegistry:
         self._backends: List[Backend] = sorted(backends, key=lambda b: b.strength, reverse=True)
         self._stop = threading.Event()
 
-    def select(self, minimum: Strength) -> Backend:
+    def select(self, minimum: Strength, needs_egress: bool = False) -> Backend:
         for backend in self._backends:
-            if backend.strength >= minimum and backend.available():
+            if backend.strength >= minimum and backend.available() and (backend.supports_egress() or not needs_egress):
                 return backend
         raise SandboxUnavailableError(f"no isolation backend available with strength >= {int(minimum)}")
 

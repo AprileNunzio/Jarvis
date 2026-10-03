@@ -5,6 +5,7 @@ import threading
 from sandbox_broker.backends import DockerBackend
 from sandbox_broker.config import BrokerConfig
 from sandbox_broker.egress_network import EgressNetwork
+from sandbox_broker.microvm.backend import MicroVmBackend
 from sandbox_broker.engine import Engine
 from sandbox_broker.housekeeping import remove_stale_workspaces, remove_stray_containers
 from sandbox_broker.registry import BackendRegistry
@@ -17,6 +18,7 @@ logger = logging.getLogger("jarvis.sandbox_broker")
 
 def build_registry(config: BrokerConfig, network: EgressNetwork) -> BackendRegistry:
     return BackendRegistry([
+        MicroVmBackend(config),
         DockerBackend(config, "gvisor", Strength.USERSPACE_KERNEL, "runsc", network),
         DockerBackend(config, "container", Strength.CONTAINER, None, network),
     ])

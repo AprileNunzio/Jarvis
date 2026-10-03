@@ -32,6 +32,8 @@ STEPS = [
          critical=False),
     Step("gvisor", "34-gvisor.sh", "Isolamento gVisor", "Kernel in spazio utente per la sandbox, scaricato in background", 1,
          critical=False, background=True),
+    Step("firecracker", "36-firecracker.sh", "Micro-VM Firecracker", "Isolamento hardware della sandbox, attivo solo dove la virtualizzazione KVM è disponibile", 1,
+         critical=False, background=True),
     Step("display_driver", "33-display-driver.sh", "Driver video", "Driver NVIDIA ufficiale per il display, con ritorno automatico", 2,
          critical=False),
     Step("gpu", "35-gpu.sh", "Accelerazione GPU", "Runtime NVIDIA per l'inferenza", 2, critical=False),

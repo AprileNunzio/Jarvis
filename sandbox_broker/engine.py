@@ -7,7 +7,7 @@ from sandbox_broker.registry import BackendRegistry
 from sandbox_broker.workspace import Workspace
 from server.features.sandbox.domain.errors import SandboxUnavailableError
 from server.features.sandbox.domain.report import ExecutionReport
-from server.features.sandbox.domain.spec import ExecutionSpec
+from server.features.sandbox.domain.spec import ExecutionSpec, NetworkPolicy
 
 
 class Engine:
@@ -19,7 +19,7 @@ class Engine:
 
     def execute(self, spec: ExecutionSpec) -> ExecutionReport:
         spec.validate()
-        backend = self._registry.select(spec.min_strength)
+        backend = self._registry.select(spec.min_strength, spec.network is NetworkPolicy.ALLOWLIST)
         if not self._slots.acquire(timeout=self._config.queue_wait_seconds):
             raise SandboxUnavailableError("sandbox is busy")
         try:

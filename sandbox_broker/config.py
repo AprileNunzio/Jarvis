@@ -23,6 +23,9 @@ class BrokerConfig:
     egress_subnet: str = "172.29.240.0/24"
     egress_gateway: str = "172.29.240.1"
     egress_ports: tuple = (38000, 38099)
+    firecracker_bin: str = "/usr/local/bin/firecracker"
+    firecracker_dir: str = "/var/lib/jarvis/firecracker"
+    kvm_device: str = "/dev/kvm"
 
     @classmethod
     def from_env(cls) -> "BrokerConfig":
@@ -32,5 +35,7 @@ class BrokerConfig:
             work_dir=os.environ.get("JARVIS_SANDBOX_WORK", defaults.work_dir),
             env_file=os.environ.get("JARVIS_ENV_FILE", defaults.env_file),
             image=os.environ.get("JARVIS_SANDBOX_IMAGE", defaults.image),
+            firecracker_bin=os.environ.get("JARVIS_FIRECRACKER_BIN", defaults.firecracker_bin),
+            firecracker_dir=os.environ.get("JARVIS_FIRECRACKER_DIR", defaults.firecracker_dir),
             max_concurrent=int(os.environ.get("JARVIS_SANDBOX_CONCURRENCY", defaults.max_concurrent)),
         )

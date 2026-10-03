@@ -37,6 +37,9 @@ class Backend(ABC):
     name: str
     strength: Strength
 
+    def supports_egress(self) -> bool:
+        return False
+
     @abstractmethod
     def available(self) -> bool: ...
 
