@@ -109,21 +109,34 @@ def run_payload(spec):
     emit("exit", process.returncode)
 
 
-def main():
-    mount("proc", "/proc", "proc", MS_NOSUID | MS_NODEV | MS_NOEXEC)
+def mount_all(spec):
     mount("sysfs", "/sys", "sysfs", MS_NOSUID | MS_NODEV | MS_NOEXEC)
-    mount("devtmpfs", "/dev", "devtmpfs", MS_NOSUID | MS_NOEXEC)
-    spec = read_spec()
     mount("tmpfs", "/tmp", "tmpfs", MS_NOSUID | MS_NODEV | MS_NOEXEC, "size=16m,mode=1777")
     mount("tmpfs", "/in", "tmpfs", MS_NOSUID | MS_NODEV | MS_NOEXEC, "size=9m,mode=0755")
     mount("tmpfs", "/out", "tmpfs", MS_NOSUID | MS_NODEV | MS_NOEXEC, "size=%d,mode=0700" % (spec["out"] + 65536))
     os.chown("/out", UID, UID)
+
+
+def mount_devices():
     try:
+        mount("devtmpfs", "/dev", "devtmpfs", MS_NOSUID | MS_NOEXEC)
+    except OSError:
+        if not os.path.exists("/dev/vdb"):
+            raise
+
+
+def main():
+    try:
+        mount("proc", "/proc", "proc", MS_NOSUID | MS_NODEV | MS_NOEXEC)
+        spec = read_spec()
+        mount_devices()
+        mount_all(spec)
         extract_inputs(read_frame("/dev/vdb"))
         run_payload(spec)
         collect_outputs(spec["out"])
-    except Exception as exc:
-        emit("stderr", "guest failure: %s" % exc)
+    except BaseException as exc:
+        print("guest failure: %s: %s" % (type(exc).__name__, exc))
+        emit("stderr", "guest failure: %s: %s" % (type(exc).__name__, exc))
         emit("exit", 125)
     sys.stdout.flush()
     os.sync()

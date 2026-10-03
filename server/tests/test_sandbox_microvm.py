@@ -85,6 +85,9 @@ class ConsoleTest(unittest.TestCase):
         self.assertIn("cannot open /dev/kvm", text)
         self.assertNotIn("secret", text)
         self.assertNotIn("[ 0]", text)
+        trace = console.tail(bytes([10]).join([b"[    0.5] Run /sbin/jarvis-init", b"Traceback (most recent call last):", b"OSError: mount /proc", b"[    0.6] Kernel panic - not syncing: Attempted to kill init", b"[    0.6] RDX: 0000"]), b"")
+        self.assertIn("OSError: mount /proc", trace)
+        self.assertNotIn("RDX", trace)
 
     def test_a_guest_cannot_exceed_the_output_cap(self):
         self.assertEqual(len(console.parse(line("stdout", b"x" * 5000), 100).stdout), 100)

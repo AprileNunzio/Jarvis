@@ -1,5 +1,6 @@
 import base64
 import binascii
+import re
 from dataclasses import dataclass
 from typing import Dict, Optional
 
@@ -49,8 +50,14 @@ def parse(console: bytes, cap: int) -> GuestReport:
     )
 
 
-def tail(console_bytes: bytes, process_stderr: bytes, lines: int = 7, limit: int = 560) -> str:
-    kept = [ln.strip() for ln in console_bytes.decode("utf-8", "replace").splitlines() if ln.strip() and MARK.decode() not in ln and "[anonymous-instance" not in ln]
+_KERNEL_LINE = re.compile(r"^\[\s*\d+\.\d+\]")
+
+
+def tail(console_bytes: bytes, process_stderr: bytes, lines: int = 8, limit: int = 560) -> str:
+    rows = [ln.strip() for ln in console_bytes.decode("utf-8", "replace").splitlines() if ln.strip()]
+    rows = [ln for ln in rows if MARK.decode() not in ln and "[anonymous-instance" not in ln]
+    guest = [ln for ln in rows if not _KERNEL_LINE.match(ln)]
+    panic = next((ln for ln in rows if "Kernel panic" in ln), "")
     err = " ".join(process_stderr.decode("utf-8", "replace").split())[-160:]
-    text = " / ".join(kept[-lines:])
+    text = " / ".join(guest[-lines:] + ([panic] if panic else []) or rows[-lines:])
     return f"console: {text[-limit:]}" + (f" | vmm: {err}" if err else "")
