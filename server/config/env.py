@@ -28,6 +28,7 @@ class ServerSettings(BaseSettings):
     HOME_ASSISTANT_TOKEN: str = ""
     FRIGATE_URL: str = "http://127.0.0.1:5000"
     CODE_SANDBOX_TIMEOUT_SECONDS: int = 30
+    SANDBOX_SOCKET_PATH: str = "/run/jarvis/sandbox/broker.sock"
 
     model_config = SettingsConfigDict(
         env_file=".env",

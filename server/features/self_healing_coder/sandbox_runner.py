@@ -1,29 +1,32 @@
-import asyncio
 from typing import Tuple
+
 from server.config.env import settings
-from server.shared.errors.domain_errors import SandboxSecurityException
+from server.features.sandbox.application.gateway import SandboxGateway
+from server.features.sandbox.domain.errors import SandboxError
+from server.features.sandbox.domain.spec import ResourceLimits
+from server.features.sandbox.infrastructure.broker_client import BrokerClient
+
 
 class SandboxRunner:
-    def __init__(self, timeout_seconds: int = settings.CODE_SANDBOX_TIMEOUT_SECONDS) -> None:
-        self._timeout = timeout_seconds
+    def __init__(self, gateway: SandboxGateway, timeout_seconds: int) -> None:
+        self._gateway = gateway
+        self._limits = ResourceLimits(wall_seconds=timeout_seconds)
 
     async def execute_in_sandbox(self, python_code: str) -> Tuple[bool, str, str]:
-        self._inspect_code_safety(python_code)
-        
-        from server.core.orchestrator.sandbox import EphemeralSandbox
-        sandbox = EphemeralSandbox()
-        
-        loop = asyncio.get_event_loop()
-        result = await loop.run_in_executor(None, sandbox.run_code, python_code, self._timeout)
-        
-        if result.get("error"):
-            return False, result.get("stdout") or "", result.get("error")
-        return True, result.get("stdout") or "", ""
+        try:
+            report = await self._gateway.run_python(python_code, limits=self._limits)
+        except SandboxError as exc:
+            return False, "", f"sandbox error: {exc}"
+        if report.timed_out:
+            return False, report.stdout, f"{report.stderr}\nexecution exceeded {self._limits.wall_seconds}s".strip()
+        if report.oom_killed:
+            return False, report.stdout, f"{report.stderr}\nexecution exceeded memory limit".strip()
+        return report.succeeded, report.stdout, report.stderr
 
-    def _inspect_code_safety(self, code_str: str) -> None:
-        forbidden_tokens = ["os.system(", "subprocess.Popen(", "shutil.rmtree('/'", "open('/etc/shadow'"]
-        for token in forbidden_tokens:
-            if token in code_str:
-                raise SandboxSecurityException(f"Forbidden security construct detected: {token}")
 
-sandbox_runner = SandboxRunner()
+def build_default_runner() -> SandboxRunner:
+    client = BrokerClient(settings.SANDBOX_SOCKET_PATH, lambda: settings.JARVIS_SECRET_KEY)
+    return SandboxRunner(SandboxGateway(client), settings.CODE_SANDBOX_TIMEOUT_SECONDS)
+
+
+sandbox_runner = build_default_runner()

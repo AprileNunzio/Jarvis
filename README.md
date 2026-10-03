@@ -433,7 +433,7 @@ Poi aprire `http://localhost:8000/` (display) e `http://localhost:8001/` (pannel
 
 ## 9. Passi d'installazione (step)
 
-Ogni passo (22 in tutto) è uno script in `scripts/os/steps/` con due comandi:
+Ogni passo (23 in tutto) è uno script in `scripts/os/steps/` con due comandi:
 
 - `check`: esce con 0 se il sistema è già nello stato voluto (deve essere veloce e senza effetti);
 - `apply`: porta il sistema nello stato voluto; deve essere **idempotente**.
@@ -1614,6 +1614,33 @@ Sicurezza del Core: tutte le rotte tranne `/health` richiedono un token firmato 
 una casuale per la sola sessione). `POST /api/v1/auth/exchange` rilascia token solo alle richieste da
 `127.0.0.1`, cioè al supervisore, e la porta 8443 è chiusa nel firewall: i client esterni passano dal
 supervisore (porte 80 e 8080).
+
+### Sandbox isolata (`sandbox_broker/`)
+
+Il codice generato dall'assistente non gira mai nel Core né sull'host. Il Core non ha accesso a Docker: invia
+una richiesta firmata (HMAC‑SHA256 con `JARVIS_SECRET_KEY`, timestamp con tolleranza di 30 s) al **Sandbox
+Broker**, un servizio systemd (`jarvis-sandbox`) che ascolta sul socket `/run/jarvis/sandbox/broker.sock`,
+montato nel container `jarvis-core`. Il broker ricontrolla la richiesta e la esegue in un container effimero:
+senza rete, filesystem di sola lettura, tutte le capability rimosse, utente non privilegiato, limiti di
+memoria, CPU, processi, tempo e dimensione dei file. Dall'esterno rientrano solo stdout, stderr, codice di
+uscita e i file regolari scritti in `/out`.
+
+| Livello | Backend | Quando è usato |
+| :---: | :--- | :--- |
+| 3 | microVM Firecracker | non ancora implementato: richiede KVM, da verificare sul server |
+| 2 | gVisor (`runsc`) | scaricato e verificato (SHA‑512) dal passo `sandbox`, se la macchina lo supporta |
+| 1 | container Docker rinforzato | sempre, come ripiego |
+
+Ogni richiesta dichiara il livello minimo (`min_strength`): se nessun backend lo raggiunge, il codice non viene
+eseguito e non c'è alcun declassamento silenzioso. Il broker prova i backend all'avvio e ogni 5 minuti,
+rimuove container e cartelle di lavoro orfani e si riavvia da solo (`Restart=always`). Il passo `sandbox`
+(non critico) costruisce l'immagine `jarvis-sandbox:local` da `docker/sandbox/`, installa gVisor e il servizio e
+si riesegue da solo quando cambia il codice del broker. Stato: `PYTHONPATH=/opt/Jarvis python3 -m
+sandbox_broker.cli status`.
+
+Lato Core il codice è in `server/features/sandbox/` (`domain/` contratti puri, `application/` gateway e porta,
+`infrastructure/` client del broker); `self_healing_coder/sandbox_runner.py` lo usa e restituisce l'errore
+all'agente per l'auto‑correzione.
 
 ---
 

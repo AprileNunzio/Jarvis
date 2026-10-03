@@ -1,0 +1,27 @@
+[Unit]
+Description=Jarvis Sandbox Broker (esecuzione isolata del codice generato)
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/Jarvis
+Environment=PYTHONPATH=/opt/Jarvis
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/usr/bin/python3 -m sandbox_broker.main
+RuntimeDirectory=jarvis/sandbox
+RuntimeDirectoryMode=0750
+RuntimeDirectoryPreserve=yes
+StateDirectory=jarvis/sandbox
+Restart=always
+RestartSec=3
+NoNewPrivileges=yes
+ProtectHome=yes
+PrivateTmp=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictRealtime=yes
+LockPersonality=yes
+
+[Install]
+WantedBy=multi-user.target

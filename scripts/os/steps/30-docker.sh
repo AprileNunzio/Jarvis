@@ -2,10 +2,13 @@
 . "$(dirname "$0")/../lib.sh"
 
 daemon_json() {
+    local runtimes=()
+    [ -x /usr/local/bin/runsc ] && runtimes=('  "runtimes": { "runsc": { "path": "/usr/local/bin/runsc" } },')
     printf '%s\n' \
         '{' \
         '  "log-driver": "json-file",' \
         '  "log-opts": { "max-size": "20m", "max-file": "3" },' \
+        "${runtimes[@]}" \
         '  "live-restore": true' \
         '}'
 }

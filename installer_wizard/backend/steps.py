@@ -28,6 +28,8 @@ STEPS = [
     Step("system", "20-system.sh", "Componenti di sistema", "Runtime, interfaccia grafica, voce", 10),
     Step("kiosk", "25-kiosk.sh", "Display olografico", "Sessione kiosk dedicata e sicura", 2, critical=False),
     Step("docker", "30-docker.sh", "Motore container", "Docker Engine e isolamento dei servizi", 9),
+    Step("sandbox", "32-sandbox.sh", "Sandbox isolata", "Esecuzione protetta del codice generato, senza rete e senza accesso al sistema", 3,
+         critical=False),
     Step("display_driver", "33-display-driver.sh", "Driver video", "Driver NVIDIA ufficiale per il display, con ritorno automatico", 2,
          critical=False),
     Step("gpu", "35-gpu.sh", "Accelerazione GPU", "Runtime NVIDIA per l'inferenza", 2, critical=False),
