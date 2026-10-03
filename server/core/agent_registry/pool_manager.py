@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional
+from typing import Collection, Dict, List, Optional
 from server.core.agent_registry.interfaces import BaseAgent, AgentTaskRequest
 from server.shared.errors.domain_errors import AgentExecutionException
 
@@ -11,6 +11,19 @@ class AgentPoolManager:
 
     def list_agents(self) -> List[str]:
         return list(self._registry.keys())
+
+    def registered(self, agent_ids: Collection[str]) -> List[str]:
+        return [a for a in agent_ids if a in self._registry]
+
+    def select_among(self, request: AgentTaskRequest, agent_ids: Collection[str]) -> BaseAgent:
+        candidates = self.registered(agent_ids)
+        if not candidates:
+            raise AgentExecutionException(
+                agent_name="orchestrator",
+                message=f"None of the agents {sorted(agent_ids)} is registered",
+                details={"intent": request.intent},
+            )
+        return self._registry[candidates[0]]
 
     async def select_best_agent(self, request: AgentTaskRequest) -> BaseAgent:
         best_agent: Optional[BaseAgent] = None

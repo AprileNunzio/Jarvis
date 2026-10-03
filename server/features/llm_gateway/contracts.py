@@ -15,8 +15,15 @@ class LLMRequest(BaseModel):
     models: List[str] = Field(default_factory=list)
     pinned: str = ""
 
+SYNTHETIC_MODEL = "deterministic-core-v1"
+
+
 class LLMResponse(BaseModel):
     content: str
     model_used: str
     tokens_consumed: int
     duration_ms: float
+
+    @property
+    def is_synthetic(self) -> bool:
+        return self.model_used == SYNTHETIC_MODEL

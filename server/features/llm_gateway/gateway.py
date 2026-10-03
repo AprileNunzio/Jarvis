@@ -3,7 +3,7 @@ import httpx
 import logging
 import os
 from server.config.env import settings
-from server.features.llm_gateway.contracts import LLMRequest, LLMResponse
+from server.features.llm_gateway.contracts import SYNTHETIC_MODEL, LLMRequest, LLMResponse
 
 logger = logging.getLogger("jarvis.llm_gateway")
 
@@ -151,7 +151,7 @@ class LLMGateway:
         user_query = request.messages[-1].content if request.messages else ""
         return LLMResponse(
             content=f"Jarvis Core acknowledges the request: '{user_query}'. Operating in deterministic autonomous mode. (Last error: {error})",
-            model_used="deterministic-core-v1",
+            model_used=SYNTHETIC_MODEL,
             tokens_consumed=25,
             duration_ms=elapsed
         )
