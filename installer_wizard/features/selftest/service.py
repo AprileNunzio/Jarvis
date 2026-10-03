@@ -56,7 +56,7 @@ class SelfTest:
             detail, status = f"nessuna risposta in {TIMEOUT} s", "errore"
         except Exception as exc:
             detail, status = str(exc)[:300] or type(exc).__name__, "errore"
-        return {"key": key, "label": label, "critical": critical, "status": status, "detail": str(detail)[:300],
+        return {"key": key, "label": label, "critical": critical, "status": status, "detail": str(detail)[:700],
                 "ms": int((time.time() - started) * 1000)}
 
     async def run(self, reason: str = "manuale") -> dict:

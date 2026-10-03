@@ -30,4 +30,4 @@ async def sandbox_isolation():
 
 
 def _backends(items):
-    return ", ".join(f"{b['name']}={'ok' if b['available'] else 'no'}{' (' + b['note'] + ')' if b.get('note') else ''}" for b in items)[:260]
+    return ", ".join(f"{b['name']}={'ok' if b['available'] else 'no'}{' (' + b['note'] + ')' if b.get('note') else ''}" for b in items)[:600]

@@ -34,6 +34,7 @@ class MicroVmBackend(Backend):
         self._kernel = os.path.join(config.firecracker_dir, KERNEL_FILE)
         self._rootfs = os.path.join(config.firecracker_dir, ROOTFS_FILE)
         self._ready = False
+        self.last_trace = ""
 
     def available(self) -> bool:
         return self._ready
@@ -64,6 +65,7 @@ class MicroVmBackend(Backend):
         cap = (spec.limits.output_bytes * 2 + 4096) * _CONSOLE_FACTOR
         result = run_capped(argv, spec.limits.wall_seconds + BOOT_ALLOWANCE_SECONDS, cap, on_timeout=lambda: None)
         report = console.parse(result.stdout, spec.limits.output_bytes)
+        self.last_trace = "" if report.complete else console.tail(result.stdout, result.stderr)
         self._restore_outputs(images["out"], spec, workspace)
         timed_out = result.timed_out or report.timed_out
         exit_code = report.exit_code if report.complete else (124 if timed_out else 125)
@@ -127,5 +129,5 @@ class MicroVmBackend(Backend):
             self.note = f"avvio fallito: {exc}"[:200]
             return False
         healthy = result.exit_code == 0 and b"jarvis-microvm-ok" in result.stdout and time.monotonic() - started < 60
-        self.note = "" if healthy else f"prova fallita: exit={result.exit_code} stderr={result.stderr[-160:].decode('utf-8', 'replace')}"
+        self.note = "" if healthy else f"prova fallita: exit={result.exit_code} {self.last_trace or result.stderr[-160:].decode('utf-8', 'replace')}"
         return healthy

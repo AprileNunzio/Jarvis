@@ -78,6 +78,16 @@ class ConsoleTest(unittest.TestCase):
         self.assertFalse(console.parse(line("timeout", 1) + line("exit", 137), 10).oom_killed)
         self.assertFalse(console.parse(b"garbage\n@@JARVIS@@ stdout !!!\n", 10).complete)
 
+    def test_tail_keeps_the_last_kernel_lines_and_the_vmm_error_only(self):
+        raw = b"".join(b"[ %d] line
+" % i for i in range(10)) + line("stdout", b"secret") + b"Kernel panic - not syncing
+"
+        text = console.tail(raw, b" firecracker:  cannot open /dev/kvm ")
+        self.assertIn("Kernel panic", text)
+        self.assertIn("cannot open /dev/kvm", text)
+        self.assertNotIn("secret", text)
+        self.assertNotIn("[ 0]", text)
+
     def test_a_guest_cannot_exceed_the_output_cap(self):
         self.assertEqual(len(console.parse(line("stdout", b"x" * 5000), 100).stdout), 100)
 

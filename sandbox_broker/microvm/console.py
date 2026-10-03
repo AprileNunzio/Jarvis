@@ -47,3 +47,10 @@ def parse(console: bytes, cap: int) -> GuestReport:
         timed_out=fields.get("timeout") == b"1",
         oom_killed=oom or (code is not None and code in (137, -9) and fields.get("timeout") != b"1"),
     )
+
+
+def tail(console_bytes: bytes, process_stderr: bytes, lines: int = 4, limit: int = 420) -> str:
+    kept = [ln.strip() for ln in console_bytes.decode("utf-8", "replace").splitlines() if ln.strip() and MARK.decode() not in ln]
+    err = " ".join(process_stderr.decode("utf-8", "replace").split())[-160:]
+    text = " / ".join(kept[-lines:])
+    return f"console: {text[-limit:]}" + (f" | vmm: {err}" if err else "")
