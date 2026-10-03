@@ -103,28 +103,31 @@ class OrchestratorDispatcher:
         if is_complex or is_web_or_code:
             logger.info("Complex task detected, delegating to LongRunningTaskManager")
             
+            from server.core.kernel.composition import build_scheduler
             from server.core.orchestrator.interrupt_manager import project_manager
-            
-            async def background_planner_task():
-                plan = await task_planner.decompose(sanitized_query)
+
+            async def background_planner_task(checkpoint, observer) -> bool:
+                dag = await task_planner.plan(sanitized_query)
                 graph_client.upsert_node(
                     node_id=task_id,
                     node_type=NodeType.CONCEPT,
                     label=f"Task: {sanitized_query[:40]}",
-                    properties={"status": "EXECUTING_PLAN", "plan_steps": len(plan)},
+                    properties={"status": "EXECUTING_PLAN", "plan_steps": len(dag.nodes), "plan": dag.fingerprint()},
                 )
-                
-                await task_planner.execute_plan(
-                    plan=plan,
-                    original_query=sanitized_query,
-                    user_id=speaker_id,
-                    device_id=device_id,
-                    task_id=task_id # Pass task_id per aggiornare il progresso nel manager
+                scheduler = build_scheduler(
+                    agent_pool, speaker_id, device_id, sanitized_query, observer=observer, checkpoint=checkpoint
                 )
+                outcome = await scheduler.run(dag)
+                graph_client.upsert_node(
+                    node_id=task_id,
+                    node_type=NodeType.CONCEPT,
+                    label=f"Task: {sanitized_query[:40]}",
+                    properties={"status": outcome.status, "nodes": outcome.summary()},
+                )
+                return outcome.succeeded
 
-            # Start in background using project manager
-            await project_manager.start_project(task_id, background_planner_task)
-            
+            await project_manager.start_project(task_id, sanitized_query[:40], background_planner_task)
+
             return AgentTaskResponse(
                 task_id=task_id,
                 agent_id="orchestrator_planner",

@@ -1,174 +1,83 @@
 import json
 import logging
-from typing import List, Dict, Any
+from typing import Optional
+
+from server.core.kernel.domain.dag import MAX_NODES, ExecutionDag
+from server.core.kernel.domain.errors import DagError
+from server.core.kernel.domain.node import NodeKind, NodeSpec
+from server.core.kernel.domain.plan_codec import dag_from_plan, extract_json_array
+from server.features.llm_gateway.contracts import LLMMessage, LLMRequest
 from server.features.llm_gateway.gateway import llm_gateway
-from server.features.llm_gateway.contracts import LLMRequest, LLMMessage
-from server.core.agent_registry.pool_manager import agent_pool
-from server.core.agent_registry.interfaces import AgentTaskRequest
 
 logger = logging.getLogger("jarvis.task_planner")
 
-_PLANNER_SYSTEM_PROMPT = """Sei il pianificatore strategico di Jarvis.
-Decomponi la richiesta complessa dell'utente in sotto-task atomici, ordinati logicamente.
+_KINDS = ", ".join(k.value for k in NodeKind)
+_PLANNER_SYSTEM_PROMPT = f"""Sei il pianificatore strategico di Jarvis.
+Trasforma la richiesta in un grafo aciclico di sotto-task atomici, isolati e verificabili.
 
 Rispondi con un JSON array. Ogni elemento DEVE avere:
-- "step": numero progressivo (intero, partendo da 1)
-- "description": descrizione chiara e concisa del sotto-task
-- "depends_on": lista di numeri di step prerequisiti (array vuoto se indipendente)
-- "estimated_intent": intent più adatto tra {intents}
+- "step": numero progressivo (intero, da 1)
+- "description": cosa fare, concreto e verificabile
+- "depends_on": lista dei numeri di step prerequisiti ([] se indipendente)
+- "estimated_intent": intent più adatto tra {{intents}}
+- "kind": uno tra {_KINDS}
+- "risk": READ_ONLY, REVERSIBLE oppure DESTRUCTIVE (DESTRUCTIVE se modifica file system, git o transazioni)
 
 Regole:
-- Ogni step deve essere abbastanza specifico da essere eseguibile da un singolo agente.
-- Ordina i passi in modo logico rispettando le dipendenze.
-- Non superare 8 step totali.
-- Rispondi SOLO con il JSON array, nessun altro testo."""
+- Nessun ciclo: uno step può dipendere solo da step con numero più basso.
+- Massimo {MAX_NODES} step, ognuno eseguibile da un singolo agente.
+- Rispondi SOLO con il JSON array."""
 
 
-class AutonomousTaskPlanner:
-
-    def __init__(self, model_name: str = "qwen2.5:7b") -> None:
+class DagPlanner:
+    def __init__(self, model_name: str = "qwen2.5:7b", max_planning_attempts: int = 2) -> None:
         self._model = model_name
+        self._attempts = max_planning_attempts
 
     async def should_decompose(self, query: str) -> bool:
-        response = await llm_gateway.generate_completion(
-            LLMRequest(
-                model_name=self._model,
-                messages=[LLMMessage(role="user", content=query)],
-                system_prompt=(
-                    "Analizza questa richiesta. È un task complesso che richiede più passi "
-                    "coordinati, oppure è un task singolo semplice?\n"
-                    'Rispondi SOLO con: {"complex": true} oppure {"complex": false}'
-                ),
-                temperature=0.05,
-                max_tokens=30,
-            )
+        response = await self._ask(
+            query,
+            "Analizza questa richiesta. È un task complesso che richiede più passi coordinati, "
+            'oppure è un task singolo semplice?\nRispondi SOLO con: {"complex": true} oppure {"complex": false}',
+            max_tokens=30,
         )
         try:
-            raw = response.content.strip()
-            start = raw.find("{")
-            end = raw.rfind("}")
-            if start != -1 and end != -1:
-                return json.loads(raw[start : end + 1]).get("complex", False)
-        except (json.JSONDecodeError, KeyError):
-            pass
-        return False
+            raw = response.strip()
+            return bool(json.loads(raw[raw.find("{") : raw.rfind("}") + 1]).get("complex", False))
+        except (json.JSONDecodeError, AttributeError):
+            return False
 
-    async def decompose(self, complex_task: str) -> List[Dict[str, Any]]:
+    async def plan(self, task: str) -> ExecutionDag:
         from server.core.orchestrator.intent_classifier import INTENT_CATALOG
 
-        system = _PLANNER_SYSTEM_PROMPT.format(intents=list(INTENT_CATALOG.keys()))
+        system = _PLANNER_SYSTEM_PROMPT.replace("{intents}", str(list(INTENT_CATALOG.keys())))
+        request = task
+        for attempt in range(1, self._attempts + 1):
+            raw = await self._ask(request, system, max_tokens=1500)
+            try:
+                dag = dag_from_plan(extract_json_array(raw))
+                logger.info("plan %s with %d nodes", dag.fingerprint()[:12], len(dag.nodes))
+                return dag
+            except DagError as exc:
+                logger.warning("planning attempt %d rejected: %s", attempt, exc)
+                request = f"{task}\n\nIl piano precedente era invalido ({exc}). Produci un piano corretto."
+        return self.single_node(task)
 
+    @staticmethod
+    def single_node(task: str, intent: Optional[str] = None) -> ExecutionDag:
+        return ExecutionDag.build([NodeSpec(node_id="n1", kind=NodeKind.REASONING, description=task, intent=intent or "GENERAL_INTELLIGENCE")])
+
+    async def _ask(self, content: str, system: str, max_tokens: int) -> str:
         response = await llm_gateway.generate_completion(
             LLMRequest(
                 model_name=self._model,
-                messages=[LLMMessage(role="user", content=complex_task)],
+                messages=[LLMMessage(role="user", content=content)],
                 system_prompt=system,
                 temperature=0.1,
-                max_tokens=1500,
+                max_tokens=max_tokens,
             )
         )
-
-        try:
-            raw = response.content.strip()
-            start = raw.find("[")
-            end = raw.rfind("]")
-            if start != -1 and end != -1:
-                plan = json.loads(raw[start : end + 1])
-                if isinstance(plan, list) and len(plan) > 0:
-                    logger.info("Task decomposed into %d steps", len(plan))
-                    return plan
-        except json.JSONDecodeError:
-            pass
-
-        logger.warning("Decomposition failed, returning single-step plan")
-        return [{"step": 1, "description": complex_task, "depends_on": [], "estimated_intent": "GENERAL_INTELLIGENCE"}]
-
-    async def execute_plan(
-        self,
-        plan: List[Dict[str, Any]],
-        original_query: str,
-        user_id: str,
-        device_id: str,
-        task_id: str = None
-    ) -> Dict[str, Any]:
-        completed: Dict[int, Dict[str, Any]] = {}
-        results: List[Dict[str, Any]] = []
-
-        sorted_plan = sorted(plan, key=lambda s: s.get("step", 0))
-        total_steps = len(sorted_plan)
-        
-        from server.core.orchestrator.interrupt_manager import project_manager, ProjectState
-
-        for i, step in enumerate(sorted_plan):
-            step_num = step.get("step", 0)
-            deps = step.get("depends_on", [])
-
-            unmet = [d for d in deps if d not in completed]
-            if unmet:
-                results.append({
-                    "step": step_num,
-                    "status": "BLOCKED",
-                    "reason": f"Unmet dependencies: {unmet}",
-                })
-                continue
-                
-            # Verifica pause se è un long running task
-            if task_id and task_id in project_manager.active_tasks:
-                pause_event = project_manager.active_tasks[task_id]["pause_event"]
-                if not pause_event.is_set():
-                    logger.info("Plan execution PAUSED for task %s", task_id)
-                    await pause_event.wait()
-                    logger.info("Plan execution RESUMED for task %s", task_id)
-                    
-            # Aggiorna il progresso del manager
-            if task_id and task_id in project_manager.active_tasks:
-                state_file = project_manager.active_tasks[task_id]["state_file"]
-                progress = int((i / max(total_steps, 1)) * 100)
-                project_manager._save_state(state_file, {"status": ProjectState.RUNNING.value, "progress": progress, "name": original_query[:40]})
-
-            sub_request = AgentTaskRequest(
-                task_id=f"plan_{step_num}",
-                user_id=user_id,
-                intent=step.get("estimated_intent", "GENERAL_INTELLIGENCE"),
-                raw_query=step["description"],
-                parameters={
-                    "device_id": device_id,
-                    "plan_context": original_query,
-                    "previous_results": {str(k): v for k, v in completed.items()},
-                },
-            )
-
-            try:
-                agent = await agent_pool.select_best_agent(sub_request)
-                response = await agent.execute(sub_request)
-                completed[step_num] = response.result_data
-                results.append({
-                    "step": step_num,
-                    "status": response.status,
-                    "agent": response.agent_id,
-                    "speech": response.speech_output,
-                })
-                logger.info("Plan step %d completed by %s: %s", step_num, response.agent_id, response.status)
-            except Exception as exc:
-                results.append({
-                    "step": step_num,
-                    "status": "ERROR",
-                    "error": str(exc),
-                })
-                logger.error("Plan step %d failed: %s", step_num, exc)
-
-        if task_id and task_id in project_manager.active_tasks:
-            state_file = project_manager.active_tasks[task_id]["state_file"]
-            project_manager._save_state(state_file, {"status": ProjectState.COMPLETED.value, "progress": 100, "name": original_query[:40]})
-
-        fully_completed = len(completed) == total_steps
-        return {
-            "plan": plan,
-            "execution": results,
-            "fully_completed": fully_completed,
-            "completed_steps": len(completed),
-            "total_steps": len(sorted_plan),
-        }
+        return response.content
 
 
-task_planner = AutonomousTaskPlanner()
+task_planner = DagPlanner()

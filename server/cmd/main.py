@@ -91,7 +91,7 @@ def create_application() -> FastAPI:
             )
             
         from server.core.orchestrator.interrupt_manager import project_manager
-        await project_manager.load_and_resume_all()
+        project_manager.mark_interrupted_projects()
 
         logger.info(
             "Jarvis v2.0.0 online — %d agents, %d graph nodes, %d graph edges",
