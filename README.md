@@ -808,6 +808,43 @@ monitor.
 
 ---
 
+### Modalità webcam
+
+«Jarvis, abilita la webcam» (anche «apri/accendi/mostrami la webcam» o «la fotocamera») apre il video a tutto
+schermo; «chiudi la webcam» lo chiude. Jarvis si riduce a un cerchio semitrasparente in un angolo
+(`web/display/camera.js`), che si trascina con il mouse, con il tocco o **pizzicando con la mano** (il
+riconoscimento delle mani genera gli stessi eventi del mouse, quindi tutto ciò che segue è pilotabile a gesti).
+La barra in basso offre: specchio, zoom, scatto (la foto riproduce ciò che si vede, con zoom e disegno; si salva
+cliccando la miniatura), **disegno in aria** con cinque colori, cancella, mostra o nascondi Jarvis, chiudi. La
+posizione di Jarvis è ricordata; dopo 15 minuti senza interazioni la webcam si chiude da sola. Sul display del
+server il video è quello della webcam del server (`/api/vision/live.mjpg`, con ripiego sulle immagini singole); da
+un altro dispositivo, aperto in `https`, Jarvis usa la webcam del dispositivo.
+
+### HTTPS e dispositivi remoti
+
+Il supervisore serve la pagina utente anche in **HTTPS sulla porta 443** (aperta nel firewall dal passo
+`security`). Al primo avvio crea una autorità locale (`/var/lib/jarvis/tls/ca.pem`, chiave 0600) e un
+certificato per il server con tutti i nomi e gli indirizzi IP della macchina; lo rinnova da solo quando cambiano
+o mancano meno di 30 giorni. Per evitare l'avviso del browser, scarica `http://<server>/jarvis-ca.crt` e
+installalo come autorità attendibile sul PC. Il browser consente microfono e webcam solo su pagine sicure:
+da un PC remoto, aperta la pagina in `https`, il tasto microfono chiede di usare il microfono di quel
+dispositivo (scelta ricordata). L'audio passa dal canale `/ws/ear`, che inoltra il WebSocket dell'ascolto solo a
+chi è sul server o ha la sessione attiva. La GPU del PC remoto non esegue i modelli: per sfruttarla, installa
+Ollama su quel PC e aggiungilo da **Cervello → Altri server**. Se la porta 443 è occupata o i certificati non si
+creano, il supervisore continua a funzionare in solo `http`.
+
+### Impaginazione scelta da Jarvis
+
+Dopo la risposta, `features/presentation/` decide la forma più utile: solo voce, **scheda piccola sul desktop**
+(widget `brief`, per ciò che si vuole tenere d'occhio) o **schermo a pannelli** su griglia a 12 colonne con testo,
+passaggi, tabelle, schede tecniche, citazioni, codice, immagini e modelli 3D. Le immagini vengono cercate su
+Wikimedia Commons e, in subordine, su Openverse, **solo con licenze libere** (CC0, pubblico dominio, CC BY, CC BY‑SA),
+validate, ridimensionate e salvate in `/var/lib/jarvis/presentation/images/`; lo sfondo uniforme può essere tolto
+(OpenCV, flood fill dai bordi) e autore e licenza compaiono sotto l'immagine. Un oggetto semplice e solido può
+essere ricostruito in 3D con il generatore esistente. Il piano è un JSON validato (massimo 6 blocchi, 2 immagini,
+1 modello); se non è valido il modello riceve l'errore e riprova una volta, e ogni guasto ripiega
+sull'impaginazione precedente. Il modello usato si sceglie dalla scheda Assegnazioni («Impaginazione dei contenuti»).
+
 ## 13. Algoritmi (skills)
 
 Gli algoritmi sono piccoli programmi Python verificati che rispondono in millisecondi senza modello
