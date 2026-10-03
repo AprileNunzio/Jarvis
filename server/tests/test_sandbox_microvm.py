@@ -79,9 +79,7 @@ class ConsoleTest(unittest.TestCase):
         self.assertFalse(console.parse(b"garbage\n@@JARVIS@@ stdout !!!\n", 10).complete)
 
     def test_tail_keeps_the_last_kernel_lines_and_the_vmm_error_only(self):
-        raw = b"".join(b"[ %d] line
-" % i for i in range(10)) + line("stdout", b"secret") + b"Kernel panic - not syncing
-"
+        raw = b"".join(b"[ %d] line" % i + bytes([10]) for i in range(10)) + line("stdout", b"secret") + b"Kernel panic - not syncing" + bytes([10])
         text = console.tail(raw, b" firecracker:  cannot open /dev/kvm ")
         self.assertIn("Kernel panic", text)
         self.assertIn("cannot open /dev/kvm", text)
