@@ -31,6 +31,12 @@ async def public_still(sid: str, request: Request):
     return Response(data, media_type="image/jpeg", headers={"Cache-Control": "private, max-age=600"})
 
 
+@public_routes.get("/api/vision/live.mjpg")
+async def public_live(request: Request):
+    require_display(request)
+    return await vision_stream("/live.mjpg")
+
+
 @public_routes.get("/api/vision/hands.mjpg")
 async def public_hands(request: Request):
     require_display(request)

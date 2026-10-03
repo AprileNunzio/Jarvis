@@ -43,6 +43,7 @@
     if (ui.mode === "focus") { D.renderStage(ui); D.typeInto($("focus-say"), d.reply); }
     D.setPresence(ui.presence || "normal");
     D.setMode(ui.mode);
+    if (ui.camera && D.setCamera) D.setCamera(ui.camera === "on");
     D.typeInto($("say"), d.reply);
     D.speak(d.reply, d.lang);
     if (ui.mode === "face" || ui.mode === "focus") setTimeout(() => D.refreshBrain(true), 1500);

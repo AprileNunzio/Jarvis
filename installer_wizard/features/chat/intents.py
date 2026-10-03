@@ -11,6 +11,8 @@ INTENTS = [
                          r"|i tuoi studi|come vanno (i tuoi )?studi)\b", re.I)),
     ("brain", re.compile(r"\b(cervello|neuroni|la tua (mente|memoria)|mostrami (la )?(mente|memoria)|cosa ricordi)\b", re.I)),
     ("system", re.compile(r"\b(stato (del |dei )?sistem[ai]|diagnostica|come stanno i sistemi|risorse del sistema|stato di salute)\b", re.I)),
+    ("camera", re.compile(r"\b(abilita|attiva|accendi|apri|avvia|metti|mostra(?:mi)?|fammi vedere|chiudi|disattiva|spegni|nascondi|ferma)\b"
+                           r"[^.?!]*\b(web\s?cam|fotocamera)\b", re.I)),
     ("vision", re.compile(r"\b(chi (vedi|c'[eè]|hai davanti)|mi vedi|mi riconosci|chi sono( io)?|cosa vedi)\b", re.I)),
     ("network", re.compile(r"\b(scansiona (la )?rete|dispositivi (in|della|nella|di) rete|chi (è|e') connesso"
                             r"|cosa c'?[èe] in rete|rete di casa|dispositivi connessi)\b", re.I)),

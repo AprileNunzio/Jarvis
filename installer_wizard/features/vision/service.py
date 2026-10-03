@@ -262,6 +262,15 @@ class Vision:
         ok, jpg = cv2.imencode(".jpg", small, [cv2.IMWRITE_JPEG_QUALITY, 70])
         return fid, jpg.tobytes() if ok else b""
 
+    def live_jpeg(self, quality: int = 80) -> tuple[int, bytes]:
+        self.fast_until = time.time() + 3
+        with self.lock:
+            frame, fid = (None, 0) if self.raw is None else (self.raw.copy(), self.frame_id)
+        if frame is None:
+            return 0, b""
+        ok, jpg = cv2.imencode(".jpg", frame, [cv2.IMWRITE_JPEG_QUALITY, quality])
+        return fid, jpg.tobytes() if ok else b""
+
     def raw_jpeg(self, quality: int = 88) -> bytes:
         with self.lock:
             frame = None if self.raw is None else self.raw.copy()
@@ -328,6 +337,19 @@ async def stream(request: Request):
             if data:
                 yield b"--frame\r\nContent-Type: image/jpeg\r\n\r\n" + data + b"\r\n"
             await asyncio.sleep(1 / DETECT_FPS)
+    return StreamingResponse(frames(), media_type="multipart/x-mixed-replace; boundary=frame")
+
+
+@app.get("/live.mjpg")
+async def live(request: Request):
+    async def frames():
+        last = -1
+        while not await request.is_disconnected():
+            fid, data = vision.live_jpeg()
+            if data and fid != last:
+                last = fid
+                yield b"--frame\r\nContent-Type: image/jpeg\r\n\r\n" + data + b"\r\n"
+            await asyncio.sleep(1 / 20)
     return StreamingResponse(frames(), media_type="multipart/x-mixed-replace; boundary=frame")
 
 

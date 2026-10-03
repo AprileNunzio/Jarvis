@@ -142,12 +142,13 @@
   setInterval(sendPosition, 30 * 60000);
   JarvisDesk.mount($("desk"), {
     speak: (text) => { if (!D.busy) { D.typeInto($("say"), text); D.speak(text); } },
-    onStage: (zone) => { D.stageZone = zone; D.applyStage(); },
+    onStage: (zone) => { if (D.cam && D.cam.on) { D.cam.prevZone = zone; return; } D.stageZone = zone; D.applyStage(); },
     screen: 0, x: +(new URLSearchParams(location.search).get("x") || 0),
   });
   Jarvis.connectState("/api/stream", (s) => (window.jarvisPerf ? window.jarvisPerf.measure("stato", () => onState(s)) : onState(s)), (ok) => $("link").classList.toggle("show", !ok));
   D.startBrain();
   D.startMindStream();
+  D.startCamera();
 })();
 
 

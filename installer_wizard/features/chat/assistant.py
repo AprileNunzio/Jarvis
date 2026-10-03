@@ -9,6 +9,7 @@ from features.brain.llm import BrainUnavailable
 from features.chat import code
 from features.chat.compose import compose_generic
 from features.chat.intents import detect_intent
+from features.chat.skills.camera import camera_skill
 from features.chat.skills.music import music_skill
 from features.chat.skills.network import network_skill
 from features.chat.skills.people import introduce_skill, vision_skill
@@ -84,6 +85,8 @@ async def handle(text: str, core_call, speech_lang: dict | None = None) -> dict:
     try:
         if intent == "weather":
             speech, ui = await weather_skill(text)
+        elif intent == "camera":
+            speech, ui = camera_skill(text)
         elif intent == "system":
             speech, ui = system_skill()
         elif intent == "vision":
