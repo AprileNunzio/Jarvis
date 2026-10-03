@@ -33,13 +33,14 @@ async def models() -> list[str]:
 
 def _message(ref: str, prompt: str, jpeg: bytes) -> dict:
     data = base64.b64encode(jpeg).decode()
+    media = "image/png" if jpeg[:4] == b"\x89PNG" else "image/jpeg"
     pid, _ = parse_ref(ref)
     if BY_ID[pid].kind == "anthropic":
         return {"role": "user", "content": [
-            {"type": "image", "source": {"type": "base64", "media_type": "image/jpeg", "data": data}},
+            {"type": "image", "source": {"type": "base64", "media_type": media, "data": data}},
             {"type": "text", "text": prompt}]}
     return {"role": "user", "content": [{"type": "text", "text": prompt},
-                                        {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{data}"}}]}
+                                        {"type": "image_url", "image_url": {"url": f"data:{media};base64,{data}"}}]}
 
 
 async def _ollama(model: str, prompt: str, jpeg: bytes, as_json: bool, max_tokens: int) -> str:

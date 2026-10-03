@@ -1,0 +1,20 @@
+{
+  "id": "rpa",
+  "name": "Controllo del computer",
+  "icon": "🖱",
+  "category": "assistente",
+  "order": 18,
+  "panel": "",
+  "toggle": { "env": "JARVIS_RPA", "apply": [] },
+  "description": "Jarvis usa un computer collegato come farebbe una persona: trova gli elementi sullo schermo con la visione, muove il mouse, scrive, e verifica dai pixel che l'azione abbia avuto effetto, riprovando da solo se non è andata.",
+  "capabilities": [
+    "Coordinate assolute in pixel degli elementi dell'interfaccia, ricavate dallo screenshot",
+    "Mouse, tastiera e rotella simulati come dispositivi hardware reali (uinput)",
+    "Ogni azione è verificata confrontando i pixel prima e dopo; se non cambia nulla ritenta su un altro elemento",
+    "Rifiuto delle aree uniformi: un'etichetta inventata dal modello non viene cliccata",
+    "Il nodo si collega in uscita: nessuna porta aperta; abilitazione esplicita per ogni nodo"
+  ],
+  "settings": [
+    { "key": "JARVIS_RPA_NODES", "label": "Nodi controllabili (id separati da virgola)", "type": "text", "default": "" }
+  ]
+}

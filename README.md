@@ -433,7 +433,7 @@ Poi aprire `http://localhost:8000/` (display) e `http://localhost:8001/` (pannel
 
 ## 9. Passi d'installazione (step)
 
-Ogni passo (23 in tutto) è uno script in `scripts/os/steps/` con due comandi:
+Ogni passo (24 in tutto) è uno script in `scripts/os/steps/` con due comandi:
 
 - `check`: esce con 0 se il sistema è già nello stato voluto (deve essere veloce e senza effetti);
 - `apply`: porta il sistema nello stato voluto; deve essere **idempotente**.
@@ -1628,19 +1628,70 @@ uscita e i file regolari scritti in `/out`.
 | Livello | Backend | Quando è usato |
 | :---: | :--- | :--- |
 | 3 | microVM Firecracker | non ancora implementato: richiede KVM, da verificare sul server |
-| 2 | gVisor (`runsc`) | scaricato e verificato (SHA‑512) dal passo `sandbox`, se la macchina lo supporta |
+| 2 | gVisor (`runsc`) | scaricato e verificato (SHA‑512) dal passo in background `gvisor`, se la macchina lo supporta |
 | 1 | container Docker rinforzato | sempre, come ripiego |
 
 Ogni richiesta dichiara il livello minimo (`min_strength`): se nessun backend lo raggiunge, il codice non viene
 eseguito e non c'è alcun declassamento silenzioso. Il broker prova i backend all'avvio e ogni 5 minuti,
 rimuove container e cartelle di lavoro orfani e si riavvia da solo (`Restart=always`). Il passo `sandbox`
-(non critico) costruisce l'immagine `jarvis-sandbox:local` da `docker/sandbox/`, installa gVisor e il servizio e
-si riesegue da solo quando cambia il codice del broker. Stato: `PYTHONPATH=/opt/Jarvis python3 -m
+(non critico) costruisce l'immagine `jarvis-sandbox:local` da `docker/sandbox/`, installa il servizio e si
+riesegue da solo quando cambia il codice del broker; il passo `gvisor` (in background) scarica il runtime senza
+bloccare l'installazione. Il collaudo notturno e quello dopo ogni aggiornamento includono una prova «Sandbox
+isolata» che esegue un programma e verifica che rete, disco, utente root e socket Docker siano davvero preclusi. Stato: `PYTHONPATH=/opt/Jarvis python3 -m
 sandbox_broker.cli status`.
 
 Lato Core il codice è in `server/features/sandbox/` (`domain/` contratti puri, `application/` gateway e porta,
 `infrastructure/` client del broker); `self_healing_coder/sandbox_runner.py` lo usa e restituisce l'errore
 all'agente per l'auto‑correzione.
+
+### Cognitive Kernel (orchestrazione multi‑agente)
+
+Il Core non esegue più un compito con un solo prompt: `core/planner/task_decomposer.py` trasforma la richiesta in
+un **DAG** (`core/kernel/`), lo valida (cicli, riferimenti, massimo 24 nodi; il modello non può abbassare il
+rischio predefinito di un tipo di nodo) e lo affida allo scheduler. Architettura a strati: `domain/` (nodi, DAG,
+esiti), `application/` (scheduler, porte), `infrastructure/` (adattatori), `swarm/`, `consensus/`, `validators/`.
+
+| Concetto | Dove | Regola |
+| :--- | :--- | :--- |
+| Ciclo di vita del nodo | `application/scheduler.py` | `running → validating → accepted`; un nodo conta solo dopo il verdetto del validatore; altrimenti `healing` con l'errore reiniettato all'attore, fino a successo, tentativi o scadenza |
+| Critic | `core/reasoning/self_critique.py` (`CriticGate`) | stato dell'agente, poi validatore deterministico per tipo (codice: AST + riesecuzione in sandbox; 3D: sintassi OBJ/glTF/DXF/AutoLISP), poi critico linguistico per i nodi di ragionamento; un validatore sconosciuto fa fallire il nodo |
+| Swarm | `swarm/` | corsie per tipo di nodo (analitica, codice, parametrica, azione) con agenti dedicati e concorrenza limitata (`AnalyticReasonerAgent`, `SelfHealingCoderAgent`, `ParametricDesignerAgent`); trasporto in‑process dietro la porta `NodeExecutor`, quindi sostituibile con uno distribuito |
+| Consenso | `consensus/` | un DAG con nodi distruttivi parte solo se approvato da un pannello: guardia deterministica (veto), responsabile sicurezza (veto), proporzionalità, reversibilità, su modelli diversi dal pianificatore quando possibile; voti illeggibili, scaduti o sintetici valgono come contrari; senza pannello nulla di distruttivo gira |
+| Progetti lunghi | `core/orchestrator/interrupt_manager.py` | esegue davvero il lavoro, con pausa tra un'ondata e l'altra e avanzamento reale |
+
+Un ripiego del gateway LLM (`deterministic-core-v1`) produceva risposte sintetiche indistinguibili da quelle vere:
+ora è riconoscibile (`is_synthetic`) e non viene mai accettato come risposta, voto o specifica.
+
+### Memoria profonda (`features/deep_memory/`)
+
+SQLite proprio, nessuna dipendenza nuova. **Struttura**: il codice Python è analizzato con `ast` in un grafo
+relazionale di simboli (moduli, classi, funzioni, variabili) con risoluzione dei nomi tra file; i file JS/TS
+contribuiscono con le importazioni. Le impronte ignorano commenti e formattazione. Aggiornando un file si
+calcolano i simboli cambiati e si invalida la cache derivata di questi e di tutti i dipendenti transitivi (sul
+grafo vecchio e su quello nuovo, quindi anche rimozioni e nomi che ora risolvono altrove). **Fallimenti**:
+`FailureIndex` memorizza gli approcci falliti come vettori (embedding Ollama, con ripiego lessicale quando
+Ollama non risponde) e restituisce vicoli ciechi o soluzioni note per obiettivi simili; lo scheduler li dà
+all'attore prima del primo tentativo e collega ogni fallimento alla soluzione che poi ha funzionato.
+
+### Ponte parametrico (`features/parametric/`)
+
+L'intento («disegna una casa moderna») è tradotto dal modello in una specifica JSON con schema formale
+(pydantic: nessun campo extra, numeri finiti e limitati, identificatori sicuri, massimo 400 parti); le specifiche
+invalide tornano al modello con gli errori esatti, fino a tre volte. Solo una specifica valida arriva al
+renderer, puro e deterministico, che produce **OBJ**, **DXF** (3DFACE) e uno **script AutoLISP**; nessun testo del
+modello finisce in un file. Primitive: box, cilindro, cono, sfera, tetto a falde; asse verticale z (l'OBJ è
+esportato con y verticale).
+
+### Controllo del computer (RPA cognitivo)
+
+`client_satellite/linux_edge/rpa_daemon.py` è un demone a sé (solo libreria standard) che si collega **in uscita**
+al supervisore con long‑poll autenticato come i nodi: nessuna porta aperta. Simula mouse, tastiera e rotella
+come dispositivo hardware virtuale (`/dev/uinput`), cattura lo schermo (grim, maim, ImageMagick o `/dev/fb0`) e
+verifica ogni azione confrontando i pixel prima e dopo. Lato supervisore (`features/rpa/`, `features/vision/ui_anchor.py`) il
+controller chiede a un cervello che vede le coordinate **assolute in pixel** dell'elemento, rifiuta aree uniformi
+(un'etichetta inventata), esegue l'azione e, se lo schermo non cambia, riprova su un altro elemento
+comunicando i punti già falliti. Abilitazione: funzione «Controllo del computer» attiva e id del nodo in
+`JARVIS_RPA_NODES`. API: `POST /api/rpa/run` (admin) e strumento `rpa_run` dell'agente (con conferma).
 
 ---
 
