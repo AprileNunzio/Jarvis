@@ -10,6 +10,7 @@ from config import DEMO, ollama_url, read_env, write_env
 from feature_registry import registry
 from features.brain.brains import brains
 from features.brain.residency import rebalance
+from features.brain.roles import ROLES
 from state import store
 from tasks import background
 
@@ -68,7 +69,7 @@ async def admin_pull(request: Request, _: str = Depends(require_admin)):
 async def admin_delete_model(name: str, _: str = Depends(require_admin)):
     env, cfg = read_env(), brains.config()
     in_use = {health.norm_model(m) for m in [env.get("JARVIS_LLM_MODEL", ""), env.get("JARVIS_EMBED_MODEL", ""),
-                                             cfg["fast"], *cfg["chat"], *cfg["deep"]] if m}
+                                             cfg["fast"], *(m for role in ROLES for m in cfg[role.id])] if m}
     if health.norm_model(name) in in_use:
         raise HTTPException(409, "Il modello è in uso: toglilo prima dalle liste del cervello")
     async with httpx.AsyncClient(timeout=30) as client:
@@ -91,14 +92,12 @@ async def admin_brains_set(request: Request, user: str = Depends(require_admin))
         if body["routing"] not in ("auto", "1", "0"):
             raise HTTPException(400, "Modalità di instradamento non valida")
         updates["JARVIS_LLM_ROUTING"] = body["routing"]
-    for kind, key in (("chat", "JARVIS_LLM_CHAT_ORDER"), ("deep", "JARVIS_LLM_DEEP_ORDER"),
-                      ("ricercatore", "JARVIS_LLM_RICERCATORE_ORDER"), ("domotico", "JARVIS_LLM_DOMOTICO_ORDER"),
-                      ("studio", "JARVIS_LLM_STUDIO_ORDER"), ("coder", "JARVIS_LLM_CODER_ORDER")):
-        if kind in body:
-            models = [str(m).strip() for m in (body[kind] or []) if str(m).strip()]
+    for role in ROLES:
+        if role.id in body:
+            models = [str(m).strip() for m in (body[role.id] or []) if str(m).strip()]
             if len(models) > 12 or not all(_MODEL_RE.match(m) for m in models):
                 raise HTTPException(400, "Elenco di modelli non valido")
-            updates[key] = ",".join(dict.fromkeys(models))
+            updates[role.env_key] = ",".join(dict.fromkeys(models))
     if updates:
         write_env(updates)
         brains.invalidate()
@@ -111,28 +110,6 @@ async def admin_brains_set(request: Request, user: str = Depends(require_admin))
 async def admin_brains_test(request: Request, _: str = Depends(require_admin)):
     text = str((await request.json()).get("text", ""))[:2000]
     return await brains.route(text)
-
-
-@admin_routes.get("/api/brain/agent_map")
-async def get_agent_map(_: str = Depends(require_admin)):
-    from config import read_env
-    env = read_env()
-    try:
-        import json
-        mapping = json.loads(env.get("AGENT_BRAIN_MAP", "{}"))
-    except:
-        mapping = {}
-    return {"map": mapping}
-
-
-@admin_routes.post("/api/brain/agent_map")
-async def save_agent_map(request: Request, _: str = Depends(require_admin)):
-    body = await request.json()
-    mapping = body.get("map", {})
-    from config import write_env
-    import json
-    write_env({"AGENT_BRAIN_MAP": json.dumps(mapping)})
-    return {"ok": True}
 
 
 @admin_routes.post("/api/brains/ollama/test")

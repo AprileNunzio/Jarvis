@@ -500,9 +500,11 @@ si spegne.
 
 ## 10. Il cervello: modelli locali, altri server e cloud
 
-### Due liste di priorità
+### Liste di priorità per ruolo
 
-Jarvis ha due liste, entrambe modificabili dal pannello (**Cervello**) trascinando gli elementi:
+Ogni ruolo del cervello ha la propria lista, tutte identiche e modificabili dal pannello (**Cervello**) trascinando gli elementi. I ruoli sono dichiarati in un solo punto, `installer_wizard/features/brain/roles.py`: aggiungerne uno richiede una riga e il pannello, il salvataggio e i pulsanti del catalogo lo mostrano da soli. Oltre a Conversazione veloce e Ragionamento esistono 🔎 Ricercatore, 🏠 Domotico, 🎓 Studio autonomo, 🌐 Architetto web e 🧊 Modellazione 3D (variabili `JARVIS_LLM_<RUOLO>_ORDER`); se la loro lista è vuota seguono automaticamente quella di Ragionamento.
+
+Le due liste principali:
 
 | Lista | Variabile | Usata per | Token massimi |
 | :--- | :--- | :--- | :---: |

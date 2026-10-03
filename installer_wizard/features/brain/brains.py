@@ -6,6 +6,7 @@ from config import DEMO, ollama_remote, ollama_url, read_env
 
 from features.cloud.catalog import BY_ID, is_cloud, is_server, parse_ref
 from features.cloud.vault import vault
+from features.brain.roles import FALLBACK_ROLE, ROLES, split_order
 
 CATALOG = [
     {"name": "qwen2.5:0.5b", "label": "Qwen 2.5 · 0,5 B", "size_gb": 0.4, "roles": ["chat"],
@@ -45,7 +46,7 @@ CATALOG = [
 ]
 _BY_NAME = {m["name"]: m for m in CATALOG}
 
-MAX_TOKENS = {"chat": 320, "deep": 1200}
+MAX_TOKENS = {r.id: r.max_tokens for r in ROLES}
 
 _DEEP = re.compile(
     r"\b(spiega(mi)?|spiegazione|analizza|analisi|confronta|differenz[ae]|vantaggi|svantaggi|perch[ée]"
@@ -56,10 +57,6 @@ _DEEP = re.compile(
     re.I)
 _CHITCHAT = re.compile(r"^\s*(ciao|buongiorno|buonasera|buonanotte|grazie|ok|okay|va bene|perfetto|come stai"
                        r"|chi sei|sei li|ci sei|salve|hey|ehi)\b", re.I)
-
-
-def _split(value: str) -> list[str]:
-    return [x.strip() for x in (value or "").split(",") if x.strip()]
 
 
 def _dedupe(items: list[str]) -> list[str]:
@@ -87,22 +84,19 @@ class Brains:
         env = read_env()
         main = env.get("JARVIS_LLM_MODEL") or "qwen2.5:3b"
         fast = env.get("JARVIS_LLM_FAST_MODEL") or main
-        chat_custom = _split(env.get("JARVIS_LLM_CHAT_ORDER", ""))
-        deep_custom = _split(env.get("JARVIS_LLM_DEEP_ORDER", ""))
-        ric_custom = _split(env.get("JARVIS_LLM_RICERCATORE_ORDER", ""))
-        dom_custom = _split(env.get("JARVIS_LLM_DOMOTICO_ORDER", ""))
-        stu_custom = _split(env.get("JARVIS_LLM_STUDIO_ORDER", ""))
-        cod_custom = _split(env.get("JARVIS_LLM_CODER_ORDER", ""))
-        
+        custom = {r.id: split_order(env.get(r.env_key, "")) for r in ROLES}
+        orders = {
+            "chat": custom["chat"] or [fast, main],
+            "deep": custom["deep"] or [main, fast],
+        }
+        for role in ROLES:
+            orders.setdefault(role.id, custom[role.id] or orders[FALLBACK_ROLE])
+        routing = env.get("JARVIS_LLM_ROUTING")
         return {
-            "routing": env.get("JARVIS_LLM_ROUTING", "auto") if env.get("JARVIS_LLM_ROUTING") in ("auto", "1", "0") else "auto",
+            "routing": routing if routing in ("auto", "1", "0") else "auto",
             "main": main, "fast": fast,
-            "chat": _dedupe(chat_custom or [fast, main]), "deep": _dedupe(deep_custom or [main, fast]),
-            "ricercatore": _dedupe(ric_custom or []),
-            "domotico": _dedupe(dom_custom or []),
-            "studio": _dedupe(stu_custom or []),
-            "coder": _dedupe(cod_custom or []),
-            "chat_custom": bool(chat_custom), "deep_custom": bool(deep_custom),
+            **{rid: _dedupe(order) for rid, order in orders.items()},
+            **{f"{rid}_custom": bool(order) for rid, order in custom.items()},
         }
 
     async def installed(self) -> list[str]:
@@ -223,13 +217,11 @@ class Brains:
             return [{"name": n, "installed": norm(n) in installed, "available": self.usable(n, installed),
                      "stats": self.stats.get(norm(n)) or self.stats.get(n), **self.describe(n)} for n in lst]
         auto_fast, auto_main = self.auto_pick(hw)
-        active = {"chat": self.active_now("chat"), "deep": self.active_now("deep")}
+        roles = [{"id": r.id, "icon": r.icon, "label": r.label, "hint": r.hint,
+                  "custom": cfg[f"{r.id}_custom"], "entries": entries(cfg[r.id]),
+                  "active": self.active_now(r.id)} for r in ROLES]
         last = {**self.last, **self.describe(self.last["model"])} if self.last.get("model") else {}
-        return {"routing": cfg["routing"], "chat": entries(cfg["chat"]), "deep": entries(cfg["deep"]),
-                "ricercatore": entries(cfg["ricercatore"]), "domotico": entries(cfg["domotico"]),
-                "studio": entries(cfg["studio"]), "coder": entries(cfg["coder"]),
-                "active": active, "last_used": last,
-                "chat_custom": cfg["chat_custom"], "deep_custom": cfg["deep_custom"],
+        return {"routing": cfg["routing"], "roles": roles, "last_used": last,
                 "main": cfg["main"], "fast": cfg["fast"], "suggested": {"chat": auto_fast, "deep": auto_main},
                 "catalog": catalog, "last": self.last, "hardware": hw}
 

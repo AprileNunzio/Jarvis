@@ -5,57 +5,13 @@
       <div class="seg" id="br-routing">
         <button data-r="auto">Automatico</button><button data-r="1">Sempre due cervelli</button><button data-r="0">Un solo cervello</button></div>
     </div>
-    <div class="br-now-grid">
-      <div class="br-now-card" id="br-now-chat"></div>
-      <div class="br-now-card" id="br-now-deep"></div>
-    </div>
+    <div class="br-now-grid" id="br-now-grid"></div>
     <div class="br-last" id="br-last"></div>
     <form class="route-box" id="br-test"><input id="br-q" placeholder="Prova una frase: quale cervello risponderebbe?"><button class="btn">Prova</button></form>
     <div class="route-res" id="br-res"></div>
   </div>
 
-  <div class="grid g2 br-lists">
-    <div class="panel">
-      <div class="panel-title">⚡ Conversazione veloce</div>
-      <div class="muted-note">Saluti e domande brevi. Trascina per cambiare l'ordine: risponde il primo disponibile.</div>
-      <div class="prio" id="br-chat" data-kind="chat"></div>
-      <div class="actions" style="margin-top:10px"><button class="btn sm" data-br-reset="chat">Automatico</button></div>
-    </div>
-    <div class="panel">
-      <div class="panel-title">🧠 Ragionamento</div>
-      <div class="muted-note">Spiegazioni, analisi, codice, testi lunghi, azioni.</div>
-      <div class="prio" id="br-deep" data-kind="deep"></div>
-      <div class="actions" style="margin-top:10px"><button class="btn sm" data-br-reset="deep">Automatico</button></div>
-    </div>
-  </div>
-
-  <div class="panel" style="margin-top:18px">
-    <div class="panel-title">Mappatura Agenti Specializzati</div>
-    <div class="muted-note" style="margin-bottom:12px">Aggiungi i cervelli dal catalogo premendo + (il primo è il preferito, i successivi sono i fallback). Se vuoto, si usano quelli di default.</div>
-    
-    <div class="grid g2 br-lists" style="margin-top:12px;">
-      <div class="panel">
-        <div class="panel-title">Ricercatore</div>
-        <div class="prio" id="br-ricercatore" data-kind="ricercatore"></div>
-        <div class="actions" style="margin-top:10px"><button class="btn sm" data-br-reset="ricercatore">Predefinito</button></div>
-      </div>
-      <div class="panel">
-        <div class="panel-title">Domotico</div>
-        <div class="prio" id="br-domotico" data-kind="domotico"></div>
-        <div class="actions" style="margin-top:10px"><button class="btn sm" data-br-reset="domotico">Predefinito</button></div>
-      </div>
-      <div class="panel">
-        <div class="panel-title">Studio Autonomo</div>
-        <div class="prio" id="br-studio" data-kind="studio"></div>
-        <div class="actions" style="margin-top:10px"><button class="btn sm" data-br-reset="studio">Predefinito</button></div>
-      </div>
-      <div class="panel">
-        <div class="panel-title">Architetto Web</div>
-        <div class="prio" id="br-coder" data-kind="coder"></div>
-        <div class="actions" style="margin-top:10px"><button class="btn sm" data-br-reset="coder">Predefinito</button></div>
-      </div>
-    </div>
-  </div>
+  <div class="grid g2 br-lists" id="br-roles"></div>
 
   <div class="panel"><div class="panel">
     <div class="panel-title">Aggiungi cervelli</div>

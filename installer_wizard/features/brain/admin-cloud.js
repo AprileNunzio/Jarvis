@@ -39,8 +39,7 @@
 
   function card(p) {
     const badge = p.configured ? '<span class="badge ok">collegato</span>' : p.has_key ? '<span class="badge warn">incompleto</span>' : '<span class="badge">non collegato</span>';
-    const inChat = new Set(data.chat), inDeep = new Set(data.deep);
-    const used = [...inChat, ...inDeep].filter((r) => r.startsWith(`cloud:${p.id}/`)).length;
+    const used = [...A.brainRoles.usedRefs()].filter((r) => r.startsWith(`cloud:${p.id}/`)).length;
     const url = `<label class="wide">Indirizzo del servizio<input data-f="base_url" value="${fmt.esc(p.base_url)}" placeholder="https://…/v1"></label>`;
     return `<div class="panel cl-card" data-pid="${p.id}">
       <div class="cl-head"><span class="cl-name">${fmt.esc(p.name)}</span><span>${badge}${used ? ` <span class="badge ok">in uso · ${used}</span>` : ""}</span></div>
@@ -55,8 +54,7 @@
       <div class="actions">
         <button class="btn sm primary" data-act="save">Salva</button>
         <button class="btn sm" data-act="test" ${p.configured ? "" : "disabled"}>Prova</button>
-        <button class="btn sm" data-act="chat" ${p.configured ? "" : "disabled"} title="Aggiungi alla conversazione veloce">+ ⚡</button>
-        <button class="btn sm" data-act="deep" ${p.configured ? "" : "disabled"} title="Aggiungi al ragionamento">+ 🧠</button>
+        ${A.brainRoles.all().map((r) => `<button class="btn sm" data-add="${r.id}" ${p.configured ? "" : "disabled"} title="Aggiungi a ${fmt.esc(r.label)}">+ ${r.icon}</button>`).join("")}
         ${p.has_key ? '<button class="btn sm danger" data-act="forget">Rimuovi chiave</button>' : ""}
       </div>
       <div class="cl-result" data-result>${fmt.esc(modelCache[p.id]?.error || "")}</div>
@@ -100,20 +98,20 @@
     load();
   }
 
-  async function act(el, action) {
+  async function act(el, action, roleId) {
     const pid = el.dataset.pid, out = el.querySelector("[data-result]"), model = el.querySelector("[data-model]").value;
     out.className = "cl-result"; out.textContent = "…";
     try {
       if (action === "save") {
         const saved = await A.api("PUT", `/api/cloud/${pid}`, collect(el));
         await loadModels(pid, true);
-        const inUse = [...data.chat, ...data.deep].some((r) => r.startsWith(`cloud:${pid}/`));
-        A.toast(inUse || !saved.configured ? `Salvato: ${saved.model || "nessun modello"}` : `Salvato ${saved.model}. Premi + ⚡ o + 🧠 perché Jarvis lo usi`);
+        const inUse = [...A.brainRoles.usedRefs()].some((r) => r.startsWith(`cloud:${pid}/`));
+        A.toast(inUse || !saved.configured ? `Salvato: ${saved.model || "nessun modello"}` : `Salvato ${saved.model}. Premi ${A.brainRoles.addHint()} perché Jarvis lo usi`);
         return load();
       }
       if (action === "forget") { if (!confirm("Rimuovere la chiave?")) return; await A.api("PUT", `/api/cloud/${pid}`, { key: "" }); return load(); }
       if (action === "refresh") { await loadModels(pid, true); return render(); }
-      if (action === "chat" || action === "deep") { out.textContent = ""; return addTo(action, ref(pid, model)); }
+      if (action === "add") { out.textContent = ""; return addTo(roleId, ref(pid, model)); }
       if (action === "test") {
         const r = await A.api("POST", `/api/cloud/${pid}/test`, { model });
         out.className = `cl-result ${r.ok ? "ok" : "err"}`;
@@ -123,7 +121,7 @@
   }
 
   function init() {
-    $("cl-grid").addEventListener("click", (e) => { const b = e.target.closest("[data-act]"); if (b) act(b.closest("[data-pid]"), b.dataset.act); });
+    $("cl-grid").addEventListener("click", (e) => { const b = e.target.closest("[data-act],[data-add]"); if (b) act(b.closest("[data-pid]"), b.dataset.act || "add", b.dataset.add); });
     $("cl-search").addEventListener("input", render);
     $("cl-grid").addEventListener("input", (e) => {
       if (!e.target.matches("[data-mfilter]")) return;

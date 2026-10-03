@@ -10,11 +10,9 @@
   }
 
   function card(s) {
-    const inChat = new Set(data.chat), inDeep = new Set(data.deep);
     const badge = s.online ? '<span class="badge ok">raggiungibile</span>' : '<span class="badge warn">non risponde</span>';
     const rows = s.models.map((m) => `<div class="sv-model"><span class="mono">${fmt.esc(m)}</span><span class="actions">
-        <button class="btn sm" data-add="chat" data-m="${fmt.esc(m)}" ${inChat.has(ref(s.id, m)) ? "disabled" : ""} title="Aggiungi alla conversazione veloce">+ ⚡</button>
-        <button class="btn sm" data-add="deep" data-m="${fmt.esc(m)}" ${inDeep.has(ref(s.id, m)) ? "disabled" : ""} title="Aggiungi al ragionamento">+ 🧠</button></span></div>`).join("")
+        ${A.brainRoles.addButtons(ref(s.id, m), `data-m="${fmt.esc(m)}"`)}</span></div>`).join("")
       || `<div class="faint">${s.online ? "Nessun modello installato su questo server." : fmt.esc(s.error)}</div>`;
     return `<div class="panel cl-card" data-sid="${fmt.esc(s.id)}">
       <div class="cl-head"><span class="cl-name">🖧 ${fmt.esc(s.name)}</span><span>${badge}</span></div>
@@ -58,7 +56,7 @@
     try {
       await A.api("POST", "/api/brains/servers", body);
       ["sv-name", "sv-url", "sv-key"].forEach((id) => { $(id).value = ""; });
-      A.toast("Server aggiunto: scegli i modelli con + ⚡ o + 🧠");
+      A.toast(`Server aggiunto: scegli i modelli con ${A.brainRoles.addHint()}`);
       load();
     } catch (err) { A.toast(err.message, true); }
   }

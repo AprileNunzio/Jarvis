@@ -1,6 +1,6 @@
 .br-now { margin-bottom: 18px; }
 .br-now-head, .br-add-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
-.br-now-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.br-now-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
 .br-now-card { border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; background: rgba(2, 8, 16, 0.45); min-width: 0; }
 .br-now-kind { font-size: 12px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.08em; }
 .br-now-model { font-size: 20px; font-weight: 600; margin: 6px 0; overflow-wrap: anywhere; }
@@ -35,7 +35,7 @@
 .cl-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
 .cl-name { font-weight: 600; font-size: 15px; }
 .cl-notes { font-size: 12px; color: var(--text-dim); min-height: 16px; }
-.cl-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.cl-fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 8px; }
 .cl-fields label { display: flex; flex-direction: column; gap: 3px; font-size: 11px; color: var(--text-faint); margin: 0; }
 .cl-fields .wide { grid-column: 1 / -1; }
 .cl-fields select, .cl-fields input { padding: 7px 10px; font-size: 13px; }
