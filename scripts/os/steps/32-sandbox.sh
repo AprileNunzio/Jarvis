@@ -5,10 +5,6 @@ IMAGE=jarvis-sandbox:local
 BASE_IMAGE=python:3.11-slim-bookworm
 UNIT_SRC="$JARVIS_DIR/scripts/os/systemd/jarvis-sandbox.service"
 UNIT_DST=/etc/systemd/system/jarvis-sandbox.service
-DAEMON_JSON=/etc/docker/daemon.json
-GVISOR_DIR=/usr/local/bin
-RUNSC_BIN="$GVISOR_DIR/runsc"
-GVISOR_BASE=https://storage.googleapis.com/gvisor/releases/release/latest
 SOCKET=/run/jarvis/sandbox/broker.sock
 
 sources() {
@@ -27,74 +23,16 @@ step_check() {
         && [ -S "$SOCKET" ]
 }
 
-fetch_runsc() {
-    local arch url tmp
-    arch=$(uname -m)
-    case "$arch" in x86_64|aarch64) ;; *) return 1 ;; esac
-    command -v bzip2 >/dev/null 2>&1 || apt_install bzip2 || return 1
-    url="$GVISOR_BASE/$arch"
-    tmp=$(mktemp -d)
-    if retry 3 10 curl -fsSL -o "$tmp/gvisor.tar.bz2" "$url/gvisor.tar.bz2" \
-        && retry 3 5 curl -fsSL -o "$tmp/gvisor.tar.bz2.sha512" "$url/gvisor.tar.bz2.sha512" \
-        && (cd "$tmp" && sha512sum -c gvisor.tar.bz2.sha512 >/dev/null) \
-        && tar -xjf "$tmp/gvisor.tar.bz2" -C "$GVISOR_DIR" runsc containerd-shim-runsc-v1 gvisor-bin; then
-        chmod 0755 "$RUNSC_BIN"
-        rm -rf "$tmp"
-        return 0
-    fi
-    rm -rf "$tmp"
-    return 1
-}
-
-register_runtime() {
-    python3 - "$DAEMON_JSON" "$RUNSC_BIN" <<'PY'
-import json
-import os
-import sys
-
-path, runsc = sys.argv[1], sys.argv[2]
-config = {}
-if os.path.exists(path):
-    with open(path, encoding="utf-8") as handle:
-        config = json.load(handle)
-runtimes = config.setdefault("runtimes", {})
-if runtimes.get("runsc", {}).get("path") == runsc:
-    sys.exit(3)
-runtimes["runsc"] = {"path": runsc}
-with open(path, "w", encoding="utf-8") as handle:
-    json.dump(config, handle, indent=2)
-    handle.write("\n")
-PY
-}
-
-setup_gvisor() {
-    [ -x "$RUNSC_BIN" ] || fetch_runsc || return 1
-    local rc=0
-    register_runtime || rc=$?
-    case "$rc" in
-        0) systemctl restart docker && wait_for 60 docker info ;;
-        3) return 0 ;;
-        *) return 1 ;;
-    esac
-}
-
 step_apply() {
     progress 5 "Verifica prerequisiti"
     apt_install python3 curl ca-certificates
     docker info >/dev/null 2>&1 || fail "Docker non risponde"
 
-    progress 15 "Immagine di base"
+    progress 20 "Immagine di base"
     retry 3 10 docker pull "$BASE_IMAGE" >/dev/null || warn "Pull dell'immagine base non riuscito: uso la copia locale se presente"
 
-    progress 35 "Immagine della sandbox"
+    progress 50 "Immagine della sandbox"
     docker build --quiet -t "$IMAGE" "$JARVIS_DIR/docker/sandbox" >/dev/null || fail "Build dell'immagine sandbox non riuscita"
-
-    progress 55 "Isolamento gVisor"
-    if setup_gvisor; then
-        info "gVisor registrato in Docker"
-    else
-        warn "gVisor non disponibile: la sandbox userà il container rinforzato"
-    fi
 
     progress 80 "Servizio Sandbox Broker"
     install -m 0644 "$UNIT_SRC" "$UNIT_DST"
