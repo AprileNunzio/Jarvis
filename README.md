@@ -630,9 +630,41 @@ non escono mai dal server; il pannello mostra solo le ultime quattro cifre. `GEM
 
 ### Modelli in memoria
 
-`features/brain/residency.py` tiene in memoria per 24 ore solo il primo modello del server principale
-presente nelle liste e il modello di embedding; gli altri restano 5 minuti dopo l'uso. Su un server Ollama
-principale remoto Jarvis non toglie dalla memoria i modelli altrui.
+Per default `features/brain/residency.py` tiene in memoria per 24 ore il primo modello locale delle liste e il
+modello di embedding; gli altri restano 5 minuti dopo l'uso. Dalla scheda **Cervello → Permanenza in memoria**
+si sceglie, modello per modello, quanto deve restare caricato dopo l'ultima risposta (5 minuti, 30 minuti,
+1 ora, 6 ore, 24 ore, sempre). Vale per l'Ollama di questo server (parametro `keep_alive` di ogni richiesta) e
+per gli altri server di tipo Ollama (a ogni risposta Jarvis rinnova il timer con una richiesta nativa).
+I modelli con una permanenza scelta non vengono mai scaricati dal riallineamento automatico. Le scelte stanno
+in `/var/lib/jarvis/brain/keep_alive.json` e viaggiano al Core insieme alle rotte. Su un server Ollama
+principale remoto Jarvis non toglie dalla memoria i modelli altrui. Il filo del discorso lo garantisce la
+cronologia che Jarvis rimanda a ogni richiesta; la permanenza evita solo il ricaricamento (decine di secondi
+per un modello da 32 miliardi di parametri).
+
+### Assegnazioni per componente
+
+Ogni agente e funzione (`features/brain/components.py`: conversazione, agente di sistema, ricercatore,
+domotico, architetto web, pianificatore, critico, i tre votanti del consenso e così via) segue per default la
+lista del proprio ruolo. Dalla scheda **Cervello → Assegnazioni per componente** si può dare a un componente:
+
+- un **ruolo di riserva** diverso da quello predefinito;
+- una **lista dedicata**, in ordine di priorità, con modelli di questo server, di altri server o del cloud;
+- la modalità **prima i miei, poi il ruolo** (ripiego automatico) oppure **solo i miei**.
+
+L'assegnazione è attiva subito. Il supervisore (`features/brain/routing.py`) la risolve e pubblica le catene
+in `/var/lib/jarvis/brain/routes.json`, montato in sola lettura nel Core come `/run/jarvis/brain/routes.json`
+e riletto a ogni modifica da `core/orchestrator/brain_routing.py`. Il gateway del Core (`LLMRequest.component`)
+sceglie la catena del componente; i riferimenti `cloud:` (servizi cloud e altri server) passano da un ponte
+firmato verso il supervisore (`POST /api/internal/brain/complete`, HMAC‑SHA256 con `JARVIS_SECRET_KEY`,
+solo da localhost), che custodisce le chiavi.
+
+### Flusso della mente
+
+Sulla pagina del display (porta 80) un riquadro discreto in basso a sinistra mostra, in tempo reale, quale
+componente sta ragionando, con quale modello e su quale server, i passaggi (catena in ordine, tentativi,
+ripiego se un modello non risponde) e un'anteprima della risposta. Si tocca per aprire i dettagli e le ultime
+richieste. I dati vengono da `GET /api/brain/trace` (solo dal display locale o con la sessione) e comprendono
+sia le chiamate del supervisore sia quelle del Core, che le segnala al supervisore a ogni passo.
 
 ### Funzioni che usano il cervello
 
@@ -1653,6 +1685,16 @@ SSRF e da DNS rebinding), con tetto di traffico e di durata. Gli host rifiutati 
 (`egress_denied`) e finiscono nel messaggio di correzione. Il passo `sandbox` apre la sola porta del proxy
 (38000‑38099) sul ponte `jarvis-sbx0` nel firewall.
 
+**Micro‑VM Firecracker.** Dove il server ha la virtualizzazione KVM, il passo `firecracker` (in background, non
+critico) scarica Firecracker 1.10.1 e un kernel guest con somma di controllo SHA‑256 fissata nel passo, e costruisce
+l'immagine di sistema a partire da quella della sandbox. La micro‑VM ha il proprio kernel, nessuna scheda di rete,
+il sistema in sola lettura e scambia file solo tramite immagini a blocchi grezze (archivio tar con lunghezza in
+testa, rifiutato se ostile); il processo gira come utente non privilegiato, con `no-new-privs` e il filtro
+seccomp di Firecracker. È il backend di forza 3: se pronto, vince su gVisor (2) e sul container (1), ma non
+supporta l'uscita controllata (quelle richieste vanno su gVisor o sul container). Senza KVM il passo si ferma e
+la sandbox resta com'era; il collaudo pubblico (`/api/state`, campo `sandbox`) elenca ogni backend con il motivo
+per cui eventualmente non è disponibile.
+
 ### Cognitive Kernel (orchestrazione multi‑agente)
 
 Il Core non esegue più un compito con un solo prompt: `core/planner/task_decomposer.py` trasforma la richiesta in
@@ -1696,7 +1738,7 @@ all'attore prima del primo tentativo e collega ogni fallimento alla soluzione ch
 
 ### Ponte parametrico (`features/parametric/`)
 
-L'intento («disegna una casa moderna») è tradotto dal modello in una specifica JSON con schema formale
+L'intento («disegna una casa moderna») è tradotto dal modello in una specifica JSON o YAML (letta con `yaml.safe_load`, mai tag eseguibili) con schema formale
 (pydantic: nessun campo extra, numeri finiti e limitati, identificatori sicuri, massimo 400 parti); le specifiche
 invalide tornano al modello con gli errori esatti, fino a tre volte. Solo una specifica valida arriva al
 renderer, puro e deterministico, che produce **OBJ**, **DXF** (3DFACE) e uno **script AutoLISP**; nessun testo del
