@@ -1,10 +1,10 @@
-import json
 import logging
 from dataclasses import dataclass
 from typing import Awaitable, Callable, Optional
 
 from pydantic import ValidationError
 
+from server.features.parametric.domain.spec_document import parse_spec_document
 from server.features.parametric.domain.schema import ModelSpec, first_error_lines, spec_prompt_description
 
 logger = logging.getLogger("jarvis.parametric.translator")
@@ -48,7 +48,4 @@ class SpecTranslator:
 
     @staticmethod
     def _parse(raw: str) -> ModelSpec:
-        start, end = raw.find("{"), raw.rfind("}")
-        if start == -1 or end <= start:
-            raise ValueError("no JSON object found")
-        return ModelSpec.model_validate(json.loads(raw[start : end + 1]))
+        return ModelSpec.model_validate(parse_spec_document(raw))

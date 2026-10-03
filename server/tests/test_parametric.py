@@ -2,6 +2,7 @@ import json
 import os
 import tempfile
 import unittest
+import yaml
 from unittest.mock import AsyncMock, patch
 
 from pydantic import ValidationError
@@ -161,6 +162,18 @@ class TranslatorTest(unittest.IsolatedAsyncioTestCase):
         translated = await SpecTranslator(llm).translate("disegna una casa moderna")
         self.assertEqual((translated.attempts, translated.spec.name), (1, "casa-moderna"))
         self.assertIn("gable_roof", llm.requests[0][0])
+
+    async def test_accepts_yaml_plain_or_fenced(self):
+        document = yaml.safe_dump(HOUSE, sort_keys=False)
+        for reply in (document, "Ecco:" + chr(10) + "```yaml" + chr(10) + document + "```" + chr(10) + "fatto"):
+            with self.subTest(reply=reply[:12]):
+                translated = await SpecTranslator(FakeLlm(reply)).translate("casa")
+                self.assertEqual((translated.attempts, translated.spec.name), (1, "casa-moderna"))
+
+    async def test_yaml_tags_cannot_construct_objects(self):
+        hostile = "!!python/object/apply:os.system ['echo x']"
+        with self.assertRaises(SpecTranslationError):
+            await SpecTranslator(FakeLlm(hostile, hostile, hostile)).translate("casa")
 
     async def test_invalid_specs_are_reinjected_with_the_validation_errors(self):
         bad = json.dumps({**HOUSE, "parts": [{"name": "a", "shape": "box", "size": [1, -1, 1]}]})
