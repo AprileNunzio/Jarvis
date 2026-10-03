@@ -17,6 +17,7 @@ from config import ADMIN_PORT, DEMO, PUBLIC_PORT, VERSION
 from feature_registry import registry
 from features.brain import api as brain_api
 from features.brain import routing as brain_routing
+from features.presentation import api as presentation_api
 from features.actions import api as actions_api
 from features.bluetooth import api as bluetooth_api
 from features.bluetooth.service import service as bluetooth_service
@@ -78,7 +79,7 @@ log = logging.getLogger("jarvis.supervisor")
 logging.getLogger("httpx").setLevel(logging.WARNING)
 logging.getLogger("httpcore").setLevel(logging.WARNING)
 
-FEATURE_APIS = (actions_api, bluetooth_api, chat_api, cloud_api, voices_api, vision_api, devices_api, location_api,
+FEATURE_APIS = (presentation_api, actions_api, bluetooth_api, chat_api, cloud_api, voices_api, vision_api, devices_api, location_api,
                 people_api, music_api, study_api, soup_api, network_api, telegram_api, home_api, brain_api,
                 desktop_api, spotify_api, google_api, maps_api, skills_api, nodes_api, mind_api, laws_api, cameras_api,
                 models3d_api, documents_api, ear_api, autonomy_api, automations_api, sounds_api, selftest_api, habits_api, vault_api, shares_api)

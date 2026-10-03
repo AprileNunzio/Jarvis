@@ -26,7 +26,11 @@
     text: (p) => `<div class="p-text">${fmt.esc(p.body)}</div>`,
     list: (p) => `<div class="p-list">${p.items.map((it) => `<div>${it.status ? `<i class="dot ${it.status}"></i>` : '<i class="bullet"></i>'}<span>${fmt.esc(it.label)}</span>${it.value ? `<span class="v">${fmt.esc(it.value)}</span>` : ""}</div>`).join("")}</div>`,
     stats: (p) => `<div class="p-stats">${p.items.map((it) => `<div><div class="row"><span>${fmt.esc(it.label)}</span><b class="mono">${fmt.esc(it.value)}</b></div><div class="bar ${it.percent > 90 ? "down" : it.percent > 75 ? "warn" : ""}"><i style="width:${it.percent}%"></i></div></div>`).join("")}</div>`,
-    image: (p) => `<div class="p-image"><img src="${fmt.esc(p.src)}?t=${Date.now()}" alt=""></div>`,
+    image: (p) => `<figure class="p-image"><img src="${fmt.esc(p.src)}?t=${Date.now()}" alt="${fmt.esc(p.caption || p.title || "")}">
+      ${p.caption || p.credit ? `<figcaption>${p.caption ? `<span>${fmt.esc(p.caption)}</span>` : ""}${p.credit ? `<small>${p.page ? `<a href="${fmt.esc(p.page)}" target="_blank" rel="noopener">${fmt.esc(p.credit)}</a>` : fmt.esc(p.credit)}</small>` : ""}</figcaption>` : ""}</figure>`,
+    steps: (p) => `<ol class="p-steps">${(p.items || []).map((s, i) => `<li style="animation-delay:${i * 70}ms"><span class="p-n">${i + 1}</span><span>${fmt.esc(s)}</span></li>`).join("")}</ol>`,
+    table: (p) => `<div class="p-table"><table><thead><tr>${(p.columns || []).map((c) => `<th>${fmt.esc(c)}</th>`).join("")}</tr></thead><tbody>${(p.rows || []).map((r) => `<tr>${r.map((c, i) => `<td${i ? "" : ' class="first"'}>${fmt.esc(c)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`,
+    quote: (p) => `<blockquote class="p-quote">${fmt.esc(p.body)}${p.source ? `<cite>— ${fmt.esc(p.source)}</cite>` : ""}</blockquote>`,
     route(p) {
       const d = p.data || {};
       const traffic = d.delay != null ? (d.delay >= 3 ? `<span style="color:#ffb547">+${d.delay} min di traffico</span>` : '<span style="color:#3ddc97">traffico scorrevole</span>') : '<span class="dim">stima senza traffico</span>';

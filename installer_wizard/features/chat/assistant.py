@@ -162,4 +162,9 @@ async def _converse(text: str, core_call) -> tuple[str, str, dict]:
         return "agente · strumenti", speech, ui
     if refused:
         actions.note_gap(text, "il modello ha rifiutato e nessuno strumento è adatto")
-    return data.get("agent_id") or "core", *(code.answer(reply, text) or compose_generic(reply, text))
+    return data.get("agent_id") or "core", *(code.answer(reply, text) or await _presented(reply, text) or compose_generic(reply, text))
+
+
+async def _presented(reply: str, text: str):
+    from features.presentation.composition import compose
+    return await compose(text, reply)

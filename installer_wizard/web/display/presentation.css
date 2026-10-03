@@ -1,0 +1,18 @@
+.p-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; counter-reset: step; }
+.p-steps li { display: grid; grid-template-columns: 30px 1fr; gap: 12px; align-items: start; line-height: 1.5; animation: p-rise 0.5s both; }
+.p-steps .p-n { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; font-size: 13px; font-family: var(--mono);
+  color: var(--cyan); border: 1px solid var(--line-strong); background: var(--cyan-soft); }
+@keyframes p-rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.p-table { overflow-x: auto; }
+.p-table table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.p-table th { text-align: left; font-weight: 500; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-dim); padding: 6px 12px 8px; border-bottom: 1px solid var(--line-strong); }
+.p-table td { padding: 8px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.p-table td.first { color: var(--cyan); white-space: nowrap; }
+.p-table tbody tr:last-child td { border-bottom: 0; }
+.p-quote { margin: 0; padding: 4px 0 4px 18px; border-left: 2px solid var(--cyan); font-size: 18px; font-weight: 300; line-height: 1.55; }
+.p-quote cite { display: block; margin-top: 8px; font-size: 12px; font-style: normal; color: var(--text-dim); }
+figure.p-image { margin: 0; display: grid; gap: 8px; justify-items: center; }
+figure.p-image img { max-width: 100%; max-height: 46vh; object-fit: contain; border-radius: 10px; }
+figure.p-image figcaption { display: grid; gap: 2px; text-align: center; font-size: 13px; color: var(--text-dim); }
+figure.p-image figcaption small { font-size: 10px; color: var(--text-faint); }
+figure.p-image figcaption a { color: inherit; text-decoration: none; border-bottom: 1px dotted var(--text-faint); }
