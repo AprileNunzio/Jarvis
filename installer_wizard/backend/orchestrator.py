@@ -87,12 +87,13 @@ class Orchestrator:
 
     async def install_background(self) -> None:
         for step in [s for s in STEPS if s.background]:
-            if store.steps.get(step.id, {}).get("status") == "done":
-                continue
+            settled = store.steps.get(step.id, {}).get("status") == "done"
             async with self.lock:
-                store.event("INFO", f"Installazione in background: {step.title}", step.id)
+                if not settled:
+                    store.event("INFO", f"Installazione in background: {step.title}", step.id)
                 ok = await self._quiet_step(step.id)
-            store.event("INFO" if ok else "WARN", f"{step.title}: {'pronto' if ok else 'non riuscito, riprovo al prossimo avvio'}", step.id)
+            if not settled or not ok:
+                store.event("INFO" if ok else "WARN", f"{step.title}: {'pronto' if ok else 'non riuscito, riprovo al prossimo avvio'}", step.id)
             await asyncio.sleep(1)
 
     async def ensure(self, step_ids: list[str], reason: str = "") -> bool:
