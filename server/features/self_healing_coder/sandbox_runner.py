@@ -24,9 +24,5 @@ class SandboxRunner:
         return report.succeeded, report.stdout, report.stderr
 
 
-def build_default_runner() -> SandboxRunner:
-    client = BrokerClient(settings.SANDBOX_SOCKET_PATH, lambda: settings.JARVIS_SECRET_KEY)
-    return SandboxRunner(SandboxGateway(client), settings.CODE_SANDBOX_TIMEOUT_SECONDS)
-
-
-sandbox_runner = build_default_runner()
+sandbox_gateway = SandboxGateway(BrokerClient(settings.SANDBOX_SOCKET_PATH, lambda: settings.JARVIS_SECRET_KEY))
+sandbox_runner = SandboxRunner(sandbox_gateway, settings.CODE_SANDBOX_TIMEOUT_SECONDS)
