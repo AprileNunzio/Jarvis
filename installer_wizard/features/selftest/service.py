@@ -43,7 +43,8 @@ class SelfTest:
         last = self.last()
         store.selftest = {"running": self.running, "passed": None} if not last else {
             "at": last["at"], "reason": last["reason"], "rev": last["rev"][:7], "passed": last["passed"],
-            "failed": [r["label"] for r in last["results"] if r["status"] == "errore"], "running": self.running}
+            "failed": [r["label"] for r in last["results"] if r["status"] == "errore"], "running": self.running,
+            "sandbox": next((r["detail"] for r in last["results"] if r["key"] == "sandbox"), "")}
 
     async def _one(self, key: str, label: str, critical: bool, fn) -> dict:
         started = time.time()
