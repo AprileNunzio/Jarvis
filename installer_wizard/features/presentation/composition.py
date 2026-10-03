@@ -16,6 +16,7 @@ logger = logging.getLogger("jarvis.presentation")
 
 ROUTE = "/api/presentation/image"
 BUDGET_SECONDS = 45.0
+WIDGET_SECONDS = 180
 image_store = ImageStore(STATE_DIR / "presentation" / "images")
 
 
@@ -44,6 +45,10 @@ async def compose(question: str, reply: str) -> Optional[Tuple[str, dict]]:
         return None
     if outcome is None:
         return None
+    if outcome.widget:
+        from features.desktop.desk import desk
+        desk.show("brief", outcome.widget, ttl=WIDGET_SECONDS)
+        return outcome.speech, {"mode": "face"}
     if outcome.ui.get("mode") == "face":
         return reply, {"mode": "face"}
     return outcome.speech, outcome.ui

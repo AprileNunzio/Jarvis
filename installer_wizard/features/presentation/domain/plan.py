@@ -4,6 +4,8 @@ from typing import Any, Dict, List, Mapping, Optional, Tuple
 
 BLOCK_TYPES = ("text", "list", "steps", "table", "image", "code", "kv", "quote", "model3d")
 MAX_BLOCKS = 6
+MAX_WIDGET_BLOCKS = 2
+WIDGET_TYPES = ("text", "list", "kv", "image")
 MAX_IMAGES = 2
 MAX_ITEMS = 12
 MAX_TABLE_ROWS = 20
@@ -150,8 +152,8 @@ def parse_plan(raw: Any, fallback_speech: str = "") -> Plan:
     if not isinstance(raw, Mapping):
         raise PlanError("the plan must be an object")
     mode = str(raw.get("mode") or "focus").strip().lower()
-    if mode not in ("focus", "face"):
-        raise PlanError("mode must be focus or face")
+    if mode not in ("focus", "face", "widget"):
+        raise PlanError("mode must be focus, widget or face")
     speech = _text(raw.get("speech"), _SPEECH_LIMIT) or fallback_speech[:_SPEECH_LIMIT]
     if not speech:
         raise PlanError("the plan needs a speech")
@@ -161,6 +163,10 @@ def parse_plan(raw: Any, fallback_speech: str = "") -> Plan:
     if not isinstance(items, (list, tuple)) or not items:
         raise PlanError("the plan needs at least one block")
     blocks = [parse_block(item) for item in items[:MAX_BLOCKS]]
+    if mode == "widget":
+        if len(blocks) > MAX_WIDGET_BLOCKS or any(b.type not in WIDGET_TYPES for b in blocks):
+            raise PlanError("a widget holds at most two blocks among text, list, kv and image")
+        return Plan("widget", _text(raw.get("title"), _TITLE_LIMIT) or "Jarvis", "", speech, tuple(blocks))
     if sum(b.type == "image" for b in blocks) > MAX_IMAGES:
         raise PlanError(f"at most {MAX_IMAGES} images")
     if sum(b.type == "model3d" for b in blocks) > 1:

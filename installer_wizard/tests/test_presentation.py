@@ -371,5 +371,88 @@ class CompositionTest(unittest.IsolatedAsyncioTestCase):
             composition.planner.compose, composition.BUDGET_SECONDS = original, budget
 
 
+class WidgetModeTest(unittest.IsolatedAsyncioTestCase):
+    PLAN = {"mode": "widget", "title": "Diodo", "speech": "Eccolo.", "blocks": [
+        {"type": "list", "items": ["Un verso solo", "0,7 V"]},
+        {"type": "image", "query": "diode", "span": 4}]}
+
+    def test_widget_plans_are_small_and_limited_to_glanceable_blocks(self):
+        plan = parse_plan(self.PLAN)
+        self.assertEqual((plan.mode, len(plan.blocks)), ("widget", 2))
+        for blocks in ([{"type": "table", "columns": ["a"], "rows": [["1"]]}],
+                       [{"type": "text", "body": "uno"}, {"type": "text", "body": "due"}, {"type": "text", "body": "tre"}]):
+            with self.assertRaises(PlanError):
+                parse_plan({"mode": "widget", "speech": "x", "blocks": blocks})
+
+    async def test_planner_returns_a_widget_payload_with_the_image(self):
+        async def complete(system, user):
+            return self.PLAN
+
+        planner = PresentationPlanner(complete, FakeImages(ImageAsset("/i.png", "Ada", "CC0")), FakeModels())
+        result = await planner.compose("quanto cade un diodo", "x")
+        self.assertEqual(result.ui, {"mode": "face"})
+        self.assertEqual(result.widget["lines"], ["Un verso solo", "0,7 V"])
+        self.assertEqual(result.widget["image"], {"src": "/i.png", "credit": "Ada · CC0"})
+
+    async def test_composition_shows_the_brief_widget_and_keeps_the_face(self):
+        from unittest.mock import patch
+        from features.presentation import composition
+        from features.presentation.application.planner import Presentation
+        original = composition.planner.compose
+        composition.planner.compose = AsyncMock(return_value=Presentation("Eccolo.", {"mode": "face"}, {"title": "Diodo", "lines": ["a"], "image": None}))
+        try:
+            with patch("features.desktop.desk.desk") as desk:
+                result = await composition.compose("mostrami un diodo", "Un diodo è un componente.")
+        finally:
+            composition.planner.compose = original
+        self.assertEqual(result, ("Eccolo.", {"mode": "face"}))
+        desk.show.assert_called_once()
+        self.assertEqual(desk.show.call_args.args[0], "brief")
+
+
+class OpenverseTest(unittest.TestCase):
+    def item(self, **overrides):
+        base = {"license": "by", "license_version": "4.0", "thumbnail": "https://api.openverse.org/v1/images/abc/thumb/",
+                "width": 1000, "height": 800, "creator": " Ada  Lovelace ", "title": "Diode",
+                "foreign_landing_url": "https://flickr.example/1"}
+        return {**base, **overrides}
+
+    def test_only_free_licences_and_trusted_thumbnails_survive(self):
+        from features.presentation.infrastructure import openverse
+        payload = {"results": [self.item(), self.item(license="by-nc"), self.item(license="by-nd"),
+                               self.item(thumbnail="https://evil.example/x.jpg"), self.item(width=100),
+                               self.item(license="cc0", license_version="1.0"), self.item(license="pdm")]}
+        found = openverse.candidates(payload)
+        self.assertEqual([c.license for c in found], ["CC BY 4.0", "CC0", "Public domain"])
+        self.assertEqual(found[0].author, "Ada Lovelace")
+        self.assertEqual(openverse.candidates({}), [])
+
+    def test_the_search_is_restricted_to_free_licences(self):
+        from features.presentation.infrastructure import openverse
+        params = openverse.search_params("diode")
+        self.assertNotIn("nc", params["license"].split(","))
+        self.assertEqual(params["mature"], "false")
+
+
+@unittest.skipUnless(IMAGING, "OpenCV/numpy non utilizzabili in questo ambiente")
+class SourceFallbackTest(unittest.IsolatedAsyncioTestCase):
+    async def test_openverse_is_tried_when_commons_has_nothing(self):
+        temp = tempfile.TemporaryDirectory()
+        self.addCleanup(temp.cleanup)
+        image = cv2.imencode(".png", np.full((400, 500, 3), 90, np.uint8))[1].tobytes()
+        asked = []
+
+        async def fetch_json(url, params):
+            asked.append(url)
+            if "wikimedia" in url:
+                return {"query": {"pages": {}}}
+            return {"results": [{"license": "cc0", "thumbnail": "https://api.openverse.org/v1/images/x/thumb/", "width": 900,
+                                 "height": 600, "creator": "Ada", "title": "t", "foreign_landing_url": "https://p/1"}]}
+
+        finder = CommonsImages(fetch_json, AsyncMock(return_value=image), ImageStore(Path(temp.name)), "/api/presentation/image")
+        asset = await finder.find("diode", False)
+        self.assertEqual((len(asked), asset.credit, asset.license), (2, "Ada", "CC0"))
+
+
 if __name__ == "__main__":
     unittest.main()

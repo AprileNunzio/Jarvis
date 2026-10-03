@@ -1,0 +1,7 @@
+.w-brief .br-title { font-size: 15px; font-weight: 600; letter-spacing: 0.02em; margin-bottom: 8px; }
+.w-brief .br-lines { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; font-size: 13px; line-height: 1.45; color: var(--text); }
+.w-brief .br-lines li { position: relative; padding-left: 14px; }
+.w-brief .br-lines li::before { content: ""; position: absolute; left: 0; top: 0.62em; width: 5px; height: 5px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 8px var(--cyan); }
+.w-brief .br-fig { margin: 0 0 10px; display: grid; gap: 4px; justify-items: center; }
+.w-brief .br-fig img { max-width: 100%; max-height: 150px; object-fit: contain; border-radius: 8px; }
+.w-brief .br-fig figcaption { font-size: 10px; color: var(--text-faint); text-align: center; }

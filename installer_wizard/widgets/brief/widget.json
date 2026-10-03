@@ -1,0 +1,13 @@
+{
+  "id": "brief",
+  "name": "Scheda rapida",
+  "icon": "📌",
+  "priority": 62,
+  "size": "m",
+  "ttl": 120,
+  "description": "Informazioni da avere a colpo d'occhio, scelte e impaginate da Jarvis: un dato, un riepilogo, un elenco breve o una piccola immagine.",
+  "demo": {
+    "title": "Diodo",
+    "lines": ["Lascia passare la corrente in un solo verso.", "Caduta tipica: 0,7 V (silicio)."]
+  }
+}

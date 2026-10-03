@@ -3,6 +3,8 @@ from typing import Any, Dict, List, Mapping, Optional
 
 from features.presentation.domain.plan import Block, Plan, fill_rows
 
+MAX_WIDGET_LINES = 6
+
 
 @dataclass(frozen=True)
 class ImageAsset:
@@ -39,8 +41,25 @@ def _panel(block: Block, image: Optional[ImageAsset]) -> Optional[Dict[str, Any]
     return None
 
 
+def to_widget(plan: Plan, images: Mapping[int, ImageAsset]) -> Dict[str, Any]:
+    lines: List[str] = []
+    picture: Optional[Dict[str, str]] = None
+    for index, block in enumerate(plan.blocks):
+        fields = block.fields
+        if block.type == "text":
+            lines.append(fields["body"][:220])
+        elif block.type == "list":
+            lines.extend(fields["items"][:MAX_WIDGET_LINES])
+        elif block.type == "kv":
+            lines.extend(f"{k}: {v}" for k, v in list(fields["pairs"].items())[:MAX_WIDGET_LINES])
+        elif block.type == "image" and picture is None and index in images:
+            asset = images[index]
+            picture = {"src": asset.src, "credit": " · ".join(p for p in (asset.credit, asset.license) if p)}
+    return {"title": plan.title, "lines": lines[:MAX_WIDGET_LINES], "image": picture}
+
+
 def to_ui(plan: Plan, images: Mapping[int, ImageAsset]) -> Dict[str, Any]:
-    if plan.mode == "face":
+    if plan.mode != "focus":
         return {"mode": "face"}
     kept: List[Block] = []
     panels: Dict[int, Dict[str, Any]] = {}

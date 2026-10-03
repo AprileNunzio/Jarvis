@@ -5,7 +5,7 @@ from typing import Any, Dict, List, Mapping, Optional
 
 from features.presentation.application.ports import Completion, ImageFinder, ModelBuilder
 from features.presentation.domain.plan import PlanError, parse_plan, side_effects
-from features.presentation.domain.stage import ImageAsset, to_ui
+from features.presentation.domain.stage import ImageAsset, to_ui, to_widget
 
 logger = logging.getLogger("jarvis.presentation")
 
@@ -21,7 +21,10 @@ Rispondi SOLO con un JSON:
  "blocks": [ ... ]}
 
 mode "face": per risposte brevi o di conversazione: niente schermo, solo la voce (blocks vuoto).
-mode "focus": per spiegazioni, lezioni, confronti, procedure, codice, cose da vedere.
+mode "widget": per ciò che si vuole avere a colpo d'occhio mentre si fa altro (un dato, un riepilogo, un promemoria,
+  un elenco breve, una piccola immagine): una scheda piccola sul desktop, da 1 a 2 blocchi tra text, list, kv, image.
+mode "focus": per spiegazioni, lezioni, confronti, procedure, codice, cose da vedere: schermo a pannelli.
+La dimensione segue l'importanza: poco importante e breve = face, da tenere d'occhio = widget, da studiare = focus.
 
 Blocchi (da 1 a 6; ognuno ha "type", "title" facoltativo e "span" da 3 a 12 colonne; le righe sono da 12 colonne):
 - {"type":"text","body":"testo organizzato in paragrafi brevi","span":7}
@@ -50,6 +53,7 @@ Criteri:
 class Presentation:
     speech: str
     ui: Dict[str, Any]
+    widget: Optional[Dict[str, Any]] = None
 
 
 class PresentationPlanner:
@@ -67,8 +71,9 @@ class PresentationPlanner:
         subject = side_effects(plan)
         if subject:
             self._models.request(subject)
-        ui = to_ui(plan, assets)
-        return Presentation(plan.speech, ui)
+        if plan.mode == "widget":
+            return Presentation(plan.speech, {"mode": "face"}, to_widget(plan, assets))
+        return Presentation(plan.speech, to_ui(plan, assets))
 
     async def _plan(self, question: str, reply: str):
         request = f"Domanda dell'utente:\n{question[:600]}\n\nRisposta già pronta:\n{reply[:MAX_ANSWER_CHARS]}"
