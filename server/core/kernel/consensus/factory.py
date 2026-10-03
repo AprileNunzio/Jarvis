@@ -3,7 +3,7 @@ from typing import List, Sequence
 from server.core.kernel.consensus.llm_voter import LlmVoter
 from server.core.kernel.consensus.panel import ConsensusPanel
 from server.core.kernel.consensus.policy_voter import PolicyGuardVoter
-from server.core.orchestrator.brain_routing import brain_order_for
+from server.core.orchestrator.brain_routing import brain_order_for, has_explicit_brain
 
 _SECURITY = (
     "Sei il responsabile della sicurezza di Jarvis. Valuta se eseguire questo piano può causare perdita di dati, "
@@ -27,12 +27,16 @@ def pick_models(candidates: Sequence[str], avoid: str, count: int) -> List[List[
     return [[preferred[i % len(preferred)]] + [m for m in pool if m != preferred[i % len(preferred)]] for i in range(count)]
 
 
+def _voter_models(component: str, fallback: List[str]):
+    return lambda: brain_order_for(component) if has_explicit_brain(component) else fallback
+
+
 def build_consensus_panel(planner_model: str = "qwen2.5:7b") -> ConsensusPanel:
     candidates = brain_order_for("analytic_reasoner") + brain_order_for("agent_self_healing_coder")
     security, proportionality, reversibility = pick_models(candidates, planner_model, 3)
     return ConsensusPanel([
         PolicyGuardVoter(),
-        LlmVoter("security", _SECURITY, security, can_veto=True),
-        LlmVoter("proportionality", _PROPORTIONALITY, proportionality),
-        LlmVoter("reversibility", _REVERSIBILITY, reversibility),
+        LlmVoter("security", _SECURITY, _voter_models("consensus_security", security), can_veto=True),
+        LlmVoter("proportionality", _PROPORTIONALITY, _voter_models("consensus_proportionality", proportionality)),
+        LlmVoter("reversibility", _REVERSIBILITY, _voter_models("consensus_reversibility", reversibility)),
     ])

@@ -1,11 +1,14 @@
 import json
 import re
+import time
 
 import httpx
 from config import ollama_url
+from tasks import background
 
 from features.brain.brains import brains
-from features.brain.residency import keep_alive
+from features.brain.trace import trace
+from features.brain.residency import keep_alive, touch
 from features.cloud.catalog import is_cloud
 from features.cloud.client import CloudError, complete
 
@@ -22,6 +25,14 @@ async def chain(kind: str = "deep") -> list[str]:
     order = cfg[kind] + cfg["deep" if kind == "chat" else "chat"]
     usable = [m for m in dict.fromkeys(order) if brains.usable(m, installed)]
     return usable or [cfg["main"]]
+
+
+async def component_chain(component: str) -> list[str]:
+    if not component:
+        return []
+    from features.brain.routing import assignment_service
+    installed = {n if ":" in n else f"{n}:latest" for n in await brains.installed()}
+    return assignment_service.chain(component, installed)
 
 
 def decode(text: str, as_json: bool):
@@ -57,12 +68,15 @@ def _govern(system: str) -> str:
 
 async def generate(prompt: str, *, as_json: bool = False, max_tokens: int = 500, temperature: float = 0.1,
                    kind: str = "deep", system: str = "", prefer: list[str] | None = None, timeout: float = 240,
-                   govern: bool = True):
+                   govern: bool = True, component: str = ""):
     if govern:
         system = _govern(system)
     errors = []
-    models = list(dict.fromkeys([m for m in prefer or [] if m] + await chain(kind)))
+    models = list(dict.fromkeys([m for m in prefer or [] if m] + await component_chain(component) + await chain(kind)))
+    call = trace.begin(component or kind, "richiesta di ragionamento" if kind == "deep" else "richiesta veloce", models)
     for model in models:
+        trace.attempt(call, model)
+        started = time.perf_counter()
         try:
             if is_cloud(model):
                 reply = await complete(model, [{"role": "user", "content": prompt}], system, max_tokens=max_tokens,
@@ -70,7 +84,16 @@ async def generate(prompt: str, *, as_json: bool = False, max_tokens: int = 500,
                 text = reply.text
             else:
                 text = await _ollama(model, prompt, system, as_json, max_tokens, temperature, timeout)
-            return decode(text, as_json)
+            result = decode(text, as_json)
         except (httpx.HTTPError, CloudError, ValueError) as exc:
             errors.append(f"{model}: {str(exc)[:120]}")
+            trace.failed(call, model, str(exc) or type(exc).__name__)
+            brains.record(model, (time.perf_counter() - started) * 1000, False, kind)
+            continue
+        elapsed = (time.perf_counter() - started) * 1000
+        brains.record(model, elapsed, True, kind)
+        trace.finish(call, model, elapsed, text)
+        background(touch(model))
+        return result
+    trace.abort(call, "; ".join(errors))
     raise BrainUnavailable("; ".join(errors) or "nessun modello disponibile")

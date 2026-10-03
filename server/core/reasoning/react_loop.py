@@ -52,8 +52,9 @@ class ToolDefinition:
 
 class ReActLoop:
 
-    def __init__(self, max_iterations: int = 8, model_name: str = "qwen2.5:7b") -> None:
+    def __init__(self, max_iterations: int = 8, model_name: str = "qwen2.5:7b", component: str = "") -> None:
         self.max_iterations = max_iterations
+        self.component = component
         self.model_name = model_name
         self._tools: Dict[str, ToolDefinition] = {}
         
@@ -95,6 +96,7 @@ class ReActLoop:
                     messages=messages,
                     system_prompt=system_prompt,
                     temperature=0.2,
+                    component=self.component,
                 )
             )
 

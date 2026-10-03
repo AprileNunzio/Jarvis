@@ -15,6 +15,7 @@ from tasks import background
 
 from features.brain.brains import brains
 from features.brain.residency import primary
+from features.brain.trace import trace
 from features.chat import addressee, assistant, brain_chain, intents, speaker, voice_id, wake
 from features.chat.dialogue import dialogue
 from features.chat.layout import presence
@@ -72,12 +73,24 @@ async def _core_call(query: str, device: str, speech_lang: dict) -> dict:
                    "context": {**context, "models": models, "max_tokens": route["max_tokens"],
                                "pinned": primary() or ""}}
         started = time.time()
-        r = await core.request("POST", "/api/v1/command", json=payload, timeout=240)
-        r.raise_for_status()
-        data = r.json()
+        call = trace.begin("conversation", route["reason"], models)
+        trace.attempt(call, models[0])
+        try:
+            r = await core.request("POST", "/api/v1/command", json=payload, timeout=240)
+            r.raise_for_status()
+            data = r.json()
+        except Exception as exc:
+            trace.abort(call, str(exc) or type(exc).__name__)
+            raise
         model = ((data.get("result_data") or {}).get("model") or "").removeprefix("ollama/")
         if model:
             brains.record(model, (time.time() - started) * 1000, model in models, route["kind"])
+        if model and models and model != models[0]:
+            trace.failed(call, models[0], "non disponibile")
+        if not model:
+            trace.note(call, f"gestita dall'agente {data.get('agent_id') or 'core'}")
+        trace.finish(call, model, (time.time() - started) * 1000, data.get("speech_output") or "")
+        if model:
             label = "veloce" if route["kind"] == "chat" else "ragionamento"
             data["agent_id"] = f"{data.get('agent_id') or 'core'} · {model} ({label})"
         return data

@@ -3,6 +3,8 @@ import httpx
 import logging
 import os
 from server.config.env import settings
+from server.core.orchestrator.brain_routing import brain_order_for, keep_alive_for
+from server.features.llm_gateway.supervisor_bridge import BridgeError, CallTrace, bridge, is_remote_ref
 from server.features.llm_gateway.contracts import SYNTHETIC_MODEL, LLMRequest, LLMResponse
 
 logger = logging.getLogger("jarvis.llm_gateway")
@@ -37,39 +39,58 @@ class LLMGateway:
         return self._fallback_synthetic_response(request, start_time, last_error)
 
     async def _call_ollama(self, request: LLMRequest, start_time: float) -> LLMResponse:
-        chain = [m for m in request.models if m] or [settings.JARVIS_LLM_MODEL or request.model_name]
+        chain = [m for m in request.models if m] or brain_order_for(request.component) or [settings.JARVIS_LLM_MODEL or request.model_name]
         messages = [{"role": m.role, "content": m.content} for m in request.messages]
         if request.system_prompt:
             messages.insert(0, {"role": "system", "content": request.system_prompt})
+        trace = CallTrace(bridge, request.component, "richiesta del Core", chain) if request.component else None
         errors = []
         for model in chain:
-            payload = {
-                "model": model,
-                "messages": messages,
-                "stream": False,
-                "keep_alive": "24h" if model == (request.pinned or chain[0]) else "5m",
-                "options": {"temperature": request.temperature, "num_predict": request.max_tokens},
-            }
+            if trace:
+                await trace.attempt(model)
+            started = time.time()
             try:
-                async with httpx.AsyncClient(timeout=180.0) as client:
-                    res = await client.post(f"{self._ollama_url}/api/chat", json=payload)
-                    res.raise_for_status()
-                    data = res.json()
-            except (httpx.HTTPError, ValueError) as exc:
+                content, tokens = await self._complete_one(model, messages, request, chain)
+            except (httpx.HTTPError, BridgeError, ValueError) as exc:
                 logger.warning("Modello %s non disponibile: %s", model, exc)
                 errors.append(f"{model}: {exc}")
+                if trace:
+                    await trace.failed(model, str(exc) or type(exc).__name__)
                 continue
-            content = data.get("message", {}).get("content", "")
             if not content.strip():
                 errors.append(f"{model}: risposta vuota")
+                if trace:
+                    await trace.failed(model, "risposta vuota")
                 continue
+            if trace:
+                await trace.done(model, (time.time() - started) * 1000, content)
             return LLMResponse(
                 content=content,
-                model_used=f"ollama/{model}",
-                tokens_consumed=data.get("eval_count", 0),
+                model_used=model if is_remote_ref(model) else f"ollama/{model}",
+                tokens_consumed=tokens,
                 duration_ms=(time.time() - start_time) * 1000,
             )
+        if trace:
+            await trace.abort("; ".join(errors)[:160] or "nessun modello")
         raise RuntimeError("; ".join(errors) or "nessun modello Ollama disponibile")
+
+    async def _complete_one(self, model: str, messages: list, request: LLMRequest, chain: list) -> tuple:
+        if is_remote_ref(model):
+            reply = await bridge.complete(model, [m for m in messages if m["role"] != "system"],
+                                          request.system_prompt, request.max_tokens, request.temperature)
+            return reply.get("text", ""), int(reply.get("tokens") or 0)
+        payload = {
+            "model": model,
+            "messages": messages,
+            "stream": False,
+            "keep_alive": keep_alive_for(model, "24h" if model == (request.pinned or chain[0]) else "5m"),
+            "options": {"temperature": request.temperature, "num_predict": request.max_tokens},
+        }
+        async with httpx.AsyncClient(timeout=180.0) as client:
+            res = await client.post(f"{self._ollama_url}/api/chat", json=payload)
+            res.raise_for_status()
+            data = res.json()
+        return data.get("message", {}).get("content", ""), data.get("eval_count", 0)
 
     async def _call_gemini(self, request: LLMRequest, start_time: float) -> LLMResponse:
         contents = []

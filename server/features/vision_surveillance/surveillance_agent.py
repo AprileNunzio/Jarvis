@@ -61,7 +61,7 @@ class VisionSurveillanceAgent(BaseAgent):
         )
 
     def _build_react_loop(self) -> ReActLoop:
-        loop = ReActLoop(max_iterations=4, model_name="qwen2.5:7b")
+        loop = ReActLoop(max_iterations=4, model_name="qwen2.5:7b", component="surveillance_agent")
 
         async def get_latest_events(limit: int = 5) -> str:
             try:

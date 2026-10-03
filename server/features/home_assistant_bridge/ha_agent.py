@@ -66,7 +66,7 @@ class HomeAssistantAgent(BaseAgent):
         )
 
     def _build_react_loop(self) -> ReActLoop:
-        loop = ReActLoop(max_iterations=4, model_name="qwen2.5:7b")
+        loop = ReActLoop(max_iterations=4, model_name="qwen2.5:7b", component="home_assistant_agent")
 
         async def ha_call_service(domain: str, service: str, entity_id: str) -> str:
             if not self._token:

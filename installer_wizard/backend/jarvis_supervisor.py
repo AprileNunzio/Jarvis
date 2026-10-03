@@ -16,6 +16,7 @@ import updater
 from config import ADMIN_PORT, DEMO, PUBLIC_PORT, VERSION
 from feature_registry import registry
 from features.brain import api as brain_api
+from features.brain import routing as brain_routing
 from features.actions import api as actions_api
 from features.bluetooth import api as bluetooth_api
 from features.bluetooth.service import service as bluetooth_service
@@ -115,7 +116,7 @@ async def main() -> None:
         telemetry_loop(), orch.boot(), health.Watchdog(orch).run(), updater.scheduler(), presence.monitor.run(),
         bot.run(), explorer.run(), audio.watcher.run(), study.engine.run(), soup_api.trainer.run(), registry.run(),
         desk.run(), spotify.run(), google.run(), maps.run(), home.brain.run(), bluetooth_service.run(),
-        object_tips.run(), node_beacon.run(), cameras_recorder.run(), autonomy.run(), automations_engine.run(), selftest.loop(), habits.run(), vault.run(), display_driver.guard(),
+        object_tips.run(), node_beacon.run(), cameras_recorder.run(), autonomy.run(), automations_engine.run(), selftest.loop(), habits.run(), vault.run(), display_driver.guard(), brain_routing.run(),
     )]
     try:
         await asyncio.gather(*(s.serve() for s in servers))

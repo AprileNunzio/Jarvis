@@ -46,6 +46,7 @@ class LLMIntentClassifier:
                     system_prompt=self._system_prompt,
                     temperature=0.05,
                     max_tokens=200,
+                    component="intent_classifier",
                 )
             )
             result = json.loads(self._extract_json(response.content))

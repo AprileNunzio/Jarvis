@@ -105,7 +105,7 @@ class SelfHealingCoderAgent(BaseAgent):
         )
 
     def _build_react_loop(self) -> ReActLoop:
-        loop = ReActLoop(max_iterations=6, model_name="qwen2.5-coder:7b")
+        loop = ReActLoop(max_iterations=6, model_name="qwen2.5-coder:7b", component="agent_self_healing_coder")
 
         async def sandbox_test(code: str) -> str:
             clean = self._clean_raw_code(code)
@@ -118,6 +118,7 @@ class SelfHealingCoderAgent(BaseAgent):
             response = await llm_gateway.generate_completion(
                 LLMRequest(
                     model_name="qwen2.5-coder:7b",
+                    component="agent_self_healing_coder",
                     messages=[LLMMessage(role="user", content=requirement)],
                     system_prompt=(
                         "Genera codice Python 3 puro ed eseguibile. "
@@ -133,6 +134,7 @@ class SelfHealingCoderAgent(BaseAgent):
             response = await llm_gateway.generate_completion(
                 LLMRequest(
                     model_name="qwen2.5-coder:7b",
+                    component="agent_self_healing_coder",
                     messages=[
                         LLMMessage(
                             role="user",
@@ -195,6 +197,7 @@ class SelfHealingCoderAgent(BaseAgent):
         response = await llm_gateway.generate_completion(
             LLMRequest(
                 model_name="qwen2.5-coder:7b",
+                component="agent_self_healing_coder",
                 messages=[
                     LLMMessage(
                         role="user",

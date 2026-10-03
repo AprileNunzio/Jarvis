@@ -35,6 +35,7 @@ class AnalyticReasonerAgent(BaseAgent):
             LLMRequest(
                 model_name=settings.JARVIS_LLM_MODEL or _DEFAULT_MODEL,
                 models=[request.preferred_brain] if request.preferred_brain else [],
+                component="analytic_reasoner",
                 messages=[LLMMessage(role="user", content=self._prompt(request))],
                 system_prompt=_SYSTEM_PROMPT,
                 temperature=0.2,

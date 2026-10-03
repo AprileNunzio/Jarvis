@@ -14,6 +14,7 @@ class LLMRequest(BaseModel):
     system_prompt: Optional[str] = None
     models: List[str] = Field(default_factory=list)
     pinned: str = ""
+    component: str = ""
 
 SYNTHETIC_MODEL = "deterministic-core-v1"
 

@@ -9,6 +9,7 @@
 <link rel="stylesheet" href="/static/display/display.css">
 <link rel="stylesheet" href="/static/display/google.css">
 <link rel="stylesheet" href="/static/display/vision.css">
+<link rel="stylesheet" href="/static/display/mindstream.css">
 </head>
 <body class="holo-grid face">
 <canvas id="core"></canvas>
@@ -82,6 +83,12 @@
 
 <div class="tooltip" id="tip"></div>
 <div class="toast-mem" id="toast-mem"></div>
+<div class="mind empty" id="mind" title="Cosa sta pensando Jarvis: tocca per i dettagli">
+  <div class="mind-head"><span class="mind-dot"></span><span class="mind-who" id="mind-who"></span><span class="mind-time" id="mind-time"></span></div>
+  <div class="mind-model" id="mind-model"></div>
+  <div class="mind-line" id="mind-line"></div>
+  <div class="mind-more" id="mind-more"></div>
+</div>
 <div class="banner" id="banner"></div>
 <div class="listen-overlay"><div class="wave" id="listen-wave"></div><div class="label" id="listen-label"></div></div>
 <div class="welcome" id="welcome"><b id="welcome-name"></b><span id="welcome-sub"></span></div>
@@ -100,6 +107,7 @@
 <script src="/static/display/hands.js"></script>
 <script src="/static/display/look.js"></script>
 <script src="/static/display/brain.js"></script>
+<script src="/static/display/mindstream.js"></script>
 <script src="/static/display/audio_panel.js"></script>
 <script src="/static/display/enroll.js"></script>
 <script src="/static/display/mood.js"></script>

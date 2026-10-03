@@ -75,6 +75,7 @@ class DagPlanner:
                 system_prompt=system,
                 temperature=0.1,
                 max_tokens=max_tokens,
+                component="kernel_planner",
             )
         )
         return response.content

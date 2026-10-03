@@ -25,6 +25,7 @@ async def complete(system: str, user: str) -> str:
         LLMRequest(
             model_name=(models or [settings.JARVIS_LLM_MODEL or _DEFAULT_MODEL])[0],
             models=models,
+            component="skill_synthesizer",
             messages=[LLMMessage(role="user", content=user)],
             system_prompt=system,
             temperature=0.15,

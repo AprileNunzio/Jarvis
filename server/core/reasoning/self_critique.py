@@ -48,6 +48,7 @@ class SelfCritiqueEngine:
                 messages=[LLMMessage(role="user", content=_REVIEW_PROMPT.format(task=task, output=output))],
                 system_prompt=_REVIEW_SYSTEM,
                 temperature=0.3,
+                component="kernel_critic",
             )
         )
         raw = response.content.strip()

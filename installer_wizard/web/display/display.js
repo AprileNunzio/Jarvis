@@ -147,6 +147,7 @@
   });
   Jarvis.connectState("/api/stream", (s) => (window.jarvisPerf ? window.jarvisPerf.measure("stato", () => onState(s)) : onState(s)), (ok) => $("link").classList.toggle("show", !ok));
   D.startBrain();
+  D.startMindStream();
 })();
 
 

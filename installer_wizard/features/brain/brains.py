@@ -78,6 +78,10 @@ class Brains:
         self._installed: tuple[float, list[str]] = (0.0, [])
         self.stats: dict[str, dict] = {}
         self.last: dict = {}
+        self._listeners: list = []
+
+    def on_change(self, callback) -> None:
+        self._listeners.append(callback)
 
     @staticmethod
     def config() -> dict:
@@ -148,6 +152,11 @@ class Brains:
 
     def invalidate(self) -> None:
         self._installed = (0.0, [])
+        for callback in self._listeners:
+            try:
+                callback()
+            except OSError:
+                pass
 
     @staticmethod
     def classify(text: str) -> tuple[str, str]:

@@ -29,6 +29,8 @@ class ServerSettings(BaseSettings):
     FRIGATE_URL: str = "http://127.0.0.1:5000"
     CODE_SANDBOX_TIMEOUT_SECONDS: int = 30
     SANDBOX_SOCKET_PATH: str = "/run/jarvis/sandbox/broker.sock"
+    BRAIN_ROUTES_PATH: str = "/run/jarvis/brain/routes.json"
+    JARVIS_SUPERVISOR_URL: str = "http://127.0.0.1:8080"
 
     model_config = SettingsConfigDict(
         env_file=".env",

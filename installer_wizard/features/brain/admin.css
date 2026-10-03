@@ -71,3 +71,28 @@
 @media (max-width: 900px) {
   .sv-form { grid-template-columns: 1fr; }
 }
+
+#br-assign { display: grid; gap: 18px; margin-bottom: 18px; }
+.as-group { margin-top: 16px; }
+.as-group-title { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 8px; }
+.as-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px 12px; align-items: start; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; margin-bottom: 8px; min-width: 0; }
+.as-row.custom { border-color: var(--line-strong); }
+.as-main { min-width: 0; }
+.as-name { font-weight: 600; font-size: 14px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.as-side { font-size: 10px; font-weight: 400; color: var(--text-faint); letter-spacing: .08em; text-transform: uppercase; }
+.as-chain { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.as-chip { font-family: var(--mono); font-size: 11px; padding: 2px 8px; border-radius: 99px; border: 1px solid var(--line); max-width: 100%; overflow-wrap: anywhere; }
+.as-chip.first { border-color: var(--cyan); color: var(--cyan); }
+.as-chip.off { opacity: .5; text-decoration: line-through; }
+.as-edit { grid-column: 1 / -1; display: grid; gap: 8px; padding-top: 10px; border-top: 1px dashed var(--line); }
+.as-edit label { display: flex; flex-direction: column; gap: 3px; font-size: 12px; color: var(--text-dim); margin: 0; }
+.as-edit label.as-mode { flex-direction: row; align-items: center; gap: 8px; }
+.as-sub { font-size: 12px; color: var(--text-dim); }
+.as-own { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 13px; }
+.as-own .mono { overflow-wrap: anywhere; min-width: 0; }
+.as-own .actions, .as-edit .actions { display: flex; gap: 6px; flex-wrap: wrap; }
+.as-add { display: flex; gap: 8px; flex-wrap: wrap; }
+.as-add select { flex: 1 1 220px; min-width: 0; }
+.as-keep { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 6px 0; flex-wrap: wrap; }
+.as-keep .mono { overflow-wrap: anywhere; min-width: 0; flex: 1 1 200px; }
+@media (max-width: 720px) { .as-row { grid-template-columns: 1fr; } }

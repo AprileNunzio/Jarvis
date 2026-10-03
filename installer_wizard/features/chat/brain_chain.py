@@ -3,8 +3,11 @@ from itertools import groupby
 
 import httpx
 from state import store
+from tasks import background
 
 from features.brain.brains import brains
+from features.brain.residency import touch
+from features.brain.trace import trace
 from features.cloud import conversation
 from features.cloud.catalog import is_cloud
 from features.cloud.client import CloudError
@@ -20,12 +23,17 @@ def _label(kind: str) -> str:
 
 async def _cloud(ref: str, query: str, device: str, context: dict, route: dict) -> dict:
     started = time.time()
+    call = trace.begin("conversation", route["reason"], route["models"])
+    trace.attempt(call, ref)
     try:
         answer = await conversation.reply(ref, query, device, context, route["max_tokens"])
-    except CloudError:
+    except CloudError as exc:
         brains.record(ref, (time.time() - started) * 1000, False, route["kind"])
+        trace.abort(call, str(exc))
         raise
     brains.record(ref, answer.ms, True, route["kind"])
+    trace.finish(call, ref, answer.ms, answer.text)
+    background(touch(ref))
     return {"agent_id": f"jarvis_cloud · {ref.removeprefix('cloud:')} ({_label(route['kind'])})",
             "speech_output": answer.text, "result_data": {"model": ref}}
 

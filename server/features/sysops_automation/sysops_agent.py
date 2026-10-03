@@ -78,7 +78,7 @@ class SysOpsAutomationAgent(BaseAgent):
         )
 
     def _build_react_loop(self) -> ReActLoop:
-        loop = ReActLoop(max_iterations=6, model_name="qwen2.5-coder:7b")
+        loop = ReActLoop(max_iterations=6, model_name="qwen2.5-coder:7b", component="sysops_agent")
 
         async def run_shell_command(shell_type: str, command: str) -> str:
             res = await shell_executor.execute_command(

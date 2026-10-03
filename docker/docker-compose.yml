@@ -26,6 +26,7 @@ services:
       - ../data/certs:/app/data/certs
       - ../data/models:/app/data/models
       - /run/jarvis/sandbox:/run/jarvis/sandbox
+      - /var/lib/jarvis/brain:/run/jarvis/brain:ro
     depends_on:
       - jarvis-qdrant
 

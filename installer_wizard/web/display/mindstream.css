@@ -1,0 +1,28 @@
+.mind { position: fixed; left: 22px; bottom: 22px; z-index: 5; width: 320px; max-width: calc(100vw - 44px); padding: 10px 14px; border-radius: 14px;
+  background: rgba(6, 14, 26, 0.5); border: 1px solid var(--line); backdrop-filter: blur(10px); font-size: 12px; color: var(--text-dim);
+  opacity: 0.42; transition: opacity 0.6s, border-color 0.6s, background 0.6s; cursor: pointer; }
+.mind:hover, .mind.live, .mind.open { opacity: 1; }
+.mind.live { border-color: var(--line-strong); background: rgba(8, 20, 36, 0.72); }
+.mind.empty { display: none; }
+.mind-head { display: flex; align-items: center; gap: 9px; min-width: 0; }
+.mind-dot { flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--text-faint); }
+.mind.live .mind-dot { background: var(--cyan); box-shadow: 0 0 10px var(--cyan); animation: mind-pulse 1.3s ease-in-out infinite; }
+.mind.failed .mind-dot { background: var(--red); }
+.mind.done .mind-dot { background: var(--green); }
+@keyframes mind-pulse { 0%, 100% { opacity: 0.35; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.15); } }
+.mind-who { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text); letter-spacing: 0.02em; }
+.mind-who small { color: var(--text-faint); letter-spacing: 0.08em; text-transform: uppercase; font-size: 9px; margin-right: 6px; }
+.mind-time { flex: none; font-family: var(--mono); font-size: 10px; color: var(--text-faint); }
+.mind-model { margin-top: 5px; font-family: var(--mono); font-size: 11px; color: var(--cyan); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mind-line { margin-top: 4px; min-height: 15px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-style: italic; }
+.mind-more { display: none; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--line); max-height: 36vh; overflow-y: auto; }
+.mind.open .mind-more { display: block; }
+.mind-step { display: flex; gap: 8px; padding: 2px 0; line-height: 1.45; }
+.mind-step b { flex: none; width: 36px; font-family: var(--mono); font-weight: 400; font-size: 10px; color: var(--text-faint); text-align: right; }
+.mind-snippet { margin: 6px 0 2px; padding: 6px 8px; border-left: 2px solid var(--line-strong); color: var(--text); font-style: italic; }
+.mind-recent { margin-top: 8px; padding-top: 6px; border-top: 1px dashed var(--line); }
+.mind-recent div { display: flex; justify-content: space-between; gap: 10px; padding: 2px 0; }
+.mind-recent span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mind-recent .ms { flex: none; font-family: var(--mono); font-size: 10px; color: var(--text-faint); }
+body.brain .mind { display: none; }
+@media (max-width: 720px) { .mind { left: 12px; bottom: 12px; width: calc(100vw - 24px); } }

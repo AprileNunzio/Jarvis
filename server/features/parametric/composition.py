@@ -13,13 +13,14 @@ class UnavailableModelError(RuntimeError):
     pass
 
 
-def build_completion(models_provider):
+def build_completion(models_provider, component="parametric_designer"):
     async def complete(system: str, user: str) -> str:
         models = models_provider()
         response = await llm_gateway.generate_completion(
             LLMRequest(
                 model_name=(models or [settings.JARVIS_LLM_MODEL or _DEFAULT_MODEL])[0],
                 models=models,
+                component=component,
                 messages=[LLMMessage(role="user", content=user)],
                 system_prompt=system,
                 temperature=0.1,

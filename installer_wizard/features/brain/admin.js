@@ -188,5 +188,5 @@
   }
 
   A.brain = { reload: loadBrains, addTo, lists: () => brainData, showSource };
-  A.tab("models", { title: "Cervello", init() { init(); if (A.brainCloud) A.brainCloud.init(); if (A.brainServers) A.brainServers.init(); }, async load() { loadModels(); loadOllama(); await loadBrains(); if (A.brainCloud) A.brainCloud.load(); if (A.brainServers) A.brainServers.load(); }, onState });
+  A.tab("models", { title: "Cervello", init() { init(); if (A.brainCloud) A.brainCloud.init(); if (A.brainServers) A.brainServers.init(); if (A.brainAssign) A.brainAssign.init(); }, async load() { loadModels(); loadOllama(); await loadBrains(); if (A.brainCloud) A.brainCloud.load(); if (A.brainServers) A.brainServers.load(); if (A.brainAssign) A.brainAssign.load(); }, onState });
 })();
